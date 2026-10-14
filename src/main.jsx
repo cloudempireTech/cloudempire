@@ -10,7 +10,7 @@ import './telemetry.js';
 
 const siteRoot = window.location.pathname.startsWith('/cloudempire/') ? '/cloudempire/' : '/';
 const url = path => `${siteRoot}${path}`;
-const asset = name => url(name);
+const asset = name => /^https?:\/\//.test(name) ? name : name.startsWith('api/media.php?') ? `https://cloudempire.tech/${name}` : url(name);
 const segments = window.location.pathname.slice(siteRoot.length).split('/').filter(Boolean);
 const route = segments[0] === 'app.html' || segments[0] === 'index.html' ? [] : segments;
 

@@ -11,6 +11,7 @@ const blogCoverPath = 'blog/ai-project-cover.png';
 const blogCoverUrl = `${siteUrl}${blogCoverPath}`;
 const template = await readFile(resolve(dist, 'app.html'), 'utf8');
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
+const mediaUrl = path => /^https?:\/\//.test(path) ? path : path.startsWith('api/media.php?') ? `https://cloudempire.tech/${path}` : `${siteUrl}${path}`;
 
 const routes = [
   {path:'',title:'CloudEmpire — AI, Websites, Android & iOS Development',description:'CloudEmpire builds AI solutions, high-performance websites, and Android and iOS apps, supported by cloud and enterprise expertise.'},
@@ -27,7 +28,7 @@ const routes = [
 function staticBody(route) {
   if (route.article) {
     const article = route.article;
-    const image = article.image ? `<figure><img src="${siteBase}${escapeHtml(article.image)}" alt="${escapeHtml(article.imageAlt || article.title)}" /></figure>` : '';
+    const image = article.image ? `<figure><img src="${escapeHtml(mediaUrl(article.image))}" alt="${escapeHtml(article.imageAlt || article.title)}" /></figure>` : '';
     return `<main class="prerender"><article><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.intro)}</p>${image}${article.sections.map(section=>`<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(paragraph=>`<p>${escapeHtml(paragraph)}</p>`).join('')}</section>`).join('')}<p><a href="${siteBase}services/${article.relatedService}/">Explore the related CloudEmpire service</a></p></article></main>`;
   }
   if (route.service) {
@@ -47,7 +48,7 @@ function structuredData(route) {
     mainEntityOfPage:`${siteUrl}${route.path}`,
     author:{'@type':'Organization',name:'CloudEmpire'},
     publisher:{'@type':'Organization',name:'CloudEmpire',url:siteUrl},
-    ...(route.article.image ? {image:`${siteUrl}${route.article.image}`} : {}),
+    ...(route.article.image ? {image:mediaUrl(route.article.image)} : {}),
   };
   if (route.service) return {
     '@context':'https://schema.org', '@type':'Service',
@@ -61,7 +62,7 @@ function structuredData(route) {
 for (const route of routes) {
   const canonical = `${siteUrl}${route.path}`;
   const data = JSON.stringify(structuredData(route)).replace(/</g,'\\u003c');
-  const coverUrl = route.article?.image ? `${siteUrl}${route.article.image}` : route.path === 'blog/' ? blogCoverUrl : '';
+  const coverUrl = route.article?.image ? mediaUrl(route.article.image) : route.path === 'blog/' ? blogCoverUrl : '';
   const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    <meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />${coverUrl?`\n    <meta property="og:image" content="${escapeHtml(coverUrl)}" />\n    <meta name="twitter:card" content="summary_large_image" />`:''}\n    <script type="application/ld+json">${data}</script>`;
   const html = template
     .replace('<head>', `<head>\n    <base href="${siteBase}" />`)

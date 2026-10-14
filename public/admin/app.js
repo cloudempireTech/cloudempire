@@ -2,8 +2,8 @@ const repo = 'cloudempireTech/cloudempire';
 const apiRoot = 'https://api.github.com/repos/' + repo;
 const apiHeaders = () => ({Accept:'application/vnd.github+json',Authorization:'Bearer ' + token,'X-GitHub-Api-Version':'2022-11-28'});
 const $ = selector => document.querySelector(selector);
-const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','files'];
-const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',files:'Other content'};
+const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','database','files'];
+const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',database:'Database & storage',files:'Other content'};
 let token = '';
 let data = null;
 let contentSha = '';
@@ -11,6 +11,8 @@ let currentTab = 'overview';
 let selected = -1;
 let metrics = null;
 const dashboardUrl = new URL('../../api/dashboard.php', import.meta.url);
+const setupUrl = new URL('../../api/setup.php', import.meta.url);
+const mediaUrl = new URL('../../api/media.php', import.meta.url);
 
 function notice(message, error=false) {
   const box = $('#notice');
@@ -67,6 +69,7 @@ async function login() {
     }
     switchTab('overview');
     loadMetrics();
+    loadSetupStatus();
   } catch (error) {
     token = '';
     alert(error.message);
@@ -83,6 +86,7 @@ function switchTab(tab) {
   $('#' + panelId).classList.add('active');
   if (panelId === 'editor-panel') renderList();
   if (tab === 'messages' || tab === 'analytics') loadMetrics();
+  if (tab === 'database') loadSetupStatus();
 }
 function renderList() {
   $('#list-title').textContent = labels[currentTab];
@@ -163,23 +167,15 @@ function readForm() {
   if ('slug' in item && data[currentTab].some((entry,index) => index !== selected && entry.slug === item.slug)) throw new Error('This URL slug already exists.');
   return item;
 }
-async function putFile(path,content,message) {
-  let sha;
-  try { sha = (await github('/contents/' + path + '?ref=main')).sha; } catch(error) { if (!error.message.startsWith('GitHub 404')) throw error; }
-  const body = {message,content,branch:'main'};
-  if (sha) body.sha = sha;
-  return github('/contents/' + path,{method:'PUT',body:JSON.stringify(body)});
-}
-async function uploadImage(file,slug) {
+async function uploadImage(file) {
   if (!file) return '';
   if (file.size > 3*1024*1024 || !['image/png','image/jpeg','image/webp'].includes(file.type)) throw new Error('Choose a PNG, JPEG or WebP image under 3 MB.');
-  const extension = {'image/png':'png','image/jpeg':'jpg','image/webp':'webp'}[file.type];
-  const path = 'blog/' + slug + '-cover.' + extension;
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  let binary = '';
-  for (let i=0;i<bytes.length;i+=8192) binary += String.fromCharCode(...bytes.slice(i,i+8192));
-  await putFile('public/' + path,btoa(binary),'Add blog cover for ' + slug);
-  return path;
+  const body = new FormData();
+  body.append('image', file);
+  const response = await fetch(mediaUrl,{method:'POST',headers:{Authorization:'Bearer ' + token},body});
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'Image upload failed on Hostinger.');
+  return result.path;
 }
 async function save(event) {
   event.preventDefault();
@@ -189,7 +185,7 @@ async function save(event) {
     const item = readForm();
     if (currentTab === 'articles') {
       const file = $('#field-upload').files[0];
-      if (file) item.image = await uploadImage(file,item.slug);
+      if (file) item.image = await uploadImage(file);
     }
     data[currentTab][selected] = item;
     const source = JSON.stringify(data,null,2) + '\n';
@@ -214,8 +210,18 @@ async function loadMetrics() {
     $('#analytics-pages').textContent = 'Live analytics are unavailable here. They are not supported on GitHub Pages preview.';
   }
 }
+async function loadSetupStatus() {
+  if (!token) return;
+  try {
+    const response = await fetch(setupUrl,{headers:{Authorization:'Bearer ' + token,Accept:'application/json'}});
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.error || 'Could not check the database.');
+    $('#database-status').textContent = result.configured ? 'Database settings saved. Inquiries and analytics use MySQL.' : 'Database connection needed. Until then, inquiries and analytics are saved in private hosting files.';
+  } catch(error) { $('#database-status').textContent = error.message; }
+}
 function renderMetrics() {
   if (!metrics) return;
+  $('#connection').textContent = metrics.storage === 'mysql' ? 'GitHub · Hostinger MySQL' : 'GitHub · Hostinger files';
   const messages = $('#messages-content');
   messages.replaceChildren();
   if (!metrics.messages.length) messages.textContent = 'No inquiries yet.';
@@ -269,3 +275,19 @@ $('#delete-item').addEventListener('click',async () => {
   } catch(error) {data[currentTab].push(removed);notice(error.message,true);renderList();}
 });
 $('#content-form').addEventListener('submit',save);
+$('#database-form').addEventListener('submit',async event => {
+  event.preventDefault();
+  const password=$('#database-password').value;
+  const button=$('#database-form button[type=submit]');
+  button.disabled=true;
+  try {
+    const response=await fetch(setupUrl,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password})});
+    const result=await response.json();
+    if (!response.ok) throw new Error(result.error || 'Database setup failed.');
+    $('#database-password').value='';
+    notice('MySQL connected. Existing inquiries and page views were imported.');
+    await loadSetupStatus();
+    await loadMetrics();
+  } catch(error) { notice(error.message,true); }
+  finally { button.disabled=false; }
+});
