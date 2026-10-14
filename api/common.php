@@ -79,10 +79,13 @@ function github_access(string $token): bool {
 
 function start_admin_session(): void {
     if (session_status() === PHP_SESSION_ACTIVE) return;
+    $sessions = private_dir() . DIRECTORY_SEPARATOR . 'sessions';
+    if (!is_dir($sessions) && !@mkdir($sessions,0700,true) && !is_dir($sessions)) respond(503,['error'=>'Private session storage is unavailable.']);
+    session_save_path($sessions);
     session_name('cloudempire_admin');
     session_set_cookie_params(['lifetime'=>0,'path'=>'/api/','secure'=>true,'httponly'=>true,'samesite'=>'Strict']);
     ini_set('session.use_strict_mode','1');
-    session_start();
+    if (!session_start()) respond(503,['error'=>'Admin session could not start.']);
 }
 
 function admin_logged_in(): bool {
