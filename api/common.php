@@ -57,26 +57,6 @@ function database(): ?PDO {
     }
 }
 
-function github_access(string $token): bool {
-    if (!function_exists('curl_init')) respond(503, ['error' => 'PHP cURL is required.']);
-    $request = curl_init('https://api.github.com/repos/cloudempireTech/cloudempire');
-    curl_setopt_array($request, [
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_TIMEOUT => 8,
-        CURLOPT_HTTPHEADER => [
-            'Accept: application/vnd.github+json',
-            'Authorization: Bearer ' . $token,
-            'User-Agent: CloudEmpire-Admin',
-            'X-GitHub-Api-Version: 2022-11-28',
-        ],
-    ]);
-    $response = curl_exec($request);
-    $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
-    curl_close($request);
-    $repo = is_string($response) ? json_decode($response, true) : null;
-    return $status === 200 && is_array($repo) && strcasecmp((string)($repo['full_name'] ?? ''), 'cloudempireTech/cloudempire') === 0 && !empty($repo['permissions']['push']);
-}
-
 function start_admin_session(): void {
     if (session_status() === PHP_SESSION_ACTIVE) return;
     $sessions = private_dir() . DIRECTORY_SEPARATOR . 'sessions';
@@ -102,22 +82,6 @@ function verify_admin(bool $write = false): void {
         $given = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
         if (!is_string($given) || !hash_equals((string)($_SESSION['csrf'] ?? ''),$given)) respond(403,['error'=>'Session check failed. Refresh the admin page.']);
     }
-}
-
-function private_settings(string $name): array {
-    $path = private_dir() . DIRECTORY_SEPARATOR . $name . '.php';
-    if (!is_file($path)) respond(503,['error'=>'Private ' . $name . ' settings are missing.']);
-    $settings = require $path;
-    if (!is_array($settings)) respond(503,['error'=>'Private settings are invalid.']);
-    return $settings;
-}
-
-function save_private_settings(string $name, array $settings): void {
-    $path = private_dir() . DIRECTORY_SEPARATOR . $name . '.php';
-    $temp = $path . '.' . bin2hex(random_bytes(6)) . '.tmp';
-    if (file_put_contents($temp,'<?php return ' . var_export($settings,true) . ';',LOCK_EX) === false) respond(503,['error'=>'Could not save private settings.']);
-    @chmod($temp,0600);
-    if (!@rename($temp,$path)) { @unlink($temp); respond(503,['error'=>'Could not activate private settings.']); }
 }
 
 function append_legacy(string $name, array $record): void {

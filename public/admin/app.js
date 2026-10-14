@@ -1,10 +1,10 @@
 const $ = selector => document.querySelector(selector);
 const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','database','files'];
-const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',database:'Database & storage',files:'Other content'};
+const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',database:'Database & storage',files:'Site copy'};
 let authenticated = false;
 let csrf = '';
 let data = null;
-let contentSha = '';
+let contentRevision = 0;
 let currentTab = 'overview';
 let selected = -1;
 let metrics = null;
@@ -33,7 +33,7 @@ async function api(endpoint,options={}) {
 }
 async function loadContent() {
   const file = await api(contentUrl);
-  contentSha = file.sha;
+  contentRevision = file.revision;
   data = file.content;
 }
 async function openWorkspace() {
@@ -69,7 +69,7 @@ async function initialize() {
 }
 function switchTab(tab) {
   if (!tabs.includes(tab) || !authenticated) return;
-  if (!data && ['articles','services','projects','processSteps'].includes(tab)) { notice('Content is unavailable. Update the GitHub publishing token in Database & storage.',true); return; }
+  if (!data && ['articles','services','projects','processSteps','files'].includes(tab)) { notice('Content is unavailable. Check the database connection.',true); return; }
   currentTab = tab;
   selected = -1;
   document.querySelectorAll('.sidebar nav button').forEach(button => button.classList.toggle('active',button.dataset.tab===tab));
@@ -80,6 +80,7 @@ function switchTab(tab) {
   if (panelId === 'editor-panel') renderList();
   if (tab === 'messages' || tab === 'analytics') loadMetrics();
   if (tab === 'database') loadSetupStatus();
+  if (tab === 'files') renderSiteCopy();
 }
 function renderList() {
   $('#list-title').textContent = labels[currentTab];
@@ -179,10 +180,10 @@ async function save(event) {
       if (file) item.image = await uploadImage(file);
     }
     const updated={...data,[currentTab]:data[currentTab].map((entry,index)=>index===selected?item:entry)};
-    const response = await api(contentUrl,{method:'PUT',body:JSON.stringify({message:'Update ' + currentTab + ': ' + item.title,content:updated,sha:contentSha})});
+    const response = await api(contentUrl,{method:'PUT',body:JSON.stringify({content:updated,revision:contentRevision})});
     data=updated;
-    contentSha = response.sha;
-    notice('Saved to GitHub. Publishing is running; check Actions for the build and Hostinger for deployment.');
+    contentRevision = response.revision;
+    notice('Saved to MySQL. Changes are live now.');
     renderList();
     renderForm();
   } catch(error) { notice(error.message,true); }
@@ -203,7 +204,7 @@ async function loadSetupStatus() {
   if (!authenticated) return;
   try {
     const result = await api(setupUrl);
-    $('#database-status').textContent = result.configured ? 'Database settings saved. Inquiries and analytics use MySQL.' : 'Database connection needed. Until then, inquiries and analytics are saved in private hosting files.';
+    $('#database-status').textContent = result.configured ? 'Connected. Site content, inquiries, and analytics use MySQL.' : 'Database connection needed before the admin can edit live content.';
   } catch(error) { $('#database-status').textContent = error.message; }
 }
 function renderMetrics() {
@@ -258,8 +259,8 @@ $('#bootstrap-form').addEventListener('submit',async event => {
   if ($('#setup-password').value !== $('#setup-confirm').value) { alert('Passwords do not match.'); return; }
   const button=$('#bootstrap-form button[type=submit]'); button.disabled=true;
   try {
-    const result=await api(new URL('?action=bootstrap',authUrl),{method:'POST',body:JSON.stringify({email:$('#setup-email').value,password:$('#setup-password').value,githubToken:$('#setup-token').value})});
-    csrf=result.csrf; $('#setup-password').value=''; $('#setup-confirm').value=''; $('#setup-token').value=''; await openWorkspace();
+    const result=await api(new URL('?action=bootstrap',authUrl),{method:'POST',body:JSON.stringify({email:$('#setup-email').value,password:$('#setup-password').value})});
+    csrf=result.csrf; $('#setup-password').value=''; $('#setup-confirm').value=''; await openWorkspace();
   } catch(error) { alert(error.message); }
   finally { button.disabled=false; }
 });
@@ -276,8 +277,8 @@ $('#delete-item').addEventListener('click',async () => {
   const removed=data[currentTab][selected];
   const updated={...data,[currentTab]:data[currentTab].filter((_,index)=>index!==selected)};
   try {
-    const result=await api(contentUrl,{method:'PUT',body:JSON.stringify({message:'Remove ' + currentTab + ': ' + removed.title,content:updated,sha:contentSha})});
-    data=updated; selected=-1; contentSha=result.sha;notice('Removed from GitHub. Publishing is running.');renderList();
+    const result=await api(contentUrl,{method:'PUT',body:JSON.stringify({content:updated,revision:contentRevision})});
+    data=updated; selected=-1; contentRevision=result.revision;notice('Removed from the live site.');renderList();
   } catch(error) {notice(error.message,true);renderList();}
 });
 $('#content-form').addEventListener('submit',save);
@@ -295,14 +296,23 @@ $('#database-form').addEventListener('submit',async event => {
   } catch(error) { notice(error.message,true); }
   finally { button.disabled=false; }
 });
-$('#publishing-form').addEventListener('submit',async event => {
+const siteCopyFields=[['heroTitle','Home headline'],['heroAccent','Home highlighted word'],['heroDescription','Home introduction'],['finaleTitle','Final section headline'],['finaleAccent','Final section highlighted line'],['finaleDescription','Final section description'],['footerTitle','Footer headline'],['footerAccent','Footer highlighted line'],['footerDescription','Footer invitation']];
+function renderSiteCopy() {
+  const form=$('#site-copy-form');form.replaceChildren();
+  for (const [key,label] of siteCopyFields) {
+    const field=document.createElement('div');field.className='form-field';
+    const caption=document.createElement('label');caption.htmlFor='copy-'+key;caption.textContent=label;
+    const control=document.createElement('textarea');control.id='copy-'+key;control.rows=2;control.value=data.siteCopy?.[key] || '';
+    field.append(caption,control);form.append(field);
+  }
+  const button=document.createElement('button');button.className='primary';button.type='submit';button.textContent='Save site copy';form.append(button);
+}
+$('#site-copy-form').addEventListener('submit',async event=>{
   event.preventDefault();
-  const button=$('#publishing-form button[type=submit]'); button.disabled=true;
-  try {
-    await api(new URL('?action=token',authUrl),{method:'POST',body:JSON.stringify({password:$('#publishing-password').value,githubToken:$('#publishing-token').value})});
-    $('#publishing-password').value=''; $('#publishing-token').value=''; notice('Publishing token updated.');
-  } catch(error) { notice(error.message,true); }
-  finally { button.disabled=false; }
+  const siteCopy={...(data.siteCopy||{})};
+  for(const [key] of siteCopyFields)siteCopy[key]=$('#copy-'+key).value.trim();
+  try {const updated={...data,siteCopy};const result=await api(contentUrl,{method:'PUT',body:JSON.stringify({content:updated,revision:contentRevision})});data=updated;contentRevision=result.revision;notice('Site copy saved to MySQL and is live now.');}
+  catch(error){notice(error.message,true);}
 });
 if (location.hostname === 'cloudempiretech.github.io') location.replace('https://cloudempire.tech/admin/');
 else initialize();

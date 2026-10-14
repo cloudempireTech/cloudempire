@@ -23,11 +23,8 @@ if ($action==='bootstrap') {
     if ($user) respond(409,['error'=>'An admin account already exists. Sign in instead.']);
     $email=strtolower(trim((string)($input['email'] ?? '')));
     $password=(string)($input['password'] ?? '');
-    $token=trim((string)($input['githubToken'] ?? ''));
     if (!filter_var($email,FILTER_VALIDATE_EMAIL) || strlen($email)>254) respond(400,['error'=>'Enter a valid email address.']);
     if (strlen($password)<12 || strlen($password)>72) respond(400,['error'=>'Use a password of 12 to 72 characters.']);
-    if (strlen($token)<20 || strlen($token)>255 || !github_access($token)) respond(403,['error'=>'The GitHub token needs write access to cloudempireTech/cloudempire.']);
-    save_private_settings('github',['token'=>$token]);
     try {
         $q=$db->prepare('INSERT INTO ce_admin_users (id,email,password_hash,created_at) VALUES (1,?,?,?)');
         $q->execute([$email,password_hash($password,PASSWORD_DEFAULT),gmdate('Y-m-d H:i:s')]);
@@ -67,13 +64,5 @@ if ($action==='logout') {
     $_SESSION=[]; session_destroy();
     setcookie(session_name(),'', ['expires'=>time()-3600,'path'=>'/api/','secure'=>true,'httponly'=>true,'samesite'=>'Strict']);
     respond(200,['loggedIn'=>false]);
-}
-if ($action==='token') {
-    verify_admin(true);
-    if (!$user || !password_verify((string)($input['password'] ?? ''),$user['password_hash'])) respond(403,['error'=>'Current admin password is incorrect.']);
-    $token=trim((string)($input['githubToken'] ?? ''));
-    if (strlen($token)<20 || strlen($token)>255 || !github_access($token)) respond(403,['error'=>'The GitHub token needs repository write access.']);
-    save_private_settings('github',['token'=>$token]);
-    respond(200,['updated'=>true]);
 }
 respond(400,['error'=>'Unknown action.']);

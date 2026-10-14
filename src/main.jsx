@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Clock3, Facebook, Globe2, Instagram, Layers3, Menu, ShieldCheck, Sparkles, X, Zap } from 'lucide-react';
 import { DeviceVisual } from './DeviceVisual.jsx';
-import { articles, processSteps, projects, services } from './content.mjs';
+import { articles as seedArticles, processSteps as seedProcessSteps, projects as seedProjects, services as seedServices } from './content.mjs';
 import './styles.css';
 import './pages.css';
 import './interaction.css';
@@ -14,6 +14,13 @@ const url = path => `${siteRoot}${path}`;
 const asset = name => /^https?:\/\//.test(name) ? name : name.startsWith('api/media.php?') ? `https://cloudempire.tech/${name}` : url(name);
 const segments = window.location.pathname.slice(siteRoot.length).split('/').filter(Boolean);
 const route = segments[0] === 'app.html' || segments[0] === 'index.html' ? [] : segments;
+let articles=seedArticles,processSteps=seedProcessSteps,projects=seedProjects,services=seedServices;
+let siteCopy={heroTitle:'Build what’s',heroAccent:'next.',heroDescription:'AI that thinks ahead. Websites that stand apart. Android and iOS apps that feel effortless. We bring ambitious ideas to life.',finaleTitle:'Everything you need.',finaleAccent:'One team to make it happen.',finaleDescription:'From strategy and design to cloud, Salesforce, security, and long-term support, we’re ready to build what comes next with you.',footerTitle:'Let’s make',footerAccent:'what’s next.',footerDescription:'One conversation can change everything. Tell us what you’re building.'};
+function applyContent(content){
+  if(!content || !['articles','processSteps','projects','services'].every(key=>Array.isArray(content[key])))return;
+  ({articles,processSteps,projects,services}=content);
+  siteCopy={...siteCopy,...content.siteCopy};
+}
 
 const focus = [
   {label:'02 / OUR FOCUS',eyebrow:'ARTIFICIAL INTELLIGENCE',title:<>One partner.<br/><em>Every possibility.</em></>,description:'Useful intelligence, built into the moments that matter. We turn data and automation into better decisions and better experiences.',link:'ai-analytics',number:'01'},
@@ -60,7 +67,7 @@ function Header(){
   </header>;
 }
 
-function Footer(){return <footer className="multi-footer"><div className="container"><div className="footer-invite"><div><span className="footer-kicker"><span className="live-dot"/> READY WHEN YOU ARE</span><h2>Let’s make<br/><em>what’s next.</em></h2><p>One conversation can change everything. Tell us what you’re building.</p></div><a className="footer-invite-link" href={url('contact/')} aria-label="Start a project with CloudEmpire"><ArrowUpRight size={35}/></a></div><div className="footer-directory"><div className="footer-brand"><a href={url('')} aria-label="CloudEmpire home"><img src={asset('logo-light.png')} alt="CloudEmpire"/></a><p>Intelligent products. Thoughtful design.<br/>Technology made for people.</p><div className="footer-socials" aria-label="CloudEmpire social media"><a href="https://www.instagram.com/cloudempire.tech/" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Instagram"><Instagram size={18}/></a><a href="https://www.facebook.com/profile.php?id=61595421568280" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Facebook"><Facebook size={18}/></a></div></div><div className="footer-links"><div><span>EXPLORE</span><a href={url('about/')}>About us</a><a href={url('services/')}>Services</a><a href={url('work/')}>Selected work</a><a href={url('process/')}>Our process</a></div><div><span>INSIGHTS</span><a href={url('blog/')}>Journal</a><a href={url('services/ai-analytics/')}>Artificial intelligence</a><a href={url('services/web-development/')}>Web development</a><a href={url('services/app-development/')}>Mobile apps</a></div><div><span>CONNECT</span><a href={url('contact/')}>Contact us</a><a href="mailto:contact@cloudempire.tech">Email</a><a href="https://wa.me/919475639634" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={13}/></a><a href="tel:+919475639634">+91 94756 39634</a></div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. Made for what’s next.</span><span>Kolkata, India · Working everywhere</span><a href="#top" onClick={e=>{if(route.length){e.preventDefault();window.location.href=url('');}}}>Back to top ↑</a></div></div></footer>}
+function Footer(){return <footer className="multi-footer"><div className="container"><div className="footer-invite"><div><span className="footer-kicker"><span className="live-dot"/> READY WHEN YOU ARE</span><h2>{siteCopy.footerTitle}<br/><em>{siteCopy.footerAccent}</em></h2><p>{siteCopy.footerDescription}</p></div><a className="footer-invite-link" href={url('contact/')} aria-label="Start a project with CloudEmpire"><ArrowUpRight size={35}/></a></div><div className="footer-directory"><div className="footer-brand"><a href={url('')} aria-label="CloudEmpire home"><img src={asset('logo-light.png')} alt="CloudEmpire"/></a><p>Intelligent products. Thoughtful design.<br/>Technology made for people.</p><div className="footer-socials" aria-label="CloudEmpire social media"><a href="https://www.instagram.com/cloudempire.tech/" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Instagram"><Instagram size={18}/></a><a href="https://www.facebook.com/profile.php?id=61595421568280" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Facebook"><Facebook size={18}/></a></div></div><div className="footer-links"><div><span>EXPLORE</span><a href={url('about/')}>About us</a><a href={url('services/')}>Services</a><a href={url('work/')}>Selected work</a><a href={url('process/')}>Our process</a></div><div><span>INSIGHTS</span><a href={url('blog/')}>Journal</a><a href={url('services/ai-analytics/')}>Artificial intelligence</a><a href={url('services/web-development/')}>Web development</a><a href={url('services/app-development/')}>Mobile apps</a></div><div><span>CONNECT</span><a href={url('contact/')}>Contact us</a><a href="mailto:contact@cloudempire.tech">Email</a><a href="https://wa.me/919475639634" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={13}/></a><a href="tel:+919475639634">+91 94756 39634</a></div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. Made for what’s next.</span><span>Kolkata, India · Working everywhere</span><a href="#top" onClick={e=>{if(route.length){e.preventDefault();window.location.href=url('');}}}>Back to top ↑</a></div></div></footer>}
 
 function Home(){
   const [active,setActive]=useState(0);
@@ -95,15 +102,45 @@ function Home(){
     };
     const schedule=()=>{if(!frame)frame=requestAnimationFrame(update);};
     update();
+    let lockedUntil=0;
+    const goScene=direction=>{
+      const height=window.innerHeight;
+      const footer=document.querySelector('.multi-footer');
+      let sceneTop=0;
+      const positions=[...targets.map(target=>{const top=sceneTop;sceneTop+=target.offsetHeight;return top;}),footer?.offsetTop ?? sceneTop];
+      const nearest=positions.reduce((best,position,index)=>Math.abs(position-window.scrollY)<Math.abs(positions[best]-window.scrollY)?index:best,0);
+      const current=window.scrollY>positions[nearest]+height*.18 && nearest<positions.length-1 ? nearest+1 : nearest;
+      const next=Math.max(0,Math.min(positions.length-1,current+direction));
+      window.scrollTo({top:positions[next],behavior:reduced.matches?'instant':'smooth'});
+    };
+    const onWheel=event=>{
+      if(reduced.matches || Math.abs(event.deltaY)<4 || event.ctrlKey)return;
+      if(window.scrollY>targets.reduce((total,target)=>total+target.offsetHeight,0)-window.innerHeight*.45 && event.deltaY>0)return;
+      event.preventDefault();
+      if(performance.now()<lockedUntil)return;
+      lockedUntil=performance.now()+850;
+      goScene(event.deltaY>0?1:-1);
+    };
+    const onKey=event=>{
+      if(reduced.matches || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName||'') || event.altKey || event.ctrlKey || event.metaKey)return;
+      const direction=['ArrowDown','PageDown',' '].includes(event.key)?1:['ArrowUp','PageUp'].includes(event.key)?-1:0;
+      if(!direction)return;
+      event.preventDefault();
+      if(performance.now()<lockedUntil)return;
+      lockedUntil=performance.now()+850;
+      goScene(direction);
+    };
+    window.addEventListener('wheel',onWheel,{passive:false});
+    window.addEventListener('keydown',onKey);
     window.addEventListener('scroll',schedule,{passive:true});
     window.addEventListener('resize',schedule);
     reduced.addEventListener('change',schedule);
-    return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
+    return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',onKey);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
   },[]);
   return <main className="home-main">
-    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><div className="hero-noise"/><div className="hero-orb"><div className="orb-core"/><div className="orb-ring ring-one"/><div className="orb-ring ring-two"/><div className="orb-highlight"/></div><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>Build what’s<br/><span>next.</span></h1><p>AI that thinks ahead. Websites that stand apart. Android and iOS apps that feel effortless. We bring ambitious ideas to life.</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
+    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><div className="hero-noise"/><div className="hero-orb"><div className="orb-core"/><div className="orb-ring ring-one"/><div className="orb-ring ring-two"/><div className="orb-highlight"/></div><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
     {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
-    <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>Everything you need.<br/><em>One team to make it happen.</em></h2><p>From strategy and design to cloud, Salesforce, security, and long-term support, we’re ready to build what comes next with you.</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
+    <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>{siteCopy.finaleTitle}<br/><em>{siteCopy.finaleAccent}</em></h2><p>{siteCopy.finaleDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
     <nav className={`home-progress ${active===6?'is-hidden':''}`} aria-label="Home scenes">{['top','focus-1','focus-2','focus-3','focus-4','future'].map((id,i)=><a key={id} className={active===i?'active':''} href={`#${id}`} aria-label={`Go to scene ${i+1}`}/>)}</nav>
   </main>;
 }
@@ -154,4 +191,8 @@ function ScrollAnimations(){
 
 function App(){let page;if(route.length===0)page=<Home/>;else if(route[0]==='about'&&route.length===1)page=<AboutPage/>;else if(route[0]==='services'&&route.length===1)page=<ServicesPage/>;else if(route[0]==='services'&&route.length===2)page=services.find(item=>item.slug===route[1])?<ServiceDetail service={services.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='work'&&route.length===1)page=<WorkPage/>;else if(route[0]==='process'&&route.length===1)page=<ProcessPage/>;else if(route[0]==='blog'&&route.length===1)page=<BlogPage/>;else if(route[0]==='blog'&&route.length===2)page=articles.find(item=>item.slug===route[1])?<ArticlePage article={articles.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='contact'&&route.length===1)page=<ContactPage/>;else page=<NotFound/>;return <><Header/>{page}<Footer/><ScrollAnimations/></>}
 
-createRoot(document.getElementById('root')).render(<App/>);
+const root=createRoot(document.getElementById('root'));
+const render=()=>root.render(<App/>);
+if(window.__CLOUDEMPIRE_CONTENT__){applyContent(window.__CLOUDEMPIRE_CONTENT__);render();}
+else if(siteRoot==='/'){fetch('/api/site-content.php',{cache:'no-store'}).then(response=>response.ok?response.json():null).then(result=>applyContent(result?.content)).catch(()=>{}).finally(render);}
+else render();

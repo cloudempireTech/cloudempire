@@ -1,6 +1,6 @@
 /* Each focus scene takes a viewport and eases into the next while native scrolling stays responsive. */
-html.snap-home{scroll-snap-type:y proximity;scroll-padding-top:0}
-.home-main .home-section{scroll-snap-align:start;scroll-snap-stop:normal}
+html.snap-home{scroll-snap-type:y mandatory;scroll-padding-top:0}
+.home-main .home-section{position:relative;top:auto;scroll-snap-align:start;scroll-snap-stop:always}
 .home-main+.multi-footer{scroll-snap-align:start}
 .home-focus .focus-copy>*{opacity:0;translate:0 28px;transition:opacity .85s cubic-bezier(.22,1,.36,1),translate .95s cubic-bezier(.22,1,.36,1)}
 .home-focus.is-active .focus-copy>*{opacity:1;translate:0 0}
@@ -27,5 +27,5 @@ html.snap-home{scroll-snap-type:y proximity;scroll-padding-top:0}
 .home-finale[data-motion-ready="true"] .section-label,.home-finale[data-motion-ready="true"] h2,.home-finale[data-motion-ready="true"] p,.home-finale[data-motion-ready="true"] .hero-actions{opacity:1;translate:0 0}
 .home-finale h2{transition-delay:.1s}.home-finale p{transition-delay:.2s}.home-finale .hero-actions{transition-delay:.3s}
 @media(hover:hover){.service-page-card.reveal.is-visible,.blog-card.reveal.is-visible,.case-card.reveal.is-visible,.value-grid>.reveal.is-visible,.related-grid>a{transition:transform .65s cubic-bezier(.22,1,.36,1),box-shadow .65s cubic-bezier(.22,1,.36,1),border-color .35s,background .35s}.service-page-card.reveal.is-visible:hover,.blog-card.reveal.is-visible:hover,.case-card.reveal.is-visible:hover,.value-grid>.reveal.is-visible:hover,.related-grid>a:hover{transform:translateY(-10px);box-shadow:0 28px 65px rgba(0,0,0,.25)}}
-@media(max-width:760px){html.snap-home{scroll-snap-type:y proximity}.home-main .home-section{scroll-snap-stop:normal}}
+@media(max-width:760px){html.snap-home{scroll-snap-type:y mandatory}.home-main .home-section{scroll-snap-stop:always}}
 @media(prefers-reduced-motion:reduce){html.snap-home{scroll-snap-type:none}.home-focus .focus-copy>*,.home-focus .device-scene .ai-chart,.home-focus .device-scene .ai-insight,.home-focus .device-scene .browser-copy,.home-focus .device-scene .browser-art,.home-focus .device-scene .app-card-gradient,.home-focus .device-scene .activity-orb,.home-focus .device-scene .app-metrics,.home-focus .device-scene .trip-tile,.home-focus .device-scene .ios-picture,.home-finale .section-label,.home-finale h2,.home-finale p,.home-finale .hero-actions{opacity:1;translate:0 0;scale:1;transition:none}.home-focus .chart-bars i{scale:1 1;transition:none}.home-focus .phone-front,.home-focus .phone-back{translate:0 0;transition:none}}

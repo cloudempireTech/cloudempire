@@ -1,0 +1,6 @@
+RewriteEngine On
+RewriteRule ^sitemap\.xml$ sitemap.php [L,QSA]
+RewriteRule ^(api|admin|assets)/ - [L]
+RewriteRule \.(js|css|png|jpe?g|webp|gif|svg|ico|woff2?|txt|json|map)$ - [L,NC]
+RewriteRule ^(index\.html|app\.html)?$ site.php [L,QSA]
+RewriteRule ^(about|services|work|process|blog|contact)(/.*)?$ site.php [L,QSA]
