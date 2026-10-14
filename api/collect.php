@@ -17,7 +17,14 @@ if ($kind === 'view') {
     if (!preg_match('~^/[a-z0-9/\-]*$~', $path) || strlen($path) > 180 || str_starts_with($path, '/admin')) {
         respond(400, ['error' => 'Invalid page.']);
     }
-    append_record('views', ['date' => gmdate('Y-m-d'), 'path' => $path]);
+    $record=['date'=>gmdate('Y-m-d'),'path'=>$path];
+    foreach (['utm_source'=>100,'utm_medium'=>100,'utm_campaign'=>150,'utm_content'=>150,'utm_term'=>150] as $field=>$limit) {
+        $value=$input[$field] ?? '';
+        if (!is_string($value)) respond(400,['error'=>'Invalid campaign parameter.']);
+        $value=trim(preg_replace('/[\x00-\x1F\x7F]/','',$value) ?? '');
+        $record[$field]=function_exists('mb_substr') ? mb_substr($value,0,$limit) : substr($value,0,$limit);
+    }
+    append_record('views',$record);
     respond(200, ['ok' => true]);
 }
 if ($kind === 'message') {

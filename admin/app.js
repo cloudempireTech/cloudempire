@@ -1,7 +1,8 @@
 const $ = selector => document.querySelector(selector);
-const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','database','files'];
-const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',database:'Database & storage',files:'Site copy'};
+const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','utm','database','users','files'];
+const labels = {overview:'Dashboard',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',utm:'UTM campaigns',database:'Database & media',users:'Admin users',files:'Site copy'};
 let authenticated = false;
+let isOwner = false;
 let csrf = '';
 let data = null;
 let contentRevision = 0;
@@ -13,6 +14,9 @@ const setupUrl = new URL('../../api/setup.php', import.meta.url);
 const mediaUrl = new URL('../../api/media.php', import.meta.url);
 const authUrl = new URL('../../api/auth.php', import.meta.url);
 const contentUrl = new URL('../../api/content.php', import.meta.url);
+const usersUrl = new URL('../../api/users.php', import.meta.url);
+const storageUrl = new URL('../../api/storage.php', import.meta.url);
+let inviteToken = location.hash.startsWith('#invite=') ? location.hash.slice(8) : '';
 
 function notice(message, error=false) {
   const box = $('#notice');
@@ -40,35 +44,28 @@ async function openWorkspace() {
   authenticated=true;
   $('#signin').hidden=true;
   $('#bootstrap').hidden=true;
+  $('#invite').hidden=true;
   $('#workspace').hidden=false;
   $('#connection').textContent='Connected to CloudEmpire';
+  document.querySelectorAll('[data-owner-only]').forEach(element=>element.hidden=!isOwner);
   try {
     await loadContent();
-    $('#summary').replaceChildren();
-    for (const [value,label] of [[data.articles.length,'Blog posts'],[data.services.length,'Services'],[data.projects.length,'Projects']]) {
-      const card = document.createElement('div');
-      card.className = 'metric';
-      const count = document.createElement('strong');
-      count.textContent = value;
-      const caption = document.createElement('span');
-      caption.textContent = label;
-      card.append(count,caption);
-      $('#summary').append(card);
-    }
     switchTab('overview');
   } catch (error) { notice(error.message,true); }
   loadMetrics();
-  loadSetupStatus();
+  if(isOwner)loadSetupStatus();
 }
 async function initialize() {
+  if(inviteToken){$('#signin').hidden=true;$('#bootstrap').hidden=true;$('#invite').hidden=false;return;}
   try {
     const state=await api(authUrl);
-    if (state.loggedIn) { csrf=state.csrf; await openWorkspace(); }
+    if (state.loggedIn) { csrf=state.csrf;isOwner=state.isOwner; await openWorkspace(); }
     else { $('#signin').hidden=state.setupRequired; $('#bootstrap').hidden=!state.setupRequired; }
   } catch(error) { $('#signin').hidden=true; $('#bootstrap').hidden=true; $('#connection').textContent=error.message; }
 }
 function switchTab(tab) {
   if (!tabs.includes(tab) || !authenticated) return;
+  if (!isOwner && ['database','users'].includes(tab)) return;
   if (!data && ['articles','services','projects','processSteps','files'].includes(tab)) { notice('Content is unavailable. Check the database connection.',true); return; }
   currentTab = tab;
   selected = -1;
@@ -79,7 +76,9 @@ function switchTab(tab) {
   $('#' + panelId).classList.add('active');
   if (panelId === 'editor-panel') renderList();
   if (tab === 'messages' || tab === 'analytics') loadMetrics();
-  if (tab === 'database') loadSetupStatus();
+  if (tab === 'utm') loadMetrics();
+  if (tab === 'database') {loadSetupStatus();loadStorage();}
+  if (tab === 'users') loadUsers();
   if (tab === 'files') renderSiteCopy();
 }
 function renderList() {
@@ -243,6 +242,82 @@ function renderMetrics() {
     bar.append(fill);line.append(title,bar);pages.append(line);
   }
   if (!metrics.pages.length) pages.textContent='No page views recorded yet.';
+  renderDashboard();
+  renderUTM();
+}
+function metricCard(value,label){
+  const card=document.createElement('div');card.className='metric';
+  const number=document.createElement('strong');number.textContent=Number(value||0).toLocaleString();
+  const caption=document.createElement('span');caption.textContent=label;
+  card.append(number,caption);return card;
+}
+function renderTrend(selector,rows){
+  const chart=$(selector);chart.replaceChildren();chart.classList.remove('empty');
+  const counts=new Map((rows||[]).map(row=>[String(row.day).slice(0,10),Number(row.count)]));
+  const days=Array.from({length:30},(_,i)=>{const date=new Date();date.setUTCDate(date.getUTCDate()-(29-i));return date.toISOString().slice(0,10)});
+  const max=Math.max(...days.map(day=>counts.get(day)||0),1);
+  if(!days.some(day=>counts.get(day))){chart.classList.add('empty');chart.textContent='No visits recorded yet.';return;}
+  for(const day of days){const bar=document.createElement('div');const count=counts.get(day)||0;bar.style.height=Math.max(count/max*100,2)+'%';bar.title=`${day}: ${count} visits`;bar.setAttribute('aria-label',bar.title);chart.append(bar);}
+}
+function renderDashboard(){
+  if(!metrics)return;
+  const summary=$('#summary');summary.replaceChildren(metricCard(metrics.views,'Visits · 30 days'),metricCard(metrics.today,'Visits today'),metricCard(metrics.inquiries30,'Inquiries · 30 days'),metricCard(metrics.utmViews,'UTM visits · 30 days'));
+  renderTrend('#overview-trend',metrics.daily);
+  const recent=$('#overview-inquiries');recent.replaceChildren();
+  if(!metrics.messages.length)recent.textContent='No inquiries yet.';
+  for(const item of metrics.messages.slice(0,5)){
+    const row=document.createElement('div');row.className='data-row';
+    const text=document.createElement('div');const name=document.createElement('strong');name.textContent=item.name||item.email||'Visitor';const detail=document.createElement('small');detail.textContent=(item.service||'General inquiry')+' · '+item.date;text.append(name,detail);row.append(text);recent.append(row);
+  }
+  const content=$('#overview-content');content.replaceChildren();
+  for(const [value,label] of [[data?.articles?.length||0,'Blog posts'],[data?.services?.length||0,'Services'],[data?.projects?.length||0,'Projects'],[data?.processSteps?.length||0,'Process steps']]){const chip=document.createElement('span');chip.textContent=`${value} ${label}`;content.append(chip);}
+}
+function renderRanking(selector,rows,emptyText){
+  const target=$(selector);target.replaceChildren();
+  if(!rows?.length){target.textContent=emptyText;return;}
+  for(const item of rows){const row=document.createElement('div');row.className='data-row';const label=document.createElement('span');label.textContent=item.label||'(not set)';const value=document.createElement('strong');value.textContent=Number(item.count).toLocaleString();row.append(label,value);target.append(row);}
+}
+function renderUTM(){
+  if(!metrics)return;
+  $('#utm-cards').replaceChildren(metricCard(metrics.utmViews,'Tagged visits · 30 days'),metricCard(metrics.utmSources?.length,'Sources'),metricCard(metrics.utmCampaigns?.length,'Campaign groups'));
+  renderRanking('#utm-sources',metrics.utmSources,'No tagged traffic yet.');
+  renderRanking('#utm-mediums',metrics.utmMediums,'No tagged traffic yet.');
+  renderRanking('#utm-landings',metrics.utmLandings,'No tagged landing pages yet.');
+  const campaigns=$('#utm-campaigns');campaigns.replaceChildren();
+  if(!metrics.utmCampaigns?.length)campaigns.textContent='No campaigns recorded yet. Generate a tagged link below to start tracking.';
+  for(const item of metrics.utmCampaigns||[]){const row=document.createElement('div');row.className='data-row';const text=document.createElement('div');const name=document.createElement('strong');name.textContent=item.label||'(not set)';const detail=document.createElement('small');detail.textContent=`${item.source||'(no source)'} / ${item.medium||'(no medium)'}`;text.append(name,detail);const value=document.createElement('strong');value.textContent=Number(item.count).toLocaleString();row.append(text,value);campaigns.append(row);}
+  renderTrend('#utm-trend',metrics.utmDaily);
+}
+async function loadStorage(){
+  if(!isOwner)return;
+  try{
+    const result=await api(storageUrl);
+    $('#storage-summary').replaceChildren(metricCard(result.contentRevision,'Content revision'),metricCard(result.mediaCount,'Images'),metricCard(result.viewsTotal,'All page views'),metricCard(result.inquiriesTotal,'All inquiries'));
+    const list=$('#media-list');list.replaceChildren();
+    if(!result.recentMedia.length)list.textContent='No uploaded images yet.';
+    for(const item of result.recentMedia){
+      const card=document.createElement('div');card.className='media-item';
+      const img=document.createElement('img');img.src='../../api/media.php?id='+item.id;img.alt=item.name;img.loading='lazy';
+      const details=document.createElement('div');const name=document.createElement('strong');name.textContent=item.name;const size=document.createElement('small');size.textContent=(Number(item.bytes)/1024).toFixed(0)+' KB · '+item.created_at;
+      const copy=document.createElement('button');copy.type='button';copy.textContent='Copy image path';copy.addEventListener('click',async()=>{await navigator.clipboard.writeText('api/media.php?id='+item.id);notice('Image path copied.');});
+      details.append(name,size,copy);card.append(img,details);list.append(card);
+    }
+  }catch(error){notice(error.message,true);}
+}
+async function loadUsers(){
+  if(!isOwner)return;
+  try{
+    const result=await api(usersUrl);
+    const users=$('#users-list');users.replaceChildren();
+    for(const user of result.users){const row=document.createElement('div');row.className='data-row';const text=document.createElement('div');const email=document.createElement('strong');email.textContent=user.email;const detail=document.createElement('small');detail.textContent=(Number(user.id)===1?'Account owner':'Admin')+' · Joined '+user.created_at;text.append(email,detail);row.append(text);if(Number(user.id)!==1){const button=document.createElement('button');button.type='button';button.textContent='Remove';button.addEventListener('click',()=>removeAdmin('user',Number(user.id),user.email));row.append(button);}users.append(row);}
+    const invites=$('#invites-list');invites.replaceChildren();
+    if(!result.invites.length)invites.textContent='No pending invitations.';
+    for(const invite of result.invites){const row=document.createElement('div');row.className='data-row';const text=document.createElement('div');const email=document.createElement('strong');email.textContent=invite.email;const detail=document.createElement('small');detail.textContent='Expires '+invite.expires_at+' UTC';text.append(email,detail);const button=document.createElement('button');button.type='button';button.textContent='Revoke';button.addEventListener('click',()=>removeAdmin('invite',Number(invite.id),invite.email));row.append(text,button);invites.append(row);}
+  }catch(error){notice(error.message,true);}
+}
+async function removeAdmin(kind,id,email){
+  if(!confirm(`${kind==='user'?'Remove admin access for':'Revoke the invitation for'} ${email}?`))return;
+  try{await api(usersUrl,{method:'DELETE',body:JSON.stringify({kind,id})});notice(kind==='user'?'Admin access removed.':'Invitation revoked.');await loadUsers();}catch(error){notice(error.message,true);}
 }
 document.querySelectorAll('.sidebar nav button').forEach(button => button.addEventListener('click',() => switchTab(button.dataset.tab)));
 $('#login-form').addEventListener('submit',async event => {
@@ -250,7 +325,7 @@ $('#login-form').addEventListener('submit',async event => {
   const button=$('#login'); button.disabled=true;
   try {
     const result=await api(new URL('?action=login',authUrl),{method:'POST',body:JSON.stringify({email:$('#login-email').value,password:$('#login-password').value})});
-    csrf=result.csrf; $('#login-password').value=''; await openWorkspace();
+    csrf=result.csrf;isOwner=result.isOwner; $('#login-password').value=''; await openWorkspace();
   } catch(error) { alert(error.message); }
   finally { button.disabled=false; }
 });
@@ -260,13 +335,23 @@ $('#bootstrap-form').addEventListener('submit',async event => {
   const button=$('#bootstrap-form button[type=submit]'); button.disabled=true;
   try {
     const result=await api(new URL('?action=bootstrap',authUrl),{method:'POST',body:JSON.stringify({email:$('#setup-email').value,password:$('#setup-password').value})});
-    csrf=result.csrf; $('#setup-password').value=''; $('#setup-confirm').value=''; await openWorkspace();
+    csrf=result.csrf;isOwner=true; $('#setup-password').value=''; $('#setup-confirm').value=''; await openWorkspace();
   } catch(error) { alert(error.message); }
   finally { button.disabled=false; }
 });
+$('#invite-form').addEventListener('submit',async event=>{
+  event.preventDefault();
+  if($('#invite-password').value!==$('#invite-confirm').value){alert('Passwords do not match.');return;}
+  const button=$('#invite-form button[type=submit]');button.disabled=true;
+  try{
+    const result=await api(new URL('?action=accept-invite',authUrl),{method:'POST',body:JSON.stringify({token:inviteToken,password:$('#invite-password').value})});
+    csrf=result.csrf;isOwner=false;inviteToken='';history.replaceState(null,'',location.pathname+location.search);
+    $('#invite-password').value='';$('#invite-confirm').value='';await openWorkspace();
+  }catch(error){alert(error.message);}finally{button.disabled=false;}
+});
 $('#logout').addEventListener('click',async () => {
   try { await api(new URL('?action=logout',authUrl),{method:'POST',body:'{}'}); } catch {}
-  authenticated=false; csrf=''; data=null; metrics=null; $('#workspace').hidden=true; $('#signin').hidden=false; $('#connection').textContent='Sign in required';
+  authenticated=false; isOwner=false; csrf=''; data=null; metrics=null; $('#workspace').hidden=true; $('#signin').hidden=false; $('#connection').textContent='Sign in required';
 });
 $('#add-item').addEventListener('click',() => {
   const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',deliverables:[],outcome:'',icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
@@ -313,6 +398,33 @@ $('#site-copy-form').addEventListener('submit',async event=>{
   for(const [key] of siteCopyFields)siteCopy[key]=$('#copy-'+key).value.trim();
   try {const updated={...data,siteCopy};const result=await api(contentUrl,{method:'PUT',body:JSON.stringify({content:updated,revision:contentRevision})});data=updated;contentRevision=result.revision;notice('Site copy saved to MySQL and is live now.');}
   catch(error){notice(error.message,true);}
+});
+$('#user-invite-form').addEventListener('submit',async event=>{
+  event.preventDefault();
+  const button=$('#user-invite-form button[type=submit]');button.disabled=true;
+  try{
+    const result=await api(usersUrl,{method:'POST',body:JSON.stringify({email:$('#invite-email').value})});
+    $('#invite-link').value=result.inviteUrl;$('#invite-link-box').hidden=false;$('#invite-email').value='';
+    notice('Invitation created. Share the link privately with '+result.email+'.');await loadUsers();
+  }catch(error){notice(error.message,true);}finally{button.disabled=false;}
+});
+$('#copy-invite-link').addEventListener('click',async()=>{
+  try{await navigator.clipboard.writeText($('#invite-link').value);notice('Invitation link copied.');}catch{ $('#invite-link').select();notice('Select and copy the invitation link.'); }
+});
+$('#utm-builder').addEventListener('submit',event=>{
+  event.preventDefault();
+  const fields=new FormData(event.currentTarget);
+  try{
+    const target=new URL(String(fields.get('path')||'/'),location.origin);
+    if(target.origin!==location.origin)throw new Error('Use a path on this website.');
+    for(const key of ['source','medium','campaign'])target.searchParams.set('utm_'+key,String(fields.get(key)||'').trim());
+    $('#utm-link').textContent=target.href;
+  }catch(error){notice(error.message,true);}
+});
+$('#media-form').addEventListener('submit',async event=>{
+  event.preventDefault();const file=$('#media-file').files[0];if(!file)return;
+  const button=$('#media-form button');button.disabled=true;
+  try{const path=await uploadImage(file);$('#media-file').value='';notice('Image uploaded. Path: '+path);await loadStorage();}catch(error){notice(error.message,true);}finally{button.disabled=false;}
 });
 if (location.hostname === 'cloudempiretech.github.io') location.replace('https://cloudempire.tech/admin/');
 else initialize();

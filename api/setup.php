@@ -1,10 +1,10 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/common.php';
-verify_admin();
+verify_owner();
 if ($_SERVER['REQUEST_METHOD'] === 'GET') respond(200,['configured'=>is_file(config_path()),'database'=>DB_NAME,'user'=>DB_USER]);
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') respond(405,['error'=>'Method not allowed.']);
-verify_admin(true);
+verify_owner(true);
 $payload=json_decode(file_get_contents('php://input') ?: '',true);
 $password=is_array($payload) ? ($payload['password'] ?? null) : null;
 if (!is_string($password) || $password === '' || strlen($password)>255) respond(400,['error'=>'Enter the MySQL user password.']);

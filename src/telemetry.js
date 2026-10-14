@@ -7,7 +7,10 @@ function send(payload) {
   navigator.sendBeacon(endpoint,new Blob([JSON.stringify(payload)],{type:'application/json'}));
 }
 if (!location.pathname.includes('/admin/')) {
-  send({kind:'view',path:location.pathname.slice(siteRoot.length-1)});
+  const query=new URLSearchParams(location.search);
+  const utm={};
+  for(const key of ['utm_source','utm_medium','utm_campaign','utm_content','utm_term']) utm[key]=(query.get(key)||'').slice(0,150);
+  send({kind:'view',path:location.pathname.slice(siteRoot.length-1),...utm});
   document.addEventListener('submit',event => {
     const form = event.target;
     if (!(form instanceof HTMLFormElement) || !form.querySelector('#email')) return;

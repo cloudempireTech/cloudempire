@@ -70,7 +70,18 @@ function start_admin_session(): void {
 
 function admin_logged_in(): bool {
     start_admin_session();
-    return ($_SESSION['admin_id'] ?? null) === 1 && ($_SESSION['signed_in_at'] ?? 0) > time()-28800;
+    $id=$_SESSION['admin_id'] ?? null;
+    if (!is_int($id) || $id<1 || ($_SESSION['signed_in_at'] ?? 0) <= time()-28800) return false;
+    $db=database();
+    if ($db===null) return false;
+    $q=$db->prepare('SELECT 1 FROM ce_admin_users WHERE id=?');
+    $q->execute([$id]);
+    return (bool)$q->fetchColumn();
+}
+
+function verify_owner(bool $write=false): void {
+    verify_admin($write);
+    if (($_SESSION['admin_id'] ?? null)!==1) respond(403,['error'=>'Only the account owner can manage this setting.']);
 }
 
 function verify_admin(bool $write = false): void {
@@ -121,6 +132,11 @@ function append_record(string $name, array $record): void {
         if ($name === 'views') {
             $statement = $db->prepare('INSERT INTO ce_views (event_day, path) VALUES (?, ?)');
             $statement->execute([$record['date'], $record['path']]);
+            if (!empty($record['utm_source']) || !empty($record['utm_medium']) || !empty($record['utm_campaign']) || !empty($record['utm_content']) || !empty($record['utm_term'])) {
+                ensure_utm_table($db);
+                $statement=$db->prepare('INSERT INTO ce_utm_views (event_day,path,utm_source,utm_medium,utm_campaign,utm_content,utm_term) VALUES (?,?,?,?,?,?,?)');
+                $statement->execute([$record['date'],$record['path'],$record['utm_source'] ?? '',$record['utm_medium'] ?? '',$record['utm_campaign'] ?? '',$record['utm_content'] ?? '',$record['utm_term'] ?? '']);
+            }
         } elseif ($name === 'messages') {
             $statement = $db->prepare('INSERT INTO ce_inquiries (created_at, name, email, phone, service, preferred_date, preferred_time, message) VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
             $statement->execute([
@@ -138,4 +154,8 @@ function append_record(string $name, array $record): void {
         error_log('CloudEmpire event insert failed: ' . $error->getMessage());
         respond(503, ['error' => 'Unable to save data in MySQL.']);
     }
+}
+
+function ensure_utm_table(PDO $db): void {
+    $db->exec('CREATE TABLE IF NOT EXISTS ce_utm_views (id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,event_day DATE NOT NULL,path VARCHAR(255) NOT NULL,utm_source VARCHAR(100) NOT NULL DEFAULT \'\',utm_medium VARCHAR(100) NOT NULL DEFAULT \'\',utm_campaign VARCHAR(150) NOT NULL DEFAULT \'\',utm_content VARCHAR(150) NOT NULL DEFAULT \'\',utm_term VARCHAR(150) NOT NULL DEFAULT \'\',INDEX (event_day),INDEX (utm_source),INDEX (utm_campaign)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 }

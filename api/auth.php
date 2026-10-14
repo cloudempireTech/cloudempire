@@ -4,12 +4,18 @@ require __DIR__ . '/common.php';
 
 $db=database();
 if ($db===null) respond(503,['error'=>'Connect the Hostinger MySQL database before creating an admin login.']);
-$db->exec('CREATE TABLE IF NOT EXISTS ce_admin_users (id TINYINT UNSIGNED PRIMARY KEY, email VARCHAR(254) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
+$db->exec('CREATE TABLE IF NOT EXISTS ce_admin_users (id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY, email VARCHAR(254) NOT NULL UNIQUE, password_hash VARCHAR(255) NOT NULL, created_at DATETIME NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4');
 $user=$db->query('SELECT id,email,password_hash FROM ce_admin_users WHERE id=1')->fetch();
 $method=$_SERVER['REQUEST_METHOD'] ?? 'GET';
 if ($method==='GET') {
-    $loggedIn=$user && admin_logged_in();
-    respond(200,['loggedIn'=>(bool)$loggedIn,'setupRequired'=>!$user,'email'=>$loggedIn ? $user['email'] : null,'csrf'=>$loggedIn ? $_SESSION['csrf'] : null]);
+    $loggedIn=admin_logged_in();
+    $current=null;
+    if ($loggedIn) {
+        $q=$db->prepare('SELECT id,email FROM ce_admin_users WHERE id=?');
+        $q->execute([$_SESSION['admin_id']]);
+        $current=$q->fetch();
+    }
+    respond(200,['loggedIn'=>(bool)$current,'setupRequired'=>!$user,'email'=>$current['email'] ?? null,'isOwner'=>(int)($current['id'] ?? 0)===1,'csrf'=>$current ? $_SESSION['csrf'] : null]);
 }
 if ($method!=='POST') respond(405,['error'=>'Method not allowed.']);
 if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0)>12000) respond(413,['error'=>'Request is too large.']);
@@ -34,7 +40,7 @@ if ($action==='bootstrap') {
     }
     start_admin_session(); session_regenerate_id(true);
     $_SESSION=['admin_id'=>1,'signed_in_at'=>time(),'csrf'=>bin2hex(random_bytes(32))];
-    respond(200,['loggedIn'=>true,'email'=>$email,'csrf'=>$_SESSION['csrf']]);
+    respond(200,['loggedIn'=>true,'email'=>$email,'isOwner'=>true,'csrf'=>$_SESSION['csrf']]);
 }
 
 if ($action==='login') {
@@ -48,15 +54,44 @@ if ($action==='login') {
     if (!is_array($attempts)) $attempts=[];
     $attempts=array_values(array_filter($attempts,static fn($time)=>is_int($time) && $time>time()-900));
     if (count($attempts)>=8) { flock($file,LOCK_UN); fclose($file); respond(429,['error'=>'Too many attempts. Try again in 15 minutes.']); }
-    $valid=hash_equals(strtolower($user['email']),strtolower(trim((string)($input['email'] ?? '')))) && password_verify((string)($input['password'] ?? ''),$user['password_hash']);
+    $q=$db->prepare('SELECT id,email,password_hash FROM ce_admin_users WHERE email=?');
+    $q->execute([strtolower(trim((string)($input['email'] ?? '')))]);
+    $candidate=$q->fetch();
+    $valid=$candidate && password_verify((string)($input['password'] ?? ''),$candidate['password_hash']);
     if (!$valid) {
         $attempts[]=time(); ftruncate($file,0); rewind($file); fwrite($file,json_encode($attempts)); fflush($file); flock($file,LOCK_UN); fclose($file);
         respond(401,['error'=>'Incorrect email or password.']);
     }
     ftruncate($file,0); rewind($file); fwrite($file,'[]'); fflush($file); flock($file,LOCK_UN); fclose($file);
     start_admin_session(); session_regenerate_id(true);
-    $_SESSION=['admin_id'=>1,'signed_in_at'=>time(),'csrf'=>bin2hex(random_bytes(32))];
-    respond(200,['loggedIn'=>true,'email'=>$user['email'],'csrf'=>$_SESSION['csrf']]);
+    $_SESSION=['admin_id'=>(int)$candidate['id'],'signed_in_at'=>time(),'csrf'=>bin2hex(random_bytes(32))];
+    respond(200,['loggedIn'=>true,'email'=>$candidate['email'],'isOwner'=>(int)$candidate['id']===1,'csrf'=>$_SESSION['csrf']]);
+}
+
+if ($action==='accept-invite') {
+    $token=(string)($input['token'] ?? '');
+    $password=(string)($input['password'] ?? '');
+    if (!preg_match('/^[a-f0-9]{64}$/',$token) || strlen($password)<12 || strlen($password)>72) respond(400,['error'=>'Use a valid invitation and a password of 12 to 72 characters.']);
+    try {
+        $db->beginTransaction();
+        $q=$db->prepare('SELECT id,email FROM ce_admin_invites WHERE token_hash=? AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>? FOR UPDATE');
+        $q->execute([hash('sha256',$token),gmdate('Y-m-d H:i:s')]);
+        $invite=$q->fetch();
+        if (!$invite) { $db->rollBack(); respond(400,['error'=>'This invitation has expired or has already been used.']); }
+        $q=$db->prepare('INSERT INTO ce_admin_users (email,password_hash,created_at) VALUES (?,?,?)');
+        $q->execute([$invite['email'],password_hash($password,PASSWORD_DEFAULT),gmdate('Y-m-d H:i:s')]);
+        $id=(int)$db->lastInsertId();
+        $q=$db->prepare('UPDATE ce_admin_invites SET accepted_at=? WHERE id=?');
+        $q->execute([gmdate('Y-m-d H:i:s'),$invite['id']]);
+        $db->commit();
+    } catch (Throwable $error) {
+        if ($db->inTransaction()) $db->rollBack();
+        error_log('CloudEmpire invitation acceptance failed: '.$error->getMessage());
+        respond(409,['error'=>'Invitation could not be accepted. Ask the account owner for a fresh link.']);
+    }
+    start_admin_session(); session_regenerate_id(true);
+    $_SESSION=['admin_id'=>$id,'signed_in_at'=>time(),'csrf'=>bin2hex(random_bytes(32))];
+    respond(200,['loggedIn'=>true,'email'=>$invite['email'],'isOwner'=>false,'csrf'=>$_SESSION['csrf']]);
 }
 
 if ($action==='logout') {
