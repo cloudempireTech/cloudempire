@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#080c17">
+  <title>CloudEmpire Admin</title>
+  <link rel="icon" href="../favicon-32.png">
+  <link rel="stylesheet" href="./admin.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="../"><img src="../logo-light.png" alt="CloudEmpire"></a>
+      <span class="side-label">CONTROL CENTER</span>
+      <nav aria-label="Admin sections">
+        <button type="button" data-tab="overview" class="active">Overview</button>
+        <button type="button" data-tab="articles">Blog posts</button>
+        <button type="button" data-tab="services">Services</button>
+        <button type="button" data-tab="projects">Portfolio</button>
+        <button type="button" data-tab="processSteps">Process</button>
+        <button type="button" data-tab="messages">Inquiries</button>
+        <button type="button" data-tab="analytics">Analytics</button>
+        <button type="button" data-tab="files">Other content</button>
+      </nav>
+      <div class="side-bottom"><a href="../" target="_blank" rel="noopener">View website ↗</a><button id="logout" type="button">Lock dashboard</button></div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><div><span class="eyebrow">CLOUDEMPIRE / ADMIN</span><h1 id="page-title">Overview</h1></div><span class="status" id="connection">Sign in required</span></header>
+      <section id="signin" class="signin card">
+        <span class="eyebrow">SECURE ACCESS</span><h2>Manage your website.</h2>
+        <p>Sign in with a GitHub fine-grained personal access token for the <strong>cloudempire</strong> repository. Give it <strong>Contents: read and write</strong> permission. The token stays in this browser tab and is sent to GitHub and your Hostinger server for access checks. It is never saved by the website.</p>
+        <label for="token">GitHub access token</label>
+        <div class="login-row"><input id="token" type="password" autocomplete="off" placeholder="github_pat_…"><button id="login" class="primary" type="button">Unlock admin</button></div>
+        <p class="hint">Create a token in <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">GitHub settings ↗</a>. Limit it to this repository. Anyone with the token can edit the site; do not share it.</p>
+      </section>
+      <div id="workspace" hidden>
+        <div id="notice" class="notice" role="status" hidden></div>
+        <section id="overview" class="panel active"><div class="intro"><h2>Everything in one place.</h2><p>Edit published content, review inquiries, and see traffic from the live Hostinger site.</p></div><div class="summary-grid" id="summary"></div><div class="card"><h3>Publishing</h3><p>Saving an edit commits it to GitHub. The publishing workflow rebuilds the site and Hostinger can then deploy the new commit from <strong>main</strong>.</p><a href="https://github.com/cloudempireTech/cloudempire/actions" target="_blank" rel="noopener">Check publishing status ↗</a></div></section>
+        <section id="editor-panel" class="panel"><div class="editor-layout"><div class="card list-card"><div class="list-head"><h2 id="list-title"></h2><button id="add-item" class="small-primary" type="button">+ New</button></div><div id="item-list" class="item-list"></div></div><div class="card form-card"><div class="form-head"><div><span class="eyebrow" id="form-kicker">EDIT CONTENT</span><h2 id="form-title">Select an item</h2></div><button id="delete-item" class="quiet danger" type="button" hidden>Delete</button></div><form id="content-form"><div id="fields"></div><div class="form-actions"><button class="primary" type="submit">Save and publish</button><span id="form-hint">Changes go live after the build and Hostinger deployment.</span></div></form></div></div></section>
+        <section id="messages" class="panel"><div class="intro"><h2>Inquiries</h2><p>Contact form submissions saved on the Hostinger server. Visitors still finish sending their message in WhatsApp.</p></div><div class="card" id="messages-content">Loading…</div></section>
+        <section id="analytics" class="panel"><div class="intro"><h2>Site activity</h2><p>Privacy-friendly page view counts from the last 30 days. No IP addresses or cookies are stored for analytics.</p></div><div class="summary-grid" id="analytics-cards"></div><div class="card"><h3>Popular pages</h3><div id="analytics-pages"></div></div></section>
+        <section id="files" class="panel"><div class="intro"><h2>Other content</h2><p>Homepage copy, layout, styles, and navigation live in source files. Open the GitHub editor for those changes; the publishing workflow builds them.</p></div><div class="file-grid"><a class="card" href="https://github.com/cloudempireTech/cloudempire/edit/main/src/main.jsx" target="_blank" rel="noopener"><h3>Pages and navigation ↗</h3><p>Home, About, Contact, footer, headings and section copy</p></a><a class="card" href="https://github.com/cloudempireTech/cloudempire/edit/main/src/styles.css" target="_blank" rel="noopener"><h3>Visual styles ↗</h3><p>Colors, typography, home scenes and layout</p></a><a class="card" href="https://github.com/cloudempireTech/cloudempire/edit/main/src/pages.css" target="_blank" rel="noopener"><h3>Inner pages ↗</h3><p>Service, blog, portfolio and contact styles</p></a><a class="card" href="https://github.com/cloudempireTech/cloudempire/tree/main/public" target="_blank" rel="noopener"><h3>Media library ↗</h3><p>Logos, favicon and blog images</p></a></div></section>
+      </div>
+    </main>
+  </div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

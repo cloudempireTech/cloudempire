@@ -1,0 +1,729 @@
+{
+  "services": [
+    {
+      "slug": "ai-analytics",
+      "title": "AI-Powered Analytics",
+      "category": "AI & DATA",
+      "lead": "Turn information into a practical advantage.",
+      "description": "We design AI-driven systems that analyze behavior, forecast trends, and make business intelligence easier to act on.",
+      "deliverables": [
+        "AI-driven data modeling and predictive insights",
+        "Machine learning algorithm development",
+        "Data visualization and reporting automation",
+        "Integration with cloud-based data lakes"
+      ],
+      "outcome": "Find patterns sooner, make clearer decisions, and give teams the insight they need at the right moment.",
+      "icon": "✦"
+    },
+    {
+      "slug": "web-development",
+      "title": "Web Design & Development",
+      "category": "WEB",
+      "lead": "A web presence built to perform.",
+      "description": "We create high-performance websites and web platforms that express your brand and support business growth.",
+      "deliverables": [
+        "Responsive frontend and backend development",
+        "Custom CMS and admin panel",
+        "SEO optimization and performance tuning",
+        "Web security and SSL integration"
+      ],
+      "outcome": "Give customers a fast, accessible experience and your team a platform that is easy to grow.",
+      "icon": "◫"
+    },
+    {
+      "slug": "app-development",
+      "title": "Mobile App Development",
+      "category": "ANDROID & IOS",
+      "lead": "Your brand in every hand.",
+      "description": "From concept to deployment, we build scalable Android, iOS, and cross-platform mobile experiences.",
+      "deliverables": [
+        "Cross-platform app development for iOS and Android",
+        "API integration and backend connectivity",
+        "Push notifications and real-time updates",
+        "Play Store and App Store deployment"
+      ],
+      "outcome": "Create mobile products people enjoy using and teams can confidently maintain.",
+      "icon": "▣"
+    },
+    {
+      "slug": "salesforce-solutions",
+      "title": "Salesforce CRM Solutions",
+      "category": "ENTERPRISE",
+      "lead": "Make every customer relationship count.",
+      "description": "We help sales and support teams work better through tailored Salesforce implementation, integration, and automation.",
+      "deliverables": [
+        "Custom Salesforce CRM implementation",
+        "Workflow automation and process optimization",
+        "Sales and Service Cloud integration",
+        "Data migration and analytics dashboards"
+      ],
+      "outcome": "Connect teams, reduce manual work, and make customer information easier to use.",
+      "icon": "◎"
+    },
+    {
+      "slug": "cyber-security",
+      "title": "Cybersecurity Solutions",
+      "category": "SECURITY",
+      "lead": "Security built into every layer.",
+      "description": "Our security work helps organizations prevent threats, detect problems, and respond with confidence.",
+      "deliverables": [
+        "Security audits and vulnerability testing",
+        "Firewall, antivirus, and endpoint protection",
+        "Data backup and disaster recovery plans",
+        "Network monitoring and threat detection"
+      ],
+      "outcome": "Protect critical systems and build resilience before incidents become disruptions.",
+      "icon": "◇"
+    },
+    {
+      "slug": "cloud-solutions",
+      "title": "Cloud Infrastructure & Migration",
+      "category": "CLOUD",
+      "lead": "A stronger foundation for what comes next.",
+      "description": "We plan and deliver cloud environments and migrations with reliability, security, and scalability in mind.",
+      "deliverables": [
+        "Cloud architecture planning and design",
+        "Serverless infrastructure deployment",
+        "Data migration and backup strategy",
+        "Cloud security and compliance setup"
+      ],
+      "outcome": "Modernize infrastructure while keeping teams productive and systems dependable.",
+      "icon": "☁"
+    },
+    {
+      "slug": "it-consulting",
+      "title": "IT Strategy & Consulting",
+      "category": "STRATEGY",
+      "lead": "Make your next technology decision clearer.",
+      "description": "We assess your current technology landscape and create practical strategies aligned with business goals.",
+      "deliverables": [
+        "Digital transformation roadmap",
+        "Technology infrastructure audit",
+        "Process optimization and automation plan",
+        "Cost efficiency and scalability analysis"
+      ],
+      "outcome": "Prioritize investments and move forward with an actionable roadmap.",
+      "icon": "⌁"
+    },
+    {
+      "slug": "automation",
+      "title": "Business Process Automation",
+      "category": "AUTOMATION",
+      "lead": "Give people time back for better work.",
+      "description": "We streamline repetitive tasks with thoughtfully designed automation and connected workflows.",
+      "deliverables": [
+        "RPA workflow setup and integration",
+        "AI-based process optimization",
+        "Manual task elimination and efficiency improvement",
+        "Custom dashboard for automation monitoring"
+      ],
+      "outcome": "Reduce busywork, improve consistency, and free teams to focus on higher-value decisions.",
+      "icon": "⚙"
+    },
+    {
+      "slug": "ecommerce-development",
+      "title": "E-Commerce Development",
+      "category": "COMMERCE",
+      "lead": "Make every shopping moment count.",
+      "description": "We build online stores with intuitive shopping experiences and the operations needed to scale.",
+      "deliverables": [
+        "Custom e-commerce storefront design",
+        "Secure payment gateway integration",
+        "Inventory and order management system",
+        "Customer analytics and sales tracking"
+      ],
+      "outcome": "Help shoppers move confidently from discovery to checkout.",
+      "icon": "◈"
+    },
+    {
+      "slug": "seo-services",
+      "title": "Search Engine Optimization",
+      "category": "GROWTH",
+      "lead": "Be found for the things that matter.",
+      "description": "We improve visibility through technical foundations, relevant content, and a search strategy tied to your audience.",
+      "deliverables": [
+        "Technical SEO audit and optimization",
+        "On-page and off-page SEO strategy",
+        "Keyword research and content optimization",
+        "Backlink building and site authority growth"
+      ],
+      "outcome": "Make important pages easier for search engines to understand and for customers to discover.",
+      "icon": "↗"
+    },
+    {
+      "slug": "ui-ux-design",
+      "title": "UI/UX Design & Research",
+      "category": "DESIGN",
+      "lead": "Experience, simplified.",
+      "description": "We create useful, memorable interfaces shaped by research, testing, and a clear design strategy.",
+      "deliverables": [
+        "User flow and wireframe planning",
+        "High-fidelity UI prototyping",
+        "User testing and feedback integration",
+        "Responsive interaction design"
+      ],
+      "outcome": "Turn complex journeys into clear, confident experiences across devices.",
+      "icon": "✳"
+    },
+    {
+      "slug": "training",
+      "title": "Corporate Training & Skill Development",
+      "category": "ENABLEMENT",
+      "lead": "Build capability that lasts.",
+      "description": "We deliver tailored learning programs across Salesforce, cloud, AI, and other digital disciplines.",
+      "deliverables": [
+        "Salesforce, cloud, and digital training modules",
+        "Customized corporate skill programs",
+        "Live workshops and hands-on sessions",
+        "Employee certification and evaluation"
+      ],
+      "outcome": "Equip teams to use new technology well after launch.",
+      "icon": "◉"
+    },
+    {
+      "slug": "maintenance-support",
+      "title": "Maintenance & Support",
+      "category": "SUPPORT",
+      "lead": "Keep momentum after launch.",
+      "description": "We monitor, maintain, and improve digital systems so they remain secure and useful over time.",
+      "deliverables": [
+        "24/7 monitoring and technical assistance",
+        "System updates and patch management",
+        "Backup and data recovery solutions",
+        "Performance optimization and SLA support"
+      ],
+      "outcome": "Keep essential experiences reliable while your business changes and grows.",
+      "icon": "∞"
+    }
+  ],
+  "projects": [
+    {
+      "slug": "university-platform",
+      "category": "WEB DEVELOPMENT",
+      "title": "University Web Application",
+      "location": "U.S. education sector",
+      "description": "A tailored web platform that simplifies academic management, automates workflows, and supports student engagement.",
+      "theme": "campus"
+    },
+    {
+      "slug": "sfmc-app",
+      "category": "SALESFORCE",
+      "title": "Custom Marketing Cloud App",
+      "location": "Salesforce ecosystem",
+      "description": "An SFMC application for creating and managing campaign messages, designed for streamlined setup and launch.",
+      "theme": "campaign"
+    },
+    {
+      "slug": "student-loans",
+      "category": "SALESFORCE",
+      "title": "Student Loan Management",
+      "location": "Australian education sector",
+      "description": "A Salesforce solution supporting loan applications, disbursement tracking, and compliance reporting.",
+      "theme": "lending"
+    },
+    {
+      "slug": "lending-platform",
+      "category": "IN PROGRESS",
+      "title": "End-to-End Lending Platform",
+      "location": "Financial services",
+      "description": "A comprehensive platform planned to connect origination, repayment, analytics, and customer experience.",
+      "theme": "finance"
+    }
+  ],
+  "processSteps": [
+    {
+      "number": "01",
+      "title": "Discovery",
+      "description": "We understand your goals, audience, existing systems, and the challenge beneath the brief."
+    },
+    {
+      "number": "02",
+      "title": "Strategy",
+      "description": "We set priorities and shape a roadmap that connects product decisions to business outcomes."
+    },
+    {
+      "number": "03",
+      "title": "Development",
+      "description": "Designers and engineers turn the plan into a coherent, useful digital experience."
+    },
+    {
+      "number": "04",
+      "title": "Testing",
+      "description": "We validate usability, performance, reliability, and security before release."
+    },
+    {
+      "number": "05",
+      "title": "Launch",
+      "description": "We prepare and deploy your solution with careful handover and support."
+    },
+    {
+      "number": "06",
+      "title": "Support",
+      "description": "We monitor, improve, and evolve the product as your needs change."
+    }
+  ],
+  "articles": [
+    {
+      "slug": "how-to-plan-an-ai-project",
+      "category": "ARTIFICIAL INTELLIGENCE",
+      "title": "How to Plan an AI Project That Solves a Real Business Problem",
+      "description": "A practical guide to choosing an AI use case, preparing data, measuring outcomes, and moving from prototype to a useful product.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "AI projects work best when they start with a concrete problem. A clear use case makes it easier to choose the right data, set boundaries, and decide whether the result is actually helping people.",
+      "sections": [
+        {
+          "heading": "Start with a decision or workflow",
+          "paragraphs": [
+            "List the decisions your team repeats, the information needed to make them, and the delays that slow the work. A valuable AI opportunity often appears where a better prediction, recommendation, or summary would change an action.",
+            "Describe the current process in plain language before discussing models. Name the people who will use the output and how they will respond when the system is uncertain."
+          ]
+        },
+        {
+          "heading": "Check the data before promising the outcome",
+          "paragraphs": [
+            "Useful AI depends on relevant, reliable information. Identify where data lives, who may access it, how it is updated, and which gaps could make results misleading. A small data audit can prevent a large amount of rework.",
+            "Agree on privacy and review requirements early. Human oversight is especially important when an output affects customers, finances, or access to services."
+          ]
+        },
+        {
+          "heading": "Measure the result in the workflow",
+          "paragraphs": [
+            "A prototype is a learning tool. Compare it with today’s process using measures such as time saved, errors reduced, decision quality, or customer satisfaction. Avoid judging success only by a model score.",
+            "Once a pilot proves useful, plan monitoring, ownership, feedback, and maintenance. AI is a product capability that needs continuous attention, not a one-time feature."
+          ]
+        },
+        {
+          "heading": "Choose a pilot the team can actually use",
+          "paragraphs": [
+            "A narrow pilot gives you a more reliable answer than a broad promise. Select one team, one workflow, and a limited set of inputs. Document the current effort and quality before introducing the new capability so the comparison is fair.",
+            "Invite the people who do the work to review early outputs. Their feedback will show whether the language is understandable, whether an answer arrives at the right moment, and when a human needs to step in. Keep a visible way to report mistakes.",
+            "At the end of the pilot, decide explicitly whether to improve, expand, or stop. Record what the team learned about data, user trust, operational cost, and ownership. A stopped pilot can be a useful result when it prevents a larger investment in the wrong idea."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Choose one measurable problem.",
+        "Validate data access and quality.",
+        "Pilot with real users before scaling."
+      ],
+      "relatedService": "ai-analytics",
+      "image": "blog/ai-project-cover.png",
+      "imageAlt": "Glowing blue AI core surrounded by glass panels and flowing data"
+    },
+    {
+      "slug": "website-redesign-checklist",
+      "category": "WEB DEVELOPMENT",
+      "title": "Website Redesign Checklist: Strategy, Speed, SEO, and Launch",
+      "description": "Plan a website redesign with a clear checklist for audience research, content, accessibility, performance, SEO, and launch quality.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "A redesign should improve how people understand and use your website. New visuals matter, but the strongest projects also clarify content, reduce friction, and protect the search value the existing site has earned.",
+      "sections": [
+        {
+          "heading": "Define what the new site must do",
+          "paragraphs": [
+            "Start with the audience and its most important tasks. Identify which pages help visitors understand your offer, compare options, and make contact. Review analytics and customer questions to find where the current journey breaks down.",
+            "Set success measures before design begins. Useful measures might include qualified inquiries, completion of key tasks, page performance, or accessibility improvements."
+          ]
+        },
+        {
+          "heading": "Plan content and search together",
+          "paragraphs": [
+            "Inventory existing pages and decide what to keep, improve, combine, or retire. Give every important page a clear purpose, descriptive title, helpful heading structure, and relevant internal links.",
+            "When URLs change, map old addresses to new ones before launch. Check metadata, canonical URLs, sitemap entries, and image descriptions so search engines and visitors can follow the new structure."
+          ]
+        },
+        {
+          "heading": "Test the real experience",
+          "paragraphs": [
+            "Check the design on phones, tablets, and larger screens. Test navigation with a keyboard, confirm forms are usable, and make sure the page remains understandable when animations are reduced.",
+            "Measure loading performance on representative devices and connections. After launch, monitor errors, broken links, search indexing, and user feedback so the redesign keeps improving."
+          ]
+        },
+        {
+          "heading": "Prepare a launch checklist with owners",
+          "paragraphs": [
+            "Assign responsibility for content approval, redirects, analytics, accessibility checks, form delivery, security, and final publishing. A launch plan is more useful when each check has a named owner and a clear pass condition.",
+            "Test the complete journey rather than isolated pages. Start from a search result, follow a service page, use the navigation, submit an inquiry, and confirm that the team receives it. Repeat on a phone and with a keyboard.",
+            "Keep a short monitoring window after release. Review errors and broken links daily at first, then adjust based on real visitor behavior. A redesign is complete when the new experience performs well for its audience, not merely when the files are online."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Start with user tasks and business goals.",
+        "Protect existing URLs and search value.",
+        "Test accessibility and performance before launch."
+      ],
+      "relatedService": "web-development"
+    },
+    {
+      "slug": "android-app-development-roadmap",
+      "category": "ANDROID",
+      "title": "Android App Development Roadmap: From Idea to Play Store",
+      "description": "Explore the key steps in Android app development, from feature planning and UX through API integration, testing, and release.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "A successful Android app starts long before code. Clear priorities, realistic user journeys, and a reliable release process help turn an idea into a product people want to keep using.",
+      "sections": [
+        {
+          "heading": "Define the first useful version",
+          "paragraphs": [
+            "Write down the core task the app helps a person complete. Build the first version around that task rather than a long feature list. User interviews and simple prototypes can reveal what belongs in the initial release.",
+            "Decide early how the app will handle sign-in, connectivity, notifications, and data privacy. These choices shape both the interface and the backend."
+          ]
+        },
+        {
+          "heading": "Design for Android use",
+          "paragraphs": [
+            "Plan for different screen sizes, input methods, and accessibility needs. Navigation, permissions, and system behavior should feel familiar to Android users while still expressing your brand.",
+            "Keep screens focused and make loading, empty, and error states useful. These moments often determine whether an app feels dependable."
+          ]
+        },
+        {
+          "heading": "Test, release, and learn",
+          "paragraphs": [
+            "Test on a representative range of devices and network conditions. Include performance, offline behavior where relevant, security, and integration checks.",
+            "Prepare store assets, privacy information, support details, and a measured rollout. After release, use feedback and product data to prioritize the next improvements."
+          ]
+        },
+        {
+          "heading": "Plan the service behind the screen",
+          "paragraphs": [
+            "Mobile experience depends on more than the app interface. Document the APIs, account model, content updates, analytics, and support process that will keep the product useful. Give the team a clear owner for each integration.",
+            "Treat permissions carefully. Ask for access only when a feature needs it, explain the benefit in context, and design a useful path if a person declines. This keeps the app understandable and supports trust.",
+            "Before submitting a release, prepare crash monitoring, support contact information, and a way to respond to feedback. A measured release helps uncover issues across the variety of devices and conditions the app will encounter."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Build the smallest valuable workflow first.",
+        "Design for diverse devices and conditions.",
+        "Treat release as the start of learning."
+      ],
+      "relatedService": "app-development"
+    },
+    {
+      "slug": "ios-app-design-principles",
+      "category": "IOS",
+      "title": "iOS App Design Principles for a More Intuitive Product",
+      "description": "Learn how to plan an iOS app around clear navigation, accessible interactions, performance, and useful feedback.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "Great iOS products make important actions feel obvious. That takes more than attractive screens: the content, navigation, feedback, and technical behavior must work together.",
+      "sections": [
+        {
+          "heading": "Make the primary task easy to find",
+          "paragraphs": [
+            "Map the journeys users will repeat most often. Give each screen a clear purpose and keep the most important action visible. A user should not have to understand your internal organization to complete a task.",
+            "Prototype the flow before building detailed visuals. Early usability sessions expose confusing labels and unnecessary steps while changes are still inexpensive."
+          ]
+        },
+        {
+          "heading": "Design the whole interaction",
+          "paragraphs": [
+            "Consider what happens while information loads, when a request fails, or when there is no content yet. Clear feedback builds trust and helps people recover without losing progress.",
+            "Support text resizing, sufficient contrast, descriptive controls, and input alternatives. Accessibility improves the product for many situations, not only a narrow group of users."
+          ]
+        },
+        {
+          "heading": "Keep performance part of design",
+          "paragraphs": [
+            "Fast responses and stable transitions make an app feel coherent. Work with engineers to choose sensible image sizes, efficient data loading, and smooth interactions.",
+            "After launch, review user feedback and the journeys people abandon. Use that evidence to simplify the next release rather than adding features by default."
+          ]
+        },
+        {
+          "heading": "Create a consistent design system",
+          "paragraphs": [
+            "Reusable colors, type styles, components, and interaction rules help the product feel coherent as it grows. Define these patterns in design and code so a new screen does not require every decision to be made again.",
+            "Use familiar platform behaviors where they help people predict what will happen. Custom interactions can be valuable, but they should make a task clearer rather than draw attention away from it. Test important gestures with people who did not design them.",
+            "Plan for localization and changing content lengths early when the audience spans regions. Flexible layouts and meaningful labels are easier to build into the system than to retrofit after many screens have been released."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Prioritize the key journey.",
+        "Design loading and error states.",
+        "Keep accessibility and speed in the design process."
+      ],
+      "relatedService": "app-development"
+    },
+    {
+      "slug": "salesforce-crm-implementation-guide",
+      "category": "SALESFORCE",
+      "title": "Salesforce CRM Implementation: A Practical Guide for Growing Teams",
+      "description": "Learn how to prepare data, map processes, plan automation, and support adoption during a Salesforce CRM implementation.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "A CRM becomes valuable when it reflects how people actually work. The strongest Salesforce implementations connect customer data, team processes, and reporting without creating extra administrative friction.",
+      "sections": [
+        {
+          "heading": "Map the customer journey first",
+          "paragraphs": [
+            "Identify how a lead becomes a customer, who owns each handoff, and what information each team needs. This gives the configuration a clear purpose and helps avoid fields that nobody uses.",
+            "Prioritize the workflows that create the most confusion or repeated manual work. A phased rollout can deliver value sooner and provide time to learn."
+          ]
+        },
+        {
+          "heading": "Prepare data and integrations",
+          "paragraphs": [
+            "Review existing records for duplicates, missing values, inconsistent naming, and ownership. Decide how the new system will connect with marketing, support, finance, and other essential tools.",
+            "Document access rules and reporting needs before migration. Testing with a representative sample helps catch issues before the entire team depends on the new setup."
+          ]
+        },
+        {
+          "heading": "Support adoption after launch",
+          "paragraphs": [
+            "Train people around their real tasks, not only system features. Offer concise guidance, identify internal champions, and create a clear path for feedback.",
+            "Track both business results and usage patterns. If a workflow is ignored, investigate whether it is confusing, slow, or simply unnecessary before adding more automation."
+          ]
+        },
+        {
+          "heading": "Build reports around questions, not dashboards",
+          "paragraphs": [
+            "Ask leaders and frontline teams which decisions they need to make each week. Reports should answer those questions with trusted definitions. Too many charts can obscure the signal and encourage people to maintain parallel spreadsheets.",
+            "Agree on common meanings for stages, owners, dates, and outcomes. Consistent definitions improve automation and make trends easier to compare over time. Keep required fields limited to information that someone will use.",
+            "Schedule regular reviews after rollout. Examine missing data, repeated exceptions, and support requests. Small adjustments to the workflow often produce more value than a large new feature."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Model real customer workflows.",
+        "Clean data before migration.",
+        "Plan training and iteration from day one."
+      ],
+      "relatedService": "salesforce-solutions"
+    },
+    {
+      "slug": "cloud-migration-plan",
+      "category": "CLOUD",
+      "title": "Cloud Migration Plan: How to Move with Less Disruption",
+      "description": "Build a cloud migration plan covering application inventory, dependencies, security, testing, and post-migration optimization.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "Cloud migration is an opportunity to improve reliability and flexibility, but moving workloads without a clear plan can transfer old problems to a new environment. A careful sequence keeps the business running while the foundation changes.",
+      "sections": [
+        {
+          "heading": "Understand what you already run",
+          "paragraphs": [
+            "Create an inventory of applications, data, owners, integrations, and operational requirements. Map dependencies so a seemingly small change does not interrupt a critical process.",
+            "Classify workloads by complexity and value. This helps choose a pilot that teaches the team without placing the most sensitive service at risk first."
+          ]
+        },
+        {
+          "heading": "Design security and recovery early",
+          "paragraphs": [
+            "Plan identity, access, backups, monitoring, and compliance before migration. Decide how data will be protected in transit and how the team will recover if a cutover fails.",
+            "Make ownership explicit. Cloud platforms provide useful capabilities, but the organization still needs clear responsibility for configuration, data, and ongoing operations."
+          ]
+        },
+        {
+          "heading": "Move in stages and optimize",
+          "paragraphs": [
+            "Test each workload in a representative environment and define acceptance criteria with its users. Use a cutover plan that includes communication, rollback steps, and post-launch checks.",
+            "After migration, review performance, cost, and reliability. Right-sizing and operational improvements are part of the project, not optional cleanup."
+          ]
+        },
+        {
+          "heading": "Give operations a clear handover",
+          "paragraphs": [
+            "Migration is not finished when the application starts in the new environment. Document alerts, access requests, backup checks, incident response, and routine maintenance for the people who will operate it.",
+            "Run recovery exercises and verify that monitoring reports meaningful issues rather than noise. A team should know who receives an alert, what to check first, and how to communicate with affected users.",
+            "Review cost against the expected usage pattern. Separate one-time migration costs from ongoing operations, and revisit capacity as demand changes. This makes cloud flexibility an active advantage rather than an unexpected bill."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Inventory dependencies before choosing a migration order.",
+        "Plan security and recovery from the start.",
+        "Optimize after each move."
+      ],
+      "relatedService": "cloud-solutions"
+    },
+    {
+      "slug": "business-process-automation-examples",
+      "category": "AUTOMATION",
+      "title": "Business Process Automation Examples That Save Teams Time",
+      "description": "Find practical business process automation opportunities in approvals, reporting, customer operations, and data handoffs.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "The best automation removes repetitive effort while keeping people in control of important decisions. It begins with a process that is understood, measurable, and worth improving.",
+      "sections": [
+        {
+          "heading": "Look for repeated handoffs",
+          "paragraphs": [
+            "Common candidates include routing requests, checking form completeness, creating routine reports, updating records across systems, and notifying the right team when work changes state.",
+            "Before automating, simplify the process itself. Encoding unnecessary steps in software can make a slow workflow harder to change."
+          ]
+        },
+        {
+          "heading": "Design for exceptions",
+          "paragraphs": [
+            "Real work rarely follows a perfect path. Decide what happens when data is missing, a request is unusual, or a system is unavailable. Give staff a clear way to review and override automated actions.",
+            "Keep a record of what the automation did and why. Visibility makes it easier to troubleshoot and build trust with the people using it."
+          ]
+        },
+        {
+          "heading": "Measure the impact",
+          "paragraphs": [
+            "Compare the automated workflow with the previous one using time, accuracy, rework, and customer experience. Include the cost of maintenance in the assessment.",
+            "Start with a focused pilot. Once it is stable and useful, expand to adjacent processes with lessons from the first release."
+          ]
+        },
+        {
+          "heading": "Start with a simple automation scorecard",
+          "paragraphs": [
+            "For each candidate process, record how often it runs, how long it takes, how many exceptions occur, and what an error would cost. This helps distinguish a genuinely useful opportunity from a task that is merely annoying.",
+            "Choose a first workflow with clear rules and a visible owner. For example, routing a complete request to the right team is easier to validate than automating a complex approval decision. Build a review path for uncertain cases.",
+            "After rollout, review the scorecard with the people doing the work. If time falls but rework rises, the automation has shifted effort rather than removed it. Use the evidence to refine the process."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Simplify before automating.",
+        "Plan human review for exceptions.",
+        "Measure outcomes, not only task volume."
+      ],
+      "relatedService": "automation"
+    },
+    {
+      "slug": "ecommerce-website-conversion",
+      "category": "E-COMMERCE",
+      "title": "E-Commerce Website Essentials for a Better Buying Experience",
+      "description": "Improve an online store with clearer product pages, simpler checkout, trustworthy information, and dependable operations.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "An online store succeeds when buying feels easy and trustworthy. Product discovery, pricing clarity, checkout, and fulfillment information all contribute to the experience.",
+      "sections": [
+        {
+          "heading": "Help people choose confidently",
+          "paragraphs": [
+            "Make product pages answer practical questions: what the item is, how it works, what is included, and whether it fits the buyer’s needs. Clear imagery, readable descriptions, and useful filters reduce uncertainty.",
+            "Show availability, delivery expectations, and return information where shoppers need them. Hiding essential details until checkout creates friction."
+          ]
+        },
+        {
+          "heading": "Reduce checkout effort",
+          "paragraphs": [
+            "Ask only for information needed to complete an order. Make form errors easy to understand and preserve progress when a customer needs to correct a detail.",
+            "Offer payment options appropriate to your audience and explain security and support in plain language. Test the entire path on mobile devices, where small usability problems become larger."
+          ]
+        },
+        {
+          "heading": "Connect the storefront to operations",
+          "paragraphs": [
+            "Inventory, order management, notifications, and customer support need reliable handoffs. A beautiful storefront cannot compensate for inaccurate stock or confusing delivery updates.",
+            "Review search terms, drop-off points, and customer questions after launch. Use these signals to improve content and flows before adding more features."
+          ]
+        },
+        {
+          "heading": "Use customer questions to prioritize improvements",
+          "paragraphs": [
+            "Support conversations often reveal why customers hesitate. Look for repeated questions about sizing, compatibility, delivery, returns, or payment. Answer those questions directly on the relevant product and checkout pages.",
+            "Measure the steps shoppers take without assuming every drop-off has the same cause. Compare mobile and desktop behavior, product categories, and returning visitors. Pair analytics with usability observations for a clearer explanation.",
+            "Make changes one at a time when possible and watch the effect on completed orders, support requests, and returns. A conversion gain that creates more confusion later is unlikely to help the business long term."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Make product information easy to evaluate.",
+        "Keep checkout focused and forgiving.",
+        "Treat operations as part of customer experience."
+      ],
+      "relatedService": "ecommerce-development"
+    },
+    {
+      "slug": "technical-seo-foundations",
+      "category": "SEO",
+      "title": "Technical SEO Foundations for a Faster, Easier-to-Find Website",
+      "description": "Understand the core technical SEO checks for crawlability, page structure, performance, mobile usability, and site maintenance.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "Technical SEO helps search engines access and understand your pages. It also tends to make the site clearer and faster for visitors. The aim is a dependable foundation, not a collection of tricks.",
+      "sections": [
+        {
+          "heading": "Make important pages discoverable",
+          "paragraphs": [
+            "Use clear internal navigation and descriptive links so people and crawlers can reach key pages. Keep a current sitemap and review whether important pages are accidentally blocked or marked not to index.",
+            "Give each page a distinct purpose, title, description, and primary heading. When multiple URLs show the same content, use a consistent canonical approach."
+          ]
+        },
+        {
+          "heading": "Improve the page experience",
+          "paragraphs": [
+            "Compress and size images appropriately, avoid unnecessary scripts, and test performance on mobile connections. A stable layout and responsive controls help visitors use the site without frustration.",
+            "Use semantic HTML and accessible labels. Structure that makes a page easier for people to navigate also makes its content easier to interpret."
+          ]
+        },
+        {
+          "heading": "Monitor after changes",
+          "paragraphs": [
+            "Check redirects, broken links, and crawl errors after redesigns or migrations. Confirm that the pages you care about remain accessible at their intended URLs.",
+            "Search visibility changes over time. Review search queries and page performance regularly, then improve the pages that answer important customer questions."
+          ]
+        },
+        {
+          "heading": "Create a repeatable publishing routine",
+          "paragraphs": [
+            "Give editors a simple checklist for page titles, headings, internal links, image alternatives, and preview checks. A maintainable routine prevents technical quality from depending on a single person remembering every detail.",
+            "Review new templates with the same care as individual pages. A template error can affect hundreds of URLs, so test canonical links, structured data where relevant, mobile layout, and crawl access before wide release.",
+            "Use search performance as feedback about real questions people ask. Technical health creates the opportunity to appear; useful, specific content earns attention once a page is found."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Keep important pages reachable.",
+        "Use unique page metadata and clear structure.",
+        "Monitor technical health after every release."
+      ],
+      "relatedService": "seo-services"
+    },
+    {
+      "slug": "ux-research-before-development",
+      "category": "UI/UX DESIGN",
+      "title": "Why UX Research Before Development Saves Rework",
+      "description": "See how interviews, journey maps, prototypes, and usability tests can clarify product decisions before development begins.",
+      "date": "2026-10-15",
+      "readTime": "3 min read",
+      "intro": "Teams often move directly from an idea to a screen. A small amount of research first can reveal the real task, the language users understand, and the assumptions most likely to cause rework.",
+      "sections": [
+        {
+          "heading": "Understand the user’s context",
+          "paragraphs": [
+            "Talk with people who will actually use the product. Ask about their current process, goals, workarounds, and the moments where they lose time or confidence.",
+            "Combine those conversations with support requests and product data where available. The aim is to find patterns, not to treat one opinion as a complete answer."
+          ]
+        },
+        {
+          "heading": "Prototype the critical journey",
+          "paragraphs": [
+            "Map the steps from a user’s starting point to a successful outcome. Sketch or prototype the route before investing in polished design and engineering.",
+            "Test whether people can complete the task without coaching. Watch where they hesitate, then adjust labels, structure, or flow before building the full experience."
+          ]
+        },
+        {
+          "heading": "Carry learning into development",
+          "paragraphs": [
+            "Document the user need behind important design choices. This helps engineers and stakeholders make consistent decisions when details change during implementation.",
+            "Research should continue after launch. Feedback and observed behavior can reveal new needs and show whether the product is delivering the intended value."
+          ]
+        },
+        {
+          "heading": "Turn findings into clear product decisions",
+          "paragraphs": [
+            "A research report is only valuable if it changes what the team builds. Summarize the main user needs, supporting evidence, open questions, and recommended next actions. Distinguish what was observed from what the team inferred.",
+            "Prioritize issues by how strongly they affect a core task. A confusing step in sign-up may deserve attention before a visual preference that few people notice. Bring design, engineering, and business stakeholders into the review.",
+            "Keep a lightweight record of decisions so future work can build on what was learned. When new evidence challenges an earlier assumption, update the plan openly rather than defending a design because it has already been made."
+          ]
+        }
+      ],
+      "takeaways": [
+        "Research the task, not only visual preferences.",
+        "Test a prototype before full development.",
+        "Keep learning after release."
+      ],
+      "relatedService": "ui-ux-design"
+    }
+  ]
+}

@@ -4,7 +4,9 @@ import { articles, services } from '../src/content.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = resolve(root, 'dist');
-const siteUrl = 'https://cloudempiretech.github.io/cloudempire/';
+const siteUrl = process.env.SITE_URL || 'https://cloudempire.tech/';
+const siteBase = process.env.SITE_BASE || '/';
+const publishRoot = process.env.PUBLISH_ROOT !== '0';
 const blogCoverPath = 'blog/ai-project-cover.png';
 const blogCoverUrl = `${siteUrl}${blogCoverPath}`;
 const template = await readFile(resolve(dist, 'app.html'), 'utf8');
@@ -25,15 +27,15 @@ const routes = [
 function staticBody(route) {
   if (route.article) {
     const article = route.article;
-    const image = article.slug === 'how-to-plan-an-ai-project' ? `<figure><img src="/cloudempire/${blogCoverPath}" alt="Glowing blue AI core surrounded by glass panels and flowing data" width="1942" height="809" /></figure>` : '';
-    return `<main class="prerender"><article><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.intro)}</p>${image}${article.sections.map(section=>`<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(paragraph=>`<p>${escapeHtml(paragraph)}</p>`).join('')}</section>`).join('')}<p><a href="/cloudempire/services/${article.relatedService}/">Explore the related CloudEmpire service</a></p></article></main>`;
+    const image = article.image ? `<figure><img src="${siteBase}${escapeHtml(article.image)}" alt="${escapeHtml(article.imageAlt || article.title)}" /></figure>` : '';
+    return `<main class="prerender"><article><h1>${escapeHtml(article.title)}</h1><p>${escapeHtml(article.intro)}</p>${image}${article.sections.map(section=>`<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(paragraph=>`<p>${escapeHtml(paragraph)}</p>`).join('')}</section>`).join('')}<p><a href="${siteBase}services/${article.relatedService}/">Explore the related CloudEmpire service</a></p></article></main>`;
   }
   if (route.service) {
     const service = route.service;
     return `<main class="prerender"><h1>${escapeHtml(service.title)}</h1><p>${escapeHtml(service.description)}</p><h2>What you get</h2><ul>${service.deliverables.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><p>${escapeHtml(service.outcome)}</p></main>`;
   }
-  if (route.path === 'blog/') return `<main class="prerender"><h1>CloudEmpire Blog</h1><p>Practical guides on AI, websites, apps, cloud, design, and digital growth.</p><ul>${articles.map(article=>`<li><a href="/cloudempire/blog/${article.slug}/">${escapeHtml(article.title)}</a> — ${escapeHtml(article.description)}</li>`).join('')}</ul></main>`;
-  if (route.path === 'services/') return `<main class="prerender"><h1>CloudEmpire Services</h1><ul>${services.map(service=>`<li><a href="/cloudempire/services/${service.slug}/">${escapeHtml(service.title)}</a> — ${escapeHtml(service.description)}</li>`).join('')}</ul></main>`;
+  if (route.path === 'blog/') return `<main class="prerender"><h1>CloudEmpire Blog</h1><p>Practical guides on AI, websites, apps, cloud, design, and digital growth.</p><ul>${articles.map(article=>`<li><a href="${siteBase}blog/${article.slug}/">${escapeHtml(article.title)}</a> — ${escapeHtml(article.description)}</li>`).join('')}</ul></main>`;
+  if (route.path === 'services/') return `<main class="prerender"><h1>CloudEmpire Services</h1><ul>${services.map(service=>`<li><a href="${siteBase}services/${service.slug}/">${escapeHtml(service.title)}</a> — ${escapeHtml(service.description)}</li>`).join('')}</ul></main>`;
   return `<main class="prerender"><h1>${escapeHtml(route.title.split(' — ')[0])}</h1><p>${escapeHtml(route.description)}</p></main>`;
 }
 
@@ -45,7 +47,7 @@ function structuredData(route) {
     mainEntityOfPage:`${siteUrl}${route.path}`,
     author:{'@type':'Organization',name:'CloudEmpire'},
     publisher:{'@type':'Organization',name:'CloudEmpire',url:siteUrl},
-    ...(route.article.slug === 'how-to-plan-an-ai-project' ? {image:blogCoverUrl} : {}),
+    ...(route.article.image ? {image:`${siteUrl}${route.article.image}`} : {}),
   };
   if (route.service) return {
     '@context':'https://schema.org', '@type':'Service',
@@ -59,10 +61,10 @@ function structuredData(route) {
 for (const route of routes) {
   const canonical = `${siteUrl}${route.path}`;
   const data = JSON.stringify(structuredData(route)).replace(/</g,'\\u003c');
-  const hasCover = route.path === 'blog/' || route.article?.slug === 'how-to-plan-an-ai-project';
-  const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    <meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />${hasCover?`\n    <meta property="og:image" content="${blogCoverUrl}" />\n    <meta name="twitter:card" content="summary_large_image" />`:''}\n    <script type="application/ld+json">${data}</script>`;
+  const coverUrl = route.article?.image ? `${siteUrl}${route.article.image}` : route.path === 'blog/' ? blogCoverUrl : '';
+  const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    <meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />${coverUrl?`\n    <meta property="og:image" content="${escapeHtml(coverUrl)}" />\n    <meta name="twitter:card" content="summary_large_image" />`:''}\n    <script type="application/ld+json">${data}</script>`;
   const html = template
-    .replace('<head>', '<head>\n    <base href="/cloudempire/" />')
+    .replace('<head>', `<head>\n    <base href="${siteBase}" />`)
     .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(route.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(route.description)}" />`)
     .replace('</head>', `    ${metadata}\n  </head>`)
@@ -70,22 +72,29 @@ for (const route of routes) {
   const output = resolve(dist, route.path, 'index.html');
   await mkdir(resolve(dist, route.path), {recursive:true});
   await writeFile(output, html, 'utf8');
-  const published = resolve(root, route.path, 'index.html');
-  await mkdir(resolve(root, route.path), {recursive:true});
-  await copyFile(output, published);
+  if (publishRoot) {
+    const published = resolve(root, route.path, 'index.html');
+    await mkdir(resolve(root, route.path), {recursive:true});
+    await copyFile(output, published);
+  }
 }
 
 const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${routes.map(route=>`  <url><loc>${siteUrl}${route.path}</loc></url>`).join('\n')}\n</urlset>\n`;
 const robots = `User-agent: *\nAllow: /\nSitemap: ${siteUrl}sitemap.xml\n`;
-await writeFile(resolve(root,'sitemap.xml'),sitemap);
-await writeFile(resolve(root,'robots.txt'),robots);
-await mkdir(resolve(root,'assets'),{recursive:true});
-const currentAssets = new Set(await readdir(resolve(dist,'assets')));
-for (const name of await readdir(resolve(root,'assets'))) {
-  if (/^app-.*\.(css|js)$/.test(name) && !currentAssets.has(name)) await unlink(resolve(root,'assets',name));
+await writeFile(resolve(dist,'sitemap.xml'),sitemap);
+await writeFile(resolve(dist,'robots.txt'),robots);
+if (publishRoot) {
+  await writeFile(resolve(root,'sitemap.xml'),sitemap);
+  await writeFile(resolve(root,'robots.txt'),robots);
+  await mkdir(resolve(root,'assets'),{recursive:true});
+  const currentAssets = new Set(await readdir(resolve(dist,'assets')));
+  for (const name of await readdir(resolve(root,'assets'))) {
+    if (/^app-.*\.(css|js)$/.test(name) && !currentAssets.has(name)) await unlink(resolve(root,'assets',name));
+  }
+  await cp(resolve(dist,'assets'),resolve(root,'assets'),{recursive:true,force:true});
+  for(const name of ['favicon-32.png','favicon-192.png','logo-light.png'])await copyFile(resolve(dist,name),resolve(root,name));
+  await cp(resolve(dist,'blog'),resolve(root,'blog'),{recursive:true,force:true});
+  await cp(resolve(dist,'admin'),resolve(root,'admin'),{recursive:true,force:true});
 }
-await cp(resolve(dist,'assets'),resolve(root,'assets'),{recursive:true,force:true});
-for(const name of ['favicon-32.png','favicon-192.png','logo-light.png'])await copyFile(resolve(dist,name),resolve(root,name));
-await copyFile(resolve(dist,blogCoverPath),resolve(root,blogCoverPath));
 
-console.log(`Published ${routes.length} pages and a sitemap to the repository root.`);
+console.log(`Published ${routes.length} pages and a sitemap${publishRoot ? ' to the repository root' : ' to dist'}.`);
