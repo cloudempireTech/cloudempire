@@ -16,6 +16,6 @@ The root page directories, root `index.html`, root `assets/`, `sitemap.xml`, and
 ## Notes
 
 - Navigation, service details, portfolio content, and every article stay within this site.
-- The contact form opens a prepared message in the visitor's email application. Connect it to a backend or form service if server-side submission is needed.
+- The contact form opens WhatsApp with a prefilled inquiry to CloudEmpire's published +91 94756 39634 number. The visitor presses Send in WhatsApp to deliver it; automatic server-side sending would require a WhatsApp Business integration.
 - The four showcase visuals are implemented in HTML and CSS, so no video or image sequence is needed for the scroll animation. The logo and circular favicon were derived from the supplied brand files.
 - Motion is reduced for visitors who enable the operating system's reduced-motion setting.
