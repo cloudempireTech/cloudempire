@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { ArrowDown, ArrowRight, ArrowUpRight, BrainCircuit, Check, ChevronDown, Code2, Database, Globe2, Layers3, Menu, MousePointer2, Play, ShieldCheck, Smartphone, Sparkles, X, Zap } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUpRight, BrainCircuit, Check, ChevronDown, Code2, Database, Globe2, Layers3, Menu, ShieldCheck, Smartphone, Sparkles, X, Zap } from 'lucide-react';
 import './styles.css';
 
 const serviceGroups = [
@@ -27,11 +27,12 @@ const projects = [
 ];
 
 const process = [
-  ['01', 'Discover', 'We listen, explore your goals, and find the real opportunity.'],
-  ['02', 'Strategize', 'We shape a clear roadmap around your business and users.'],
-  ['03', 'Design & build', 'We turn the plan into a purposeful digital product.'],
-  ['04', 'Test & launch', 'We refine, validate, and release with confidence.'],
-  ['05', 'Grow together', 'We support, optimize, and keep moving forward.'],
+  ['01', 'Discovery', 'We listen, explore your goals, and find the real opportunity.'],
+  ['02', 'Strategy', 'We shape a clear roadmap around your business and users.'],
+  ['03', 'Development', 'We turn the plan into a purposeful digital product.'],
+  ['04', 'Testing', 'We refine and validate performance, security, and stability.'],
+  ['05', 'Launch', 'We deploy your solution with care and confidence.'],
+  ['06', 'Support', 'We keep improving, optimizing, and moving forward together.'],
 ];
 
 const journal = [
@@ -42,9 +43,18 @@ const journal = [
 
 const faqs = [
   ['What can CloudEmpire build for my business?', 'We design and develop AI solutions, websites, Android and iOS apps, Salesforce systems, cloud infrastructure, and other digital products tailored to your goals.'],
+  ['Where is CloudEmpire located?', 'Our head office is at 328, Sahapur Colony, New Alipore, Kolkata 700053, India.'],
+  ['How can I contact CloudEmpire for business inquiries?', 'Email contact@cloudempire.tech or call +91 94756 39634. You can also use the inquiry form below to prepare an email.'],
+  ['Do you provide Salesforce customization?', 'Yes. We offer Salesforce customization, integration, and automation to improve CRM workflows.'],
+  ['What industries do you serve?', 'Our work spans education, healthcare, retail, finance, and IT enterprises.'],
+  ['Can you help with cloud migration?', 'Yes. We help organizations move from legacy infrastructure to modern cloud environments including AWS, Azure, and Google Cloud.'],
   ['Do you offer both Android and iOS development?', 'Yes. We build Android, iOS, and cross-platform mobile experiences with a focus on performance and thoughtful user experience.'],
+  ['What makes CloudEmpire different?', 'We combine technical expertise with customer-focused strategy to create solutions tailored to measurable results and long-term growth.'],
   ['Can you work with our existing systems?', 'Absolutely. Our team handles integrations, Salesforce customization, cloud migration, and modernization of existing workflows.'],
   ['Do you support products after launch?', 'Yes. We provide ongoing maintenance, optimization, security, and technical support as your product grows.'],
+  ['How can I request a project quote?', 'Share your project details through the contact form or email contact@cloudempire.tech and our team will follow up.'],
+  ['Are you hiring or offering internships?', 'Opportunities open periodically. Follow CloudEmpire on LinkedIn for updates.'],
+  ['What is CloudEmpire’s mission?', 'We help businesses grow through innovative, secure, and scalable technology that makes digital transformation practical.'],
 ];
 
 function Reveal({ children, className = '' }) {
@@ -140,7 +150,7 @@ function App() {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
     const subject = encodeURIComponent(`Project inquiry: ${data.get('service') || 'New project'}`);
-    const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nService: ${data.get('service')}\n\n${data.get('message')}`);
+    const body = encodeURIComponent(`Name: ${data.get('name')}\nEmail: ${data.get('email')}\nPhone: ${data.get('phone')}\nService: ${data.get('service')}\nPreferred date: ${data.get('date')}\nPreferred time: ${data.get('time')}\n\n${data.get('message')}`);
     window.location.href = `mailto:contact@cloudempire.tech?subject=${subject}&body=${body}`;
     setFormMessage('Your email app will open with your message ready to send.');
   };
@@ -177,7 +187,7 @@ function App() {
 
       <section className="faq section-pad"><div className="container faq-layout"><Reveal><div className="section-label"><span>GOOD TO KNOW</span><i/></div><h2>Curious?<br/><em>We get it.</em></h2><p>A few answers to help you get started.</p></Reveal><div className="faq-list">{faqs.map(([q,a],i)=><div className={`faq-item ${activeFaq===i?'open':''}`} key={q}><button onClick={()=>setActiveFaq(activeFaq===i?-1:i)} aria-expanded={activeFaq===i}><span>{q}</span><ChevronDown size={19}/></button>{activeFaq===i&&<p>{a}</p>}</div>)}</div></div></section>
 
-      <section className="contact section-pad" id="contact"><div className="contact-glow"/><div className="container contact-grid"><Reveal><div className="section-label"><span>06 / LET’S CONNECT</span><i/></div><h2>Have a big idea?<br/><em>Let’s make it real.</em></h2><p>Tell us what you’re imagining. We’ll help you find the clearest path from possibility to product.</p><div className="contact-details"><a href="mailto:contact@cloudempire.tech">contact@cloudempire.tech <ArrowUpRight size={17}/></a><a href="tel:+919475639634">+91 94756 39634 <ArrowUpRight size={17}/></a><span>328, Sahapur Colony, New Alipore<br/>Kolkata 700053, India</span></div></Reveal><Reveal className="form-shell"><div className="form-head"><span>START A CONVERSATION</span><Sparkles size={18}/></div><form onSubmit={submitContact}><label htmlFor="name">Your name</label><input id="name" name="name" placeholder="How should we call you?" required/><label htmlFor="email">Email address</label><input id="email" name="email" type="email" placeholder="you@company.com" required/><label htmlFor="service">What are you looking for?</label><select id="service" name="service" defaultValue=""><option value="" disabled>Select a service</option><option>AI & automation</option><option>Website design & development</option><option>Android app development</option><option>iOS app development</option>{serviceGroups.flatMap(s=>s.items).filter(x=>!['AI-Powered Analytics','Web Design & Development','Mobile App Development'].includes(x)).map(x=><option key={x}>{x}</option>)}</select><label htmlFor="message">Tell us about it</label><textarea id="message" name="message" rows="3" placeholder="The idea, the challenge, the big dream..." required/><button type="submit" className="button button-primary">Send your inquiry <ArrowUpRight size={18}/></button><p className="form-note" role="status">{formMessage || 'This opens your email app with your inquiry ready to send.'}</p></form></Reveal></div></section>
+      <section className="contact section-pad" id="contact"><div className="contact-glow"/><div className="container contact-grid"><Reveal><div className="section-label"><span>06 / LET’S CONNECT</span><i/></div><h2>Have a big idea?<br/><em>Let’s make it real.</em></h2><p>Tell us what you’re imagining. We’ll help you find the clearest path from possibility to product.</p><div className="contact-details"><a href="mailto:contact@cloudempire.tech">contact@cloudempire.tech <ArrowUpRight size={17}/></a><a href="tel:+919475639634">+91 94756 39634 <ArrowUpRight size={17}/></a><span>328, Sahapur Colony, New Alipore<br/>Kolkata 700053, India</span></div></Reveal><Reveal className="form-shell"><div className="form-head"><span>START A CONVERSATION</span><Sparkles size={18}/></div><form onSubmit={submitContact}><label htmlFor="name">Your name</label><input id="name" name="name" placeholder="How should we call you?"/><label htmlFor="email">Email address *</label><input id="email" name="email" type="email" placeholder="you@company.com" required/><label htmlFor="phone">Phone number</label><input id="phone" name="phone" type="tel" placeholder="Your contact number"/><label htmlFor="service">What are you looking for?</label><select id="service" name="service" defaultValue=""><option value="" disabled>Select a service</option><option>AI & automation</option><option>Website design & development</option><option>Android app development</option><option>iOS app development</option>{serviceGroups.flatMap(s=>s.items).filter(x=>!['AI-Powered Analytics','Web Design & Development','Mobile App Development'].includes(x)).map(x=><option key={x}>{x}</option>)}</select><div className="form-row"><div><label htmlFor="date">Preferred date</label><input id="date" name="date" type="date"/></div><div><label htmlFor="time">Preferred time</label><input id="time" name="time" type="time"/></div></div><label htmlFor="message">Tell us about it</label><textarea id="message" name="message" rows="3" placeholder="The idea, the challenge, the big dream..."/><button type="submit" className="button button-primary">Send your inquiry <ArrowUpRight size={18}/></button><p className="form-note" role="status">{formMessage || 'Only email is required. This opens your email app with your inquiry ready to send.'}</p></form></Reveal></div></section>
     </main>
 
     <footer><div className="container footer-top"><div><img src="/logo-light.png" alt="CloudEmpire"/><p>Thoughtful technology.<br/>Extraordinary possibilities.</p></div><div className="footer-links"><div><span>EXPLORE</span><a href="#about">About</a><a href="#expertise">Expertise</a><a href="#work">Work</a><a href="#process">Process</a></div><div><span>CONNECT</span><a href="#contact">Contact</a><a href="mailto:contact@cloudempire.tech">Email us</a><a href="https://www.linkedin.com/company/cloudempire" target="_blank" rel="noreferrer">LinkedIn</a></div></div></div><div className="container footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. All rights reserved.</span><a href="#top">Back to top ↑</a></div></footer>
