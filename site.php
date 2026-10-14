@@ -23,10 +23,11 @@ $title=$article ? ($article['title'] ?? 'Article').' | CloudEmpire Blog' : ($ser
 });
 $description=$article['description'] ?? $service['description'] ?? 'CloudEmpire builds AI solutions, websites, Android and iOS apps, supported by cloud and enterprise expertise.';
 $canonical='https://cloudempire.tech/'.($path!=='' ? $path.'/' : '');
+$cover=isset($article['image']) && is_string($article['image']) && $article['image']!=='' ? (preg_match('~^https?://~i',$article['image']) ? $article['image'] : 'https://cloudempire.tech/'.ltrim($article['image'],'/')) : null;
 $body='<main class="prerender"><h1>'.e($title).'</h1><p>'.e($description).'</p>';
 if ($article) {
     $body='<main class="prerender"><article><h1>'.e($article['title']).'</h1><p>'.e($article['intro'] ?? '').'</p>';
-    if (!empty($article['image'])) $body.='<figure><img src="/'.e($article['image']).'" alt="'.e($article['imageAlt'] ?? $article['title']).'"></figure>';
+    if ($cover) $body.='<figure><img src="'.e($cover).'" alt="'.e($article['imageAlt'] ?? $article['title']).'"></figure>';
     foreach (($article['sections'] ?? []) as $section) {
         $body.='<section><h2>'.e($section['heading'] ?? '').'</h2>';
         foreach (($section['paragraphs'] ?? []) as $paragraph) $body.='<p>'.e($paragraph).'</p>';
@@ -48,6 +49,22 @@ if ($template===false) { http_response_code(503); exit('Site template unavailabl
 $html=preg_replace('~<title>.*?</title>~s','<title>'.e($title).'</title>',$template,1);
 $html=preg_replace('~<meta name="description" content="[^"]*"\s*/?>~','<meta name="description" content="'.e($description).'" />',$html,1);
 $html=preg_replace('~<link rel="canonical" href="[^"]*"\s*/?>~','<link rel="canonical" href="'.e($canonical).'" />',$html,1);
+$openGraph=['og:type'=>$article ? 'article' : 'website','og:title'=>$title,'og:description'=>$description,'og:url'=>$canonical];
+foreach ($openGraph as $key=>$value) {
+    $html=preg_replace_callback('~<meta property="'.preg_quote($key,'~').'" content="[^"]*"\s*/?>~',static fn()=>'<meta property="'.$key.'" content="'.e($value).'" />',$html,1);
+}
+if ($cover) $html=str_replace('</head>','<meta property="og:image" content="'.e($cover).'" /><meta name="twitter:card" content="summary_large_image" /></head>',$html);
+$schema=$article ? [
+    '@context'=>'https://schema.org','@type'=>'BlogPosting','headline'=>$article['title'],'description'=>$description,
+    'datePublished'=>$article['date'] ?? null,'dateModified'=>$article['date'] ?? null,'mainEntityOfPage'=>$canonical,
+    'author'=>['@type'=>'Organization','name'=>'CloudEmpire'],'publisher'=>['@type'=>'Organization','name'=>'CloudEmpire'],
+    'image'=>$cover,
+] : ($service ? [
+    '@context'=>'https://schema.org','@type'=>'Service','name'=>$service['title'],'description'=>$description,
+    'provider'=>['@type'=>'Organization','name'=>'CloudEmpire'],'url'=>$canonical,
+] : ['@context'=>'https://schema.org','@type'=>'WebPage','name'=>$title,'description'=>$description,'url'=>$canonical]);
+$schemaJson=json_encode($schema,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_INVALID_UTF8_SUBSTITUTE);
+$html=preg_replace_callback('~<script type="application/ld\+json">.*?</script>~s',static fn()=>'<script type="application/ld+json">'.$schemaJson.'</script>',$html,1);
 $html=preg_replace_callback('~<div id="root">.*?</div>~s',static fn()=>'<div id="root">'.$body.'</div>',$html,1);
 $json=json_encode($data,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE);
 $html=str_replace('</head>','<script>window.__CLOUDEMPIRE_CONTENT__='.$json.';</script></head>',$html);
