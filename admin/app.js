@@ -1,10 +1,8 @@
-const repo = 'cloudempireTech/cloudempire';
-const apiRoot = 'https://api.github.com/repos/' + repo;
-const apiHeaders = () => ({Accept:'application/vnd.github+json',Authorization:'Bearer ' + token,'X-GitHub-Api-Version':'2022-11-28'});
 const $ = selector => document.querySelector(selector);
 const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','database','files'];
 const labels = {overview:'Overview',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',database:'Database & storage',files:'Other content'};
-let token = '';
+let authenticated = false;
+let csrf = '';
 let data = null;
 let contentSha = '';
 let currentTab = 'overview';
@@ -13,6 +11,8 @@ let metrics = null;
 const dashboardUrl = new URL('../../api/dashboard.php', import.meta.url);
 const setupUrl = new URL('../../api/setup.php', import.meta.url);
 const mediaUrl = new URL('../../api/media.php', import.meta.url);
+const authUrl = new URL('../../api/auth.php', import.meta.url);
+const contentUrl = new URL('../../api/content.php', import.meta.url);
 
 function notice(message, error=false) {
   const box = $('#notice');
@@ -20,42 +20,30 @@ function notice(message, error=false) {
   box.classList.toggle('error', error);
   box.hidden = false;
 }
-function encodeUtf8(text) {
-  const bytes = new TextEncoder().encode(text);
-  let binary = '';
-  for (let i=0;i<bytes.length;i+=8192) binary += String.fromCharCode(...bytes.slice(i,i+8192));
-  return btoa(binary);
-}
-function decodeUtf8(value) {
-  return new TextDecoder().decode(Uint8Array.from(atob(value.replace(/\s/g,'')), c => c.charCodeAt(0)));
-}
-async function github(path, options={}) {
-  const response = await fetch(apiRoot + path,{...options,headers:{...apiHeaders(),...(options.body?{'Content-Type':'application/json'}:{})}});
+async function api(endpoint,options={}) {
+  const headers={Accept:'application/json',...(options.body && !(options.body instanceof FormData) ? {'Content-Type':'application/json'} : {}),...(options.method && options.method !== 'GET' && csrf ? {'X-CSRF-Token':csrf} : {})};
+  const response = await fetch(endpoint,{...options,credentials:'same-origin',headers});
+  let result={};
+  try { result=await response.json(); } catch {}
   if (!response.ok) {
-    let detail = '';
-    try { detail = (await response.json()).message || ''; } catch {}
-    throw new Error('GitHub ' + response.status + ': ' + (detail || response.statusText));
+    if (response.status===401 && authenticated) { authenticated=false; $('#workspace').hidden=true; $('#signin').hidden=false; }
+    throw new Error(result.error || 'Request failed (' + response.status + ').');
   }
-  return response.status === 204 ? null : response.json();
+  return result;
 }
 async function loadContent() {
-  const file = await github('/contents/src/content.json?ref=main');
+  const file = await api(contentUrl);
   contentSha = file.sha;
-  data = JSON.parse(decodeUtf8(file.content));
+  data = file.content;
 }
-async function login() {
-  const value = $('#token').value.trim();
-  if (!value) return;
-  token = value;
-  $('#login').disabled = true;
+async function openWorkspace() {
+  authenticated=true;
+  $('#signin').hidden=true;
+  $('#bootstrap').hidden=true;
+  $('#workspace').hidden=false;
+  $('#connection').textContent='Connected to CloudEmpire';
   try {
-    const details = await github('');
-    if (!details.permissions?.push) throw new Error('This GitHub token does not have write access to the CloudEmpire repository.');
     await loadContent();
-    $('#token').value = '';
-    $('#signin').hidden = true;
-    $('#workspace').hidden = false;
-    $('#connection').textContent = 'Connected to GitHub';
     $('#summary').replaceChildren();
     for (const [value,label] of [[data.articles.length,'Blog posts'],[data.services.length,'Services'],[data.projects.length,'Projects']]) {
       const card = document.createElement('div');
@@ -68,15 +56,20 @@ async function login() {
       $('#summary').append(card);
     }
     switchTab('overview');
-    loadMetrics();
-    loadSetupStatus();
-  } catch (error) {
-    token = '';
-    alert(error.message);
-  } finally { $('#login').disabled = false; }
+  } catch (error) { notice(error.message,true); }
+  loadMetrics();
+  loadSetupStatus();
+}
+async function initialize() {
+  try {
+    const state=await api(authUrl);
+    if (state.loggedIn) { csrf=state.csrf; await openWorkspace(); }
+    else { $('#signin').hidden=state.setupRequired; $('#bootstrap').hidden=!state.setupRequired; }
+  } catch(error) { $('#signin').hidden=true; $('#bootstrap').hidden=true; $('#connection').textContent=error.message; }
 }
 function switchTab(tab) {
-  if (!tabs.includes(tab) || !token) return;
+  if (!tabs.includes(tab) || !authenticated) return;
+  if (!data && ['articles','services','projects','processSteps'].includes(tab)) { notice('Content is unavailable. Update the GitHub publishing token in Database & storage.',true); return; }
   currentTab = tab;
   selected = -1;
   document.querySelectorAll('.sidebar nav button').forEach(button => button.classList.toggle('active',button.dataset.tab===tab));
@@ -172,9 +165,7 @@ async function uploadImage(file) {
   if (file.size > 3*1024*1024 || !['image/png','image/jpeg','image/webp'].includes(file.type)) throw new Error('Choose a PNG, JPEG or WebP image under 3 MB.');
   const body = new FormData();
   body.append('image', file);
-  const response = await fetch(mediaUrl,{method:'POST',headers:{Authorization:'Bearer ' + token},body});
-  const result = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(result.error || 'Image upload failed on Hostinger.');
+  const result = await api(mediaUrl,{method:'POST',body});
   return result.path;
 }
 async function save(event) {
@@ -187,10 +178,10 @@ async function save(event) {
       const file = $('#field-upload').files[0];
       if (file) item.image = await uploadImage(file);
     }
-    data[currentTab][selected] = item;
-    const source = JSON.stringify(data,null,2) + '\n';
-    const response = await github('/contents/src/content.json',{method:'PUT',body:JSON.stringify({message:'Update ' + currentTab + ': ' + item.title,content:encodeUtf8(source),sha:contentSha,branch:'main'})});
-    contentSha = response.content.sha;
+    const updated={...data,[currentTab]:data[currentTab].map((entry,index)=>index===selected?item:entry)};
+    const response = await api(contentUrl,{method:'PUT',body:JSON.stringify({message:'Update ' + currentTab + ': ' + item.title,content:updated,sha:contentSha})});
+    data=updated;
+    contentSha = response.sha;
     notice('Saved to GitHub. Publishing is running; check Actions for the build and Hostinger for deployment.');
     renderList();
     renderForm();
@@ -198,11 +189,9 @@ async function save(event) {
   finally { button.disabled = false; }
 }
 async function loadMetrics() {
-  if (!token) return;
+  if (!authenticated) return;
   try {
-    const response = await fetch(dashboardUrl,{headers:{Authorization:'Bearer ' + token,Accept:'application/json'}});
-    if (!response.ok) throw new Error('Live analytics and inquiries require the Hostinger PHP endpoint.');
-    metrics = await response.json();
+    metrics = await api(dashboardUrl);
     renderMetrics();
   } catch(error) {
     $('#messages-content').textContent = 'Live inquiries are unavailable here. Hostinger must run PHP and allow a private writable data directory.';
@@ -211,17 +200,15 @@ async function loadMetrics() {
   }
 }
 async function loadSetupStatus() {
-  if (!token) return;
+  if (!authenticated) return;
   try {
-    const response = await fetch(setupUrl,{headers:{Authorization:'Bearer ' + token,Accept:'application/json'}});
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.error || 'Could not check the database.');
+    const result = await api(setupUrl);
     $('#database-status').textContent = result.configured ? 'Database settings saved. Inquiries and analytics use MySQL.' : 'Database connection needed. Until then, inquiries and analytics are saved in private hosting files.';
   } catch(error) { $('#database-status').textContent = error.message; }
 }
 function renderMetrics() {
   if (!metrics) return;
-  $('#connection').textContent = metrics.storage === 'mysql' ? 'GitHub · Hostinger MySQL' : 'GitHub · Hostinger files';
+  $('#connection').textContent = metrics.storage === 'mysql' ? 'Signed in · Hostinger MySQL' : 'Signed in · Hostinger files';
   const messages = $('#messages-content');
   messages.replaceChildren();
   if (!metrics.messages.length) messages.textContent = 'No inquiries yet.';
@@ -257,22 +244,41 @@ function renderMetrics() {
   if (!metrics.pages.length) pages.textContent='No page views recorded yet.';
 }
 document.querySelectorAll('.sidebar nav button').forEach(button => button.addEventListener('click',() => switchTab(button.dataset.tab)));
-$('#login').addEventListener('click',login);
-$('#token').addEventListener('keydown',event => {if(event.key==='Enter') login();});
-$('#logout').addEventListener('click',() => {token='';data=null;metrics=null;$('#workspace').hidden=true;$('#signin').hidden=false;$('#connection').textContent='Sign in required';});
+$('#login-form').addEventListener('submit',async event => {
+  event.preventDefault();
+  const button=$('#login'); button.disabled=true;
+  try {
+    const result=await api(new URL('?action=login',authUrl),{method:'POST',body:JSON.stringify({email:$('#login-email').value,password:$('#login-password').value})});
+    csrf=result.csrf; $('#login-password').value=''; await openWorkspace();
+  } catch(error) { alert(error.message); }
+  finally { button.disabled=false; }
+});
+$('#bootstrap-form').addEventListener('submit',async event => {
+  event.preventDefault();
+  if ($('#setup-password').value !== $('#setup-confirm').value) { alert('Passwords do not match.'); return; }
+  const button=$('#bootstrap-form button[type=submit]'); button.disabled=true;
+  try {
+    const result=await api(new URL('?action=bootstrap',authUrl),{method:'POST',body:JSON.stringify({email:$('#setup-email').value,password:$('#setup-password').value,githubToken:$('#setup-token').value})});
+    csrf=result.csrf; $('#setup-password').value=''; $('#setup-confirm').value=''; $('#setup-token').value=''; await openWorkspace();
+  } catch(error) { alert(error.message); }
+  finally { button.disabled=false; }
+});
+$('#logout').addEventListener('click',async () => {
+  try { await api(new URL('?action=logout',authUrl),{method:'POST',body:'{}'}); } catch {}
+  authenticated=false; csrf=''; data=null; metrics=null; $('#workspace').hidden=true; $('#signin').hidden=false; $('#connection').textContent='Sign in required';
+});
 $('#add-item').addEventListener('click',() => {
   const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',deliverables:[],outcome:'',icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
   data[currentTab].push(defaults[currentTab]);selected=data[currentTab].length-1;renderList();renderForm();
 });
 $('#delete-item').addEventListener('click',async () => {
   if (selected<0 || !confirm('Delete this item from the site?')) return;
-  const removed=data[currentTab].splice(selected,1)[0];
-  selected=-1;
-  const source=JSON.stringify(data,null,2) + '\n';
+  const removed=data[currentTab][selected];
+  const updated={...data,[currentTab]:data[currentTab].filter((_,index)=>index!==selected)};
   try {
-    const result=await github('/contents/src/content.json',{method:'PUT',body:JSON.stringify({message:'Remove ' + currentTab + ': ' + removed.title,content:encodeUtf8(source),sha:contentSha,branch:'main'})});
-    contentSha=result.content.sha;notice('Removed from GitHub. Publishing is running.');renderList();
-  } catch(error) {data[currentTab].push(removed);notice(error.message,true);renderList();}
+    const result=await api(contentUrl,{method:'PUT',body:JSON.stringify({message:'Remove ' + currentTab + ': ' + removed.title,content:updated,sha:contentSha})});
+    data=updated; selected=-1; contentSha=result.sha;notice('Removed from GitHub. Publishing is running.');renderList();
+  } catch(error) {notice(error.message,true);renderList();}
 });
 $('#content-form').addEventListener('submit',save);
 $('#database-form').addEventListener('submit',async event => {
@@ -281,9 +287,7 @@ $('#database-form').addEventListener('submit',async event => {
   const button=$('#database-form button[type=submit]');
   button.disabled=true;
   try {
-    const response=await fetch(setupUrl,{method:'POST',headers:{Authorization:'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({password})});
-    const result=await response.json();
-    if (!response.ok) throw new Error(result.error || 'Database setup failed.');
+    await api(setupUrl,{method:'POST',body:JSON.stringify({password})});
     $('#database-password').value='';
     notice('MySQL connected. Existing inquiries and page views were imported.');
     await loadSetupStatus();
@@ -291,3 +295,14 @@ $('#database-form').addEventListener('submit',async event => {
   } catch(error) { notice(error.message,true); }
   finally { button.disabled=false; }
 });
+$('#publishing-form').addEventListener('submit',async event => {
+  event.preventDefault();
+  const button=$('#publishing-form button[type=submit]'); button.disabled=true;
+  try {
+    await api(new URL('?action=token',authUrl),{method:'POST',body:JSON.stringify({password:$('#publishing-password').value,githubToken:$('#publishing-token').value})});
+    $('#publishing-password').value=''; $('#publishing-token').value=''; notice('Publishing token updated.');
+  } catch(error) { notice(error.message,true); }
+  finally { button.disabled=false; }
+});
+if (location.hostname === 'cloudempiretech.github.io') location.replace('https://cloudempire.tech/admin/');
+else initialize();

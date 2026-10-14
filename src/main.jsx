@@ -6,6 +6,7 @@ import { articles, processSteps, projects, services } from './content.mjs';
 import './styles.css';
 import './pages.css';
 import './interaction.css';
+import './home-motion.css';
 import './telemetry.js';
 
 const siteRoot = window.location.pathname.startsWith('/cloudempire/') ? '/cloudempire/' : '/';
@@ -64,6 +65,7 @@ function Footer(){return <footer className="multi-footer"><div className="contai
 function Home(){
   const [active,setActive]=useState(0);
   useEffect(()=>{
+    document.documentElement.classList.add('snap-home');
     const targets=[...document.querySelectorAll('.home-section')];
     const reduced=matchMedia('(prefers-reduced-motion: reduce)');
     let frame=0;
@@ -71,25 +73,32 @@ function Home(){
       frame=0;
       const height=window.innerHeight;
       let current=0;
+      let settling=false;
       for(const target of targets){
         const top=target.getBoundingClientRect().top;
-        const progress=Math.max(0,Math.min(1,1-top/height));
-        const eased=reduced.matches?1:Math.max(0,Math.min(1,(progress-.08)/.82));
+        const progress=Math.max(0,Math.min(1,(1-top/height-.04)/.83));
+        const desired=reduced.matches ? 1 : progress*progress*(3-2*progress);
+        const previous=Number(target.dataset.motion ?? (target.dataset.scene==='0' ? 1 : 0));
+        const eased=reduced.matches ? 1 : previous+(desired-previous)*.19;
+        if(Math.abs(desired-eased)>.002)settling=true;
+        target.dataset.motion=String(eased);
         target.style.setProperty('--scene-opacity',eased.toFixed(3));
-        target.style.setProperty('--scene-shift',`${Math.round((1-eased)*76)}px`);
-        target.style.setProperty('--scene-art-shift',`${Math.round((1-eased)*125)}px`);
-        target.style.setProperty('--scene-scale',(0.91+eased*.09).toFixed(3));
+        target.style.setProperty('--scene-shift',`${Math.round((1-eased)*92)}px`);
+        target.style.setProperty('--scene-art-shift',`${Math.round((1-eased)*145)}px`);
+        target.style.setProperty('--scene-scale',(0.88+eased*.12).toFixed(3));
+        if(target.dataset.scene==='5')target.dataset.motionReady=progress>.4 || reduced.matches ? 'true' : 'false';
         if(top<height*.54)current=Number(target.dataset.scene);
       }
       if(document.querySelector('.multi-footer')?.getBoundingClientRect().top<height*.55)current=6;
       setActive(previous=>previous===current?previous:current);
+      if(settling)frame=requestAnimationFrame(update);
     };
     const schedule=()=>{if(!frame)frame=requestAnimationFrame(update);};
     update();
     window.addEventListener('scroll',schedule,{passive:true});
     window.addEventListener('resize',schedule);
     reduced.addEventListener('change',schedule);
-    return()=>{window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
+    return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
   },[]);
   return <main className="home-main">
     <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><div className="hero-noise"/><div className="hero-orb"><div className="orb-core"/><div className="orb-ring ring-one"/><div className="orb-ring ring-two"/><div className="orb-highlight"/></div><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>Build what’s<br/><span>next.</span></h1><p>AI that thinks ahead. Websites that stand apart. Android and iOS apps that feel effortless. We bring ambitious ideas to life.</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>

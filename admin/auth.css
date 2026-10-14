@@ -1,0 +1,7 @@
+.signin[hidden],#workspace[hidden]{display:none!important}
+.signin form>label,.setup-card form>label{display:block;margin:19px 0 8px;font-size:12px;font-weight:800;color:#cbd7ed}
+.signin form>input,.setup-card form>input{width:100%}
+.auth-button{margin-top:23px;min-width:150px}
+.secondary-card{margin-top:20px}
+.signin .hint{margin:17px 0 0}
+.setup-card .hint{margin-bottom:0}

@@ -1,0 +1,31 @@
+/* Each focus scene takes a viewport and eases into the next while native scrolling stays responsive. */
+html.snap-home{scroll-snap-type:y proximity;scroll-padding-top:0}
+.home-main .home-section{scroll-snap-align:start;scroll-snap-stop:normal}
+.home-main+.multi-footer{scroll-snap-align:start}
+.home-focus .focus-copy>*{opacity:0;translate:0 28px;transition:opacity .85s cubic-bezier(.22,1,.36,1),translate .95s cubic-bezier(.22,1,.36,1)}
+.home-focus.is-active .focus-copy>*{opacity:1;translate:0 0}
+.home-focus .focus-copy>*:nth-child(2){transition-delay:.07s}
+.home-focus .focus-copy>*:nth-child(3){transition-delay:.14s}
+.home-focus .focus-copy>*:nth-child(4){transition-delay:.21s}
+.home-focus .focus-copy>*:nth-child(5){transition-delay:.28s}
+.home-focus .focus-copy>*:nth-child(6){transition-delay:.35s}
+.home-focus .world-halo{transition:scale .9s cubic-bezier(.22,1,.36,1);scale:.88}
+.home-focus.is-active .world-halo{scale:1}
+.home-focus .device-scene .ai-chart,.home-focus .device-scene .ai-insight,.home-focus .device-scene .browser-copy,.home-focus .device-scene .browser-art,.home-focus .device-scene .app-card-gradient,.home-focus .device-scene .activity-orb,.home-focus .device-scene .app-metrics,.home-focus .device-scene .trip-tile,.home-focus .device-scene .ios-picture{opacity:0;translate:0 24px;scale:.96;transition:opacity .85s cubic-bezier(.22,1,.36,1),translate 1s cubic-bezier(.22,1,.36,1),scale 1s cubic-bezier(.22,1,.36,1)}
+.home-focus.is-active .device-scene .ai-chart,.home-focus.is-active .device-scene .ai-insight,.home-focus.is-active .device-scene .browser-copy,.home-focus.is-active .device-scene .browser-art,.home-focus.is-active .device-scene .app-card-gradient,.home-focus.is-active .device-scene .activity-orb,.home-focus.is-active .device-scene .app-metrics,.home-focus.is-active .device-scene .trip-tile,.home-focus.is-active .device-scene .ios-picture{opacity:1;translate:0 0;scale:1}
+.home-focus .device-scene .ai-chart,.home-focus .device-scene .browser-copy,.home-focus .device-scene .app-card-gradient,.home-focus .device-scene .activity-orb,.home-focus .device-scene .trip-tile{transition-delay:.13s}
+.home-focus .device-scene .ai-insight,.home-focus .device-scene .browser-art,.home-focus .device-scene .app-metrics,.home-focus .device-scene .ios-picture{transition-delay:.31s}
+.home-focus .chart-bars i{scale:1 0;transform-origin:bottom;transition:scale .9s cubic-bezier(.22,1,.36,1)}
+.home-focus.is-active .chart-bars i{scale:1 1}
+.home-focus .chart-bars i:nth-child(3n + 1){transition-delay:.38s}
+.home-focus .chart-bars i:nth-child(3n + 2){transition-delay:.44s}
+.home-focus .chart-bars i:nth-child(3n){transition-delay:.5s}
+.home-focus .phone-front{translate:0 26px;transition:translate 1.1s cubic-bezier(.22,1,.36,1)}
+.home-focus .phone-back{translate:0 -14px;transition:translate 1.1s cubic-bezier(.22,1,.36,1)}
+.home-focus.is-active .phone-front,.home-focus.is-active .phone-back{translate:0 0}
+.home-finale .section-label,.home-finale h2,.home-finale p,.home-finale .hero-actions{opacity:0;translate:0 30px;transition:opacity .9s cubic-bezier(.22,1,.36,1),translate 1s cubic-bezier(.22,1,.36,1)}
+.home-finale[data-motion-ready="true"] .section-label,.home-finale[data-motion-ready="true"] h2,.home-finale[data-motion-ready="true"] p,.home-finale[data-motion-ready="true"] .hero-actions{opacity:1;translate:0 0}
+.home-finale h2{transition-delay:.1s}.home-finale p{transition-delay:.2s}.home-finale .hero-actions{transition-delay:.3s}
+@media(hover:hover){.service-page-card.reveal.is-visible,.blog-card.reveal.is-visible,.case-card.reveal.is-visible,.value-grid>.reveal.is-visible,.related-grid>a{transition:transform .65s cubic-bezier(.22,1,.36,1),box-shadow .65s cubic-bezier(.22,1,.36,1),border-color .35s,background .35s}.service-page-card.reveal.is-visible:hover,.blog-card.reveal.is-visible:hover,.case-card.reveal.is-visible:hover,.value-grid>.reveal.is-visible:hover,.related-grid>a:hover{transform:translateY(-10px);box-shadow:0 28px 65px rgba(0,0,0,.25)}}
+@media(max-width:760px){html.snap-home{scroll-snap-type:y proximity}.home-main .home-section{scroll-snap-stop:normal}}
+@media(prefers-reduced-motion:reduce){html.snap-home{scroll-snap-type:none}.home-focus .focus-copy>*,.home-focus .device-scene .ai-chart,.home-focus .device-scene .ai-insight,.home-focus .device-scene .browser-copy,.home-focus .device-scene .browser-art,.home-focus .device-scene .app-card-gradient,.home-focus .device-scene .activity-orb,.home-focus .device-scene .app-metrics,.home-focus .device-scene .trip-tile,.home-focus .device-scene .ios-picture,.home-finale .section-label,.home-finale h2,.home-finale p,.home-finale .hero-actions{opacity:1;translate:0 0;scale:1;transition:none}.home-focus .chart-bars i{scale:1 1;transition:none}.home-focus .phone-front,.home-focus .phone-back{translate:0 0;transition:none}}

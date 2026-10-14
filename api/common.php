@@ -57,14 +57,7 @@ function database(): ?PDO {
     }
 }
 
-function verify_admin(): void {
-    $header = $_SERVER['HTTP_AUTHORIZATION'] ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '';
-    if ($header === '' && function_exists('getallheaders')) {
-        foreach (getallheaders() as $name => $value) {
-            if (strcasecmp($name, 'Authorization') === 0) $header = $value;
-        }
-    }
-    if (!preg_match('/^Bearer ([A-Za-z0-9_\-]+)$/', $header, $match)) respond(401, ['error' => 'Sign in required.']);
+function github_access(string $token): bool {
     if (!function_exists('curl_init')) respond(503, ['error' => 'PHP cURL is required.']);
     $request = curl_init('https://api.github.com/repos/cloudempireTech/cloudempire');
     curl_setopt_array($request, [
@@ -72,7 +65,7 @@ function verify_admin(): void {
         CURLOPT_TIMEOUT => 8,
         CURLOPT_HTTPHEADER => [
             'Accept: application/vnd.github+json',
-            'Authorization: Bearer ' . $match[1],
+            'Authorization: Bearer ' . $token,
             'User-Agent: CloudEmpire-Admin',
             'X-GitHub-Api-Version: 2022-11-28',
         ],
@@ -81,11 +74,47 @@ function verify_admin(): void {
     $status = curl_getinfo($request, CURLINFO_HTTP_CODE);
     curl_close($request);
     $repo = is_string($response) ? json_decode($response, true) : null;
-    if ($status !== 200 || !is_array($repo) ||
-        strcasecmp((string)($repo['full_name'] ?? ''), 'cloudempireTech/cloudempire') !== 0 ||
-        empty($repo['permissions']['push'])) {
-        respond(403, ['error' => 'Repository write access required.']);
+    return $status === 200 && is_array($repo) && strcasecmp((string)($repo['full_name'] ?? ''), 'cloudempireTech/cloudempire') === 0 && !empty($repo['permissions']['push']);
+}
+
+function start_admin_session(): void {
+    if (session_status() === PHP_SESSION_ACTIVE) return;
+    session_name('cloudempire_admin');
+    session_set_cookie_params(['lifetime'=>0,'path'=>'/api/','secure'=>true,'httponly'=>true,'samesite'=>'Strict']);
+    ini_set('session.use_strict_mode','1');
+    session_start();
+}
+
+function admin_logged_in(): bool {
+    start_admin_session();
+    return ($_SESSION['admin_id'] ?? null) === 1 && ($_SESSION['signed_in_at'] ?? 0) > time()-28800;
+}
+
+function verify_admin(bool $write = false): void {
+    if (!admin_logged_in()) respond(401, ['error'=>'Sign in required.']);
+    if ($write) {
+        $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+        $expected = 'https://' . ($_SERVER['HTTP_HOST'] ?? '');
+        if ($origin !== '' && $origin !== $expected) respond(403,['error'=>'Origin is not allowed.']);
+        $given = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? '';
+        if (!is_string($given) || !hash_equals((string)($_SESSION['csrf'] ?? ''),$given)) respond(403,['error'=>'Session check failed. Refresh the admin page.']);
     }
+}
+
+function private_settings(string $name): array {
+    $path = private_dir() . DIRECTORY_SEPARATOR . $name . '.php';
+    if (!is_file($path)) respond(503,['error'=>'Private ' . $name . ' settings are missing.']);
+    $settings = require $path;
+    if (!is_array($settings)) respond(503,['error'=>'Private settings are invalid.']);
+    return $settings;
+}
+
+function save_private_settings(string $name, array $settings): void {
+    $path = private_dir() . DIRECTORY_SEPARATOR . $name . '.php';
+    $temp = $path . '.' . bin2hex(random_bytes(6)) . '.tmp';
+    if (file_put_contents($temp,'<?php return ' . var_export($settings,true) . ';',LOCK_EX) === false) respond(503,['error'=>'Could not save private settings.']);
+    @chmod($temp,0600);
+    if (!@rename($temp,$path)) { @unlink($temp); respond(503,['error'=>'Could not activate private settings.']); }
 }
 
 function append_legacy(string $name, array $record): void {

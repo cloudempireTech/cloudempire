@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     readfile($path); exit;
 }
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') respond(405,['error'=>'Method not allowed.']);
-verify_admin();
+verify_admin(true);
 $db=database(); if ($db===null) respond(409,['error'=>'Connect MySQL in Admin → Database before uploading images.']);
 $file=$_FILES['image'] ?? null;
 if (!is_array($file) || ($file['error'] ?? UPLOAD_ERR_NO_FILE)!==UPLOAD_ERR_OK || ($file['size'] ?? 0)>3*1024*1024) respond(400,['error'=>'Choose an image under 3 MB.']);
