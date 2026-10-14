@@ -4,9 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 0.0.0.0",
+    "dev": "vite --host 0.0.0.0 --open /app.html",
     "build": "vite build",
-    "preview": "vite preview --host 0.0.0.0"
+    "preview": "vite preview --host 0.0.0.0 --open /app.html",
+    "publish:pages": "npm run build && node scripts/publish-pages.mjs"
   },
   "dependencies": {
     "react": "^19.2.0",

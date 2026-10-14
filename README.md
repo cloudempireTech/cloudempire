@@ -9,7 +9,9 @@ npm install
 npm run dev
 ```
 
-Open the local URL shown by Vite. For a production bundle, run `npm run build`; deploy the generated `dist/` directory to a static host.
+Vite opens `app.html`, the editable source entry. Before pushing changes, run `npm run publish:pages`. It builds the site and copies the compiled page and assets to the repository root. The existing GitHub Actions workflow uploads that root directory to Pages; the same files also work with a `main` / `/ (root)` Pages source. The published URL is `https://cloudempiretech.github.io/cloudempire/`.
+
+The root `index.html`, root `assets/`, and root copies of the favicon and logo are generated files. Edit `app.html`, `src/`, and `public/`, then run `npm run publish:pages` again.
 
 ## Notes
 
