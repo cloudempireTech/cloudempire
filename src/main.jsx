@@ -32,9 +32,17 @@ const focus = [
 function Reveal({children,className=''}) {
   const ref=useRef(null);
   useEffect(()=>{
-    const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting){entry.target.classList.add('is-visible');observer.unobserve(entry.target);}}, {threshold:.08});
-    if(ref.current)observer.observe(ref.current);
-    return()=>observer.disconnect();
+    const element=ref.current;
+    if(!element)return;
+    let visible=false;
+    const finish=()=>{if(visible)return;visible=true;element.classList.add('is-visible');observer.disconnect();window.removeEventListener('scroll',check);window.removeEventListener('resize',check);};
+    const check=()=>{const rect=element.getBoundingClientRect();if(rect.bottom>0&&rect.top<window.innerHeight)finish();};
+    const observer=new IntersectionObserver(([entry])=>{if(entry.isIntersecting)finish();},{threshold:.01,rootMargin:'0px 0px 10% 0px'});
+    observer.observe(element);
+    window.addEventListener('scroll',check,{passive:true});
+    window.addEventListener('resize',check);
+    check();
+    return()=>{observer.disconnect();window.removeEventListener('scroll',check);window.removeEventListener('resize',check);};
   },[]);
   return <div ref={ref} className={`reveal ${className}`}>{children}</div>;
 }
@@ -184,7 +192,11 @@ function ScrollAnimations(){
       for(const entry of entries)if(entry.isIntersecting){entry.target.classList.add('entered');observer.unobserve(entry.target);}
     },{threshold:.12,rootMargin:'0px 0px -4% 0px'});
     targets.forEach(target=>observer.observe(target));
-    return()=>observer.disconnect();
+    const check=()=>{for(const target of targets){if(target.classList.contains('entered'))continue;const rect=target.getBoundingClientRect();if(rect.bottom>0&&rect.top<window.innerHeight*.94){target.classList.add('entered');observer.unobserve(target);}}};
+    window.addEventListener('scroll',check,{passive:true});
+    window.addEventListener('resize',check);
+    check();
+    return()=>{observer.disconnect();window.removeEventListener('scroll',check);window.removeEventListener('resize',check);};
   },[]);
   return null;
 }

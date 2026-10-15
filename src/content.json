@@ -355,7 +355,9 @@
         "Protect existing URLs and search value.",
         "Test accessibility and performance before launch."
       ],
-      "relatedService": "web-development"
+      "relatedService": "web-development",
+      "image": "blog/website-redesign-checklist-cover.webp",
+      "imageAlt": "Modern website redesign interface evolving from an outdated layout"
     },
     {
       "slug": "android-app-development-roadmap",
@@ -401,7 +403,9 @@
         "Design for diverse devices and conditions.",
         "Treat release as the start of learning."
       ],
-      "relatedService": "app-development"
+      "relatedService": "app-development",
+      "image": "blog/android-app-development-roadmap-cover.webp",
+      "imageAlt": "Android app product screens and development milestones"
     },
     {
       "slug": "ios-app-design-principles",
@@ -447,7 +451,9 @@
         "Design loading and error states.",
         "Keep accessibility and speed in the design process."
       ],
-      "relatedService": "app-development"
+      "relatedService": "app-development",
+      "image": "blog/ios-app-design-principles-cover.webp",
+      "imageAlt": "Elegant iPhone app interfaces and interaction cards"
     },
     {
       "slug": "salesforce-crm-implementation-guide",
@@ -493,7 +499,9 @@
         "Clean data before migration.",
         "Plan training and iteration from day one."
       ],
-      "relatedService": "salesforce-solutions"
+      "relatedService": "salesforce-solutions",
+      "image": "blog/salesforce-crm-implementation-guide-cover.webp",
+      "imageAlt": "Connected customer profiles and sales pipeline in a cloud CRM"
     },
     {
       "slug": "cloud-migration-plan",
@@ -539,7 +547,9 @@
         "Plan security and recovery from the start.",
         "Optimize after each move."
       ],
-      "relatedService": "cloud-solutions"
+      "relatedService": "cloud-solutions",
+      "image": "blog/cloud-migration-plan-cover.webp",
+      "imageAlt": "Data moving from legacy servers to scalable cloud infrastructure"
     },
     {
       "slug": "business-process-automation-examples",
@@ -585,7 +595,9 @@
         "Plan human review for exceptions.",
         "Measure outcomes, not only task volume."
       ],
-      "relatedService": "automation"
+      "relatedService": "automation",
+      "image": "blog/business-process-automation-examples-cover.webp",
+      "imageAlt": "Connected workflow cards around an automation engine"
     },
     {
       "slug": "ecommerce-website-conversion",
@@ -631,7 +643,9 @@
         "Keep checkout focused and forgiving.",
         "Treat operations as part of customer experience."
       ],
-      "relatedService": "ecommerce-development"
+      "relatedService": "ecommerce-development",
+      "image": "blog/ecommerce-website-conversion-cover.webp",
+      "imageAlt": "Online storefront with product cards and a rising conversion chart"
     },
     {
       "slug": "technical-seo-foundations",
@@ -677,7 +691,9 @@
         "Use unique page metadata and clear structure.",
         "Monitor technical health after every release."
       ],
-      "relatedService": "seo-services"
+      "relatedService": "seo-services",
+      "image": "blog/technical-seo-foundations-cover.webp",
+      "imageAlt": "Magnifying glass examining website architecture and search growth"
     },
     {
       "slug": "ux-research-before-development",
@@ -723,7 +739,9 @@
         "Test a prototype before full development.",
         "Keep learning after release."
       ],
-      "relatedService": "ui-ux-design"
+      "relatedService": "ui-ux-design",
+      "image": "blog/ux-research-before-development-cover.webp",
+      "imageAlt": "User research board with interview insights and app wireframes"
     }
   ]
 }

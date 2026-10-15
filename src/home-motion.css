@@ -28,4 +28,34 @@ html.snap-home{scroll-snap-type:y mandatory;scroll-padding-top:0}
 .home-finale h2{transition-delay:.1s}.home-finale p{transition-delay:.2s}.home-finale .hero-actions{transition-delay:.3s}
 @media(hover:hover){.service-page-card.reveal.is-visible,.blog-card.reveal.is-visible,.case-card.reveal.is-visible,.value-grid>.reveal.is-visible,.related-grid>a{transition:transform .65s cubic-bezier(.22,1,.36,1),box-shadow .65s cubic-bezier(.22,1,.36,1),border-color .35s,background .35s}.service-page-card.reveal.is-visible:hover,.blog-card.reveal.is-visible:hover,.case-card.reveal.is-visible:hover,.value-grid>.reveal.is-visible:hover,.related-grid>a:hover{transform:translateY(-10px);box-shadow:0 28px 65px rgba(0,0,0,.25)}}
 @media(max-width:760px){html.snap-home{scroll-snap-type:y mandatory}.home-main .home-section{scroll-snap-stop:always}}
+/* A scene must fit the actual phone viewport or mandatory snap hides its content. */
+@media(max-width:760px){
+  .home-main .home-section{height:100svh;min-height:0}
+  .home-focus .focus-layout{box-sizing:border-box;min-height:0;padding-top:clamp(68px,10svh,86px);padding-bottom:clamp(10px,2svh,22px);gap:clamp(8px,1.5svh,14px);justify-content:center}
+  .home-focus .focus-eyebrow{margin-top:clamp(9px,2svh,18px)}
+  .home-focus .focus-art{height:auto;min-height:0;max-height:min(45svh,410px);flex:1 1 auto;overflow:hidden}
+  .home-focus .focus-art .device-world{height:100%;min-height:0}
+  .home-focus .focus-art .ai-dashboard{width:88%;transform:scale(.78)}
+  .home-focus .dashboard-top{height:38px;padding:0 14px}
+  .home-focus .dashboard-intro{padding:14px 20px 12px}
+  .home-focus .ai-chart{height:138px;margin:0 20px 12px;padding:11px 13px}
+  .home-focus .chart-bars{height:72px;gap:6px}
+  .home-focus .ai-insight{margin:0 20px 16px;padding:8px}
+  .home-focus .focus-art .phone-set{transform:scale(.7)}
+}
+@media(max-width:760px) and (max-height:700px){
+  .home-hero .hero-content{padding-bottom:clamp(65px,11svh,86px)}
+  .home-hero h1{font-size:clamp(48px,min(15vw,10svh),66px)}
+  .home-focus .focus-layout{padding-top:65px;padding-bottom:10px}
+  .home-focus .focus-eyebrow{margin-top:8px}
+  .home-focus .focus-copy h2{margin:7px 0;font-size:clamp(38px,10vw,49px)}
+  .home-focus .focus-copy>p{line-height:1.4;margin-bottom:5px}
+  .home-focus .focus-copy .inline-link{margin-top:5px}
+  .home-focus .focus-art{max-height:42svh}
+  .home-focus .focus-art .ai-dashboard{transform:scale(.63)}
+  .home-focus .focus-art .web-browser{transform:scale(.6)}
+  .home-focus .focus-art .phone-set{transform:scale(.47)}
+  .home-finale h2{font-size:clamp(40px,10vw,55px);margin:15px 0}
+  .home-finale .hero-actions{margin-top:18px}
+}
 @media(prefers-reduced-motion:reduce){html.snap-home{scroll-snap-type:none}.home-focus .focus-copy>*,.home-focus .device-scene .ai-chart,.home-focus .device-scene .ai-insight,.home-focus .device-scene .browser-copy,.home-focus .device-scene .browser-art,.home-focus .device-scene .app-card-gradient,.home-focus .device-scene .activity-orb,.home-focus .device-scene .app-metrics,.home-focus .device-scene .trip-tile,.home-focus .device-scene .ios-picture,.home-finale .section-label,.home-finale h2,.home-finale p,.home-finale .hero-actions{opacity:1;translate:0 0;scale:1;transition:none}.home-focus .chart-bars i{scale:1 1;transition:none}.home-focus .phone-front,.home-focus .phone-back{translate:0 0;transition:none}}
