@@ -117,3 +117,19 @@
   .home-hero .hero-slide-copy .eyebrow,.home-hero .hero-slide-copy>p,.home-hero .hero-carousel h1 .hero-title-inner,.home-hero .hero-slide-tab.is-current.is-playing .hero-slide-track:after{animation:none;filter:none}
   .home-hero .hero-offer:after{animation:none}
 }
+/* Desktop follows the same low-cost motion path as mobile: the art stays sharp,
+   only two transform animations run, and paused scenes consume no animation work. */
+@media(min-width:761px){
+  .multi-header{background:rgba(5,8,16,.97);backdrop-filter:none;-webkit-backdrop-filter:none}
+  .home-hero .hero-art-svg{filter:none}
+  .home-hero .hero-art-svg [filter]{display:none}
+  .home-hero .hero-system,.home-hero .hero-scan,.home-hero .hero-data-line,.home-hero .hero-metric,.home-hero .hero-node,.home-hero .hero-satellite{animation:none;will-change:auto;filter:none}
+  .home-hero .hero-ring{will-change:auto}
+  .home-hero .hero-ring-outer{animation-duration:36s}
+  .home-hero .hero-ring-inner{animation-duration:24s}
+  .home-hero .hero-core{filter:none;animation-duration:4.5s}
+  .home-hero .hero-offer{position:relative;isolation:isolate;overflow:hidden;animation:none;box-shadow:0 8px 24px rgba(0,0,0,.26),0 0 19px rgba(255,188,74,.4)}
+  .home-hero .hero-offer:after{content:"";position:absolute;inset:0;width:45%;background:linear-gradient(100deg,transparent,rgba(255,226,166,.18),transparent);transform:translateX(-170%);animation:offerSweep 5.5s ease-in-out infinite;pointer-events:none}
+  .home-hero .hero-offer-spark{animation:none}
+}
+.home-hero:not(.is-active) .hero-ring,.home-hero:not(.is-active) .hero-core,.home-hero:not(.is-active) .hero-offer:after{animation-play-state:paused}

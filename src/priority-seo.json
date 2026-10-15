@@ -1,0 +1,103 @@
+{
+  "ai-analytics": {
+    "seoTitle": "AI Development & Business Analytics | CloudEmpire",
+    "seoDescription": "Build practical AI solutions with CloudEmpire. Explore predictive analytics, data dashboards, workflow automation, and responsible AI integration for your business.",
+    "description": "CloudEmpire designs practical AI solutions, predictive analytics, and data dashboards that help businesses use information to make better decisions.",
+    "sections": [
+      {"heading": "AI solutions built around a business decision", "paragraphs": ["A useful AI project begins with a specific question or workflow. We identify the decision to improve, the data available, and the way people will use the result before choosing a model or tool.", "Projects may involve forecasting, classification, document workflows, reporting, or an AI assistant connected to approved business knowledge. We choose an approach that fits the problem and make room for human review where mistakes would matter."]},
+      {"heading": "From data readiness to a measurable pilot", "paragraphs": ["We review data quality, access, privacy, and integration needs, then define a small pilot with clear success criteria. That makes it possible to test usefulness before scaling to more teams or processes.", "After launch, we monitor outputs, collect feedback, and improve the system as data and business needs change."]}
+    ],
+    "faqs": [
+      {"question": "Do we need a large data set to start an AI project?", "answer": "No. The right amount depends on the use case. We first assess the quality and availability of your data, then decide whether an AI model, rules-based automation, or a simpler analytics dashboard is the best starting point."},
+      {"question": "Can AI connect to our existing software?", "answer": "Yes, where the existing system offers suitable APIs or data access. We plan the integration, permissions, and review process before connecting AI features to live workflows."}
+    ]
+  },
+  "web-development": {
+    "seoTitle": "Website Design & Development Company in Kolkata | CloudEmpire",
+    "seoDescription": "Need a website developer? CloudEmpire builds responsive business websites, web apps, e-commerce sites, and custom CMS platforms. Based in Kolkata. Websites start at ₹2,999.",
+    "description": "CloudEmpire designs and builds responsive business websites, web applications, and content-managed platforms that are fast, accessible, and easy to maintain.",
+    "sections": [
+      {"heading": "What kind of website do you need?", "paragraphs": ["A focused business website should explain your offer clearly, work well on phones, and make it easy for visitors to contact you. A web application needs more: accounts, workflows, integrations, and a reliable backend. We scope these differently so the build fits its purpose.", "We can create landing pages, company websites, online stores, custom dashboards, and web platforms. Design, content structure, accessibility, performance, and search visibility are considered from the start."]},
+      {"heading": "How we build and launch", "paragraphs": ["We begin with your audience, goals, pages, and required features. The team then plans the information architecture and interface, develops the site, and tests it across devices and browsers before launch.", "For content-heavy sites, we can provide an admin panel or CMS so your team can update pages. We also plan analytics, redirects from old URLs, backups, and ongoing maintenance where needed."]},
+      {"heading": "Website pricing and scope", "paragraphs": ["The advertised starting price of ₹2,999 applies to an entry-level website scope. A tailored quote depends on page count, copy and design needs, content management, integrations, e-commerce, and support. We confirm the deliverables before work begins."]}
+    ],
+    "faqs": [
+      {"question": "Can CloudEmpire build a website for my business in Kolkata?", "answer": "Yes. CloudEmpire is based in Kolkata and works with businesses on responsive websites and web applications. We can discuss the pages, features, and launch plan remotely or locally."},
+      {"question": "Can I edit my website after it launches?", "answer": "Yes, if content editing is part of the project scope. We can build an admin panel or connect a suitable CMS for pages, articles, images, and other agreed content."},
+      {"question": "Does the ₹2,999 offer include every website feature?", "answer": "No. It is a starting price for a limited website scope. Custom design, extra pages, e-commerce, integrations, and ongoing services are quoted according to requirements."}
+    ]
+  },
+  "app-development": {
+    "seoTitle": "Mobile App Development Company | Android & iOS | CloudEmpire",
+    "seoDescription": "Plan and build mobile apps with CloudEmpire. Explore Android, iOS, and cross-platform development, UX design, API integrations, testing, and app store release support.",
+    "description": "CloudEmpire plans, designs, and develops Android, iOS, and cross-platform apps, from the first user flow through testing and store release.",
+    "sections": [
+      {"heading": "Choose the right mobile approach", "paragraphs": ["Native Android and iOS apps can make sense when platform-specific features or device performance are central to the product. A cross-platform app can be effective when the same core experience should reach both ecosystems. We assess the trade-offs against your users, budget, and release plan.", "The app is only one part of a useful product. We also plan authentication, APIs, data storage, analytics, notifications, and the support needed after launch."]},
+      {"heading": "From prototype to store release", "paragraphs": ["We map essential tasks, prototype key screens, build the agreed features, and test on representative devices. Before release, we review privacy needs, store assets, permissions, and performance.", "Once the app is live, updates and feedback help prioritize the next improvements."]}
+    ],
+    "faqs": [
+      {"question": "Should I build Android and iOS apps separately?", "answer": "It depends on the product. Native development offers direct access to each platform, while cross-platform development can share more code. We recommend an approach after reviewing features, devices, timeline, and maintenance needs."},
+      {"question": "Can CloudEmpire help publish an app?", "answer": "Yes. App Store and Play Store release support can be included in the project scope, along with testing, store materials, and guidance on account requirements."}
+    ]
+  },
+  "custom-software-development": {
+    "slug": "custom-software-development",
+    "title": "Custom Software Development",
+    "category": "SOFTWARE",
+    "lead": "Software shaped around the way your business works.",
+    "description": "CloudEmpire designs and develops custom business software, internal tools, portals, and integrations for teams that need more than an off-the-shelf product.",
+    "seoTitle": "Custom Software Development Company in Kolkata | CloudEmpire",
+    "seoDescription": "Looking for a software developer? CloudEmpire builds custom business software, web platforms, dashboards, and integrations. Based in Kolkata, working with teams worldwide.",
+    "deliverables": ["Discovery and software requirements", "User-focused interface and workflow design", "Frontend, backend, and API development", "Testing, deployment, and ongoing improvements"],
+    "outcome": "Replace fragmented manual work with software that fits your processes and can grow with your team.",
+    "icon": "⌘",
+    "sections": [
+      {"heading": "When custom software is the right fit", "paragraphs": ["Custom development is useful when standard tools cannot support a critical workflow, when several systems need to share data, or when your team needs a distinct customer or staff experience. We first check whether configuration or integration of an existing product would solve the problem more simply.", "Typical projects include customer portals, operations dashboards, approval workflows, booking systems, and industry-specific applications. Each starts with a clear user and an outcome to measure."]},
+      {"heading": "A practical development process", "paragraphs": ["We document the people, tasks, data, and constraints involved. An initial release focuses on the essential workflow, with architecture that allows later changes without rebuilding from scratch.", "The build includes interface design, backend development, integrations, testing, deployment, and a plan for ownership and support."]}
+    ],
+    "faqs": [
+      {"question": "What is the difference between custom software and a website?", "answer": "A website mainly presents content and helps visitors take an action. Custom software usually manages accounts, data, roles, and ongoing business workflows. Some projects combine both."},
+      {"question": "Can new software connect to our current tools?", "answer": "Often yes. We assess available APIs, data formats, permissions, and reliability before proposing an integration plan."}
+    ]
+  },
+  "android-app-development": {
+    "slug": "android-app-development",
+    "title": "Android App Development",
+    "category": "ANDROID",
+    "lead": "Android experiences that work across real devices.",
+    "description": "CloudEmpire builds Android applications with clear user journeys, dependable API connections, device testing, and Play Store release support.",
+    "seoTitle": "Android App Development Company in Kolkata | CloudEmpire",
+    "seoDescription": "Hire an Android app development partner for product planning, UI design, Android engineering, API integration, testing, and Google Play launch. CloudEmpire is based in Kolkata.",
+    "deliverables": ["Android product discovery and screen flows", "Android interface and application development", "Backend APIs, authentication, and notifications", "Device testing and Google Play release support"],
+    "outcome": "Launch an Android product that is understandable to users and maintainable for your team.",
+    "icon": "▣",
+    "sections": [
+      {"heading": "Plan the Android app around its users", "paragraphs": ["We begin with the tasks people need to complete, the range of devices they use, and the data the app needs. That informs navigation, offline behavior, permissions, and accessibility before development begins.", "If an existing backend or website is involved, we define the API and account model early so the app and supporting systems stay in sync."]},
+      {"heading": "Build, test, and release", "paragraphs": ["Development follows agreed milestones with working builds to review. Testing covers core journeys, screen sizes, network conditions, and the permissions the app requests.", "For release, we prepare the agreed store assets and support submission to Google Play. After launch, crash reports and user feedback guide updates."]}
+    ],
+    "faqs": [
+      {"question": "Can you build an Android app from an existing website?", "answer": "Yes, but the right approach depends on the website and the features users need on mobile. We assess whether a responsive web app, cross-platform app, or dedicated Android app provides the better experience."},
+      {"question": "Do you help with Google Play publishing?", "answer": "Yes. We can help prepare builds and store materials and support submission through your Google Play developer account as part of the agreed scope."}
+    ]
+  },
+  "ios-app-development": {
+    "slug": "ios-app-development",
+    "title": "iOS App Development",
+    "category": "IOS",
+    "lead": "Thoughtful iPhone applications, built for everyday use.",
+    "description": "CloudEmpire designs and develops iOS apps with considered interactions, reliable integrations, testing, and App Store release support.",
+    "seoTitle": "iOS App Development Company in Kolkata | CloudEmpire",
+    "seoDescription": "Plan and build an iPhone app with CloudEmpire. Get iOS product design, application development, API integration, testing, and App Store release support from a Kolkata team.",
+    "deliverables": ["iOS product discovery and interface design", "iPhone application development", "Secure backend and API integration", "Device testing and App Store release support"],
+    "outcome": "Give iPhone users an app that is clear, responsive, and ready to evolve with your product.",
+    "icon": "◩",
+    "sections": [
+      {"heading": "Design for the iPhone experience", "paragraphs": ["An effective iOS app respects familiar interaction patterns while expressing your product's identity. We map primary tasks, prototype the important screens, and consider accessibility, privacy, and performance before implementation.", "We also plan the supporting services, such as sign-in, content delivery, notifications, and analytics, so the app remains dependable after the first release."]},
+      {"heading": "From working build to App Store", "paragraphs": ["We review working builds against the agreed user journeys, test on relevant devices, and prepare for store review. App Store metadata, permission explanations, and privacy information are included in release planning.", "After launch, feedback and usage data can guide a focused improvement roadmap."]}
+    ],
+    "faqs": [
+      {"question": "Can you develop an iOS app and an Android app together?", "answer": "Yes. We can plan both platforms together and evaluate native or cross-platform development based on required features, timelines, and long-term maintenance."},
+      {"question": "Will you publish the iPhone app for us?", "answer": "We can support App Store submission through your Apple Developer account. Final approval remains subject to Apple's review process."}
+    ]
+  }
+}

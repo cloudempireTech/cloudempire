@@ -403,7 +403,7 @@
         "Design for diverse devices and conditions.",
         "Treat release as the start of learning."
       ],
-      "relatedService": "app-development",
+      "relatedService": "android-app-development",
       "image": "blog/android-app-development-roadmap-cover.webp",
       "imageAlt": "Android app product screens and development milestones"
     },
@@ -451,7 +451,7 @@
         "Design loading and error states.",
         "Keep accessibility and speed in the design process."
       ],
-      "relatedService": "app-development",
+      "relatedService": "ios-app-development",
       "image": "blog/ios-app-design-principles-cover.webp",
       "imageAlt": "Elegant iPhone app interfaces and interaction cards"
     },

@@ -105,7 +105,7 @@ function renderList() {
 }
 const fields = {
   articles:[['slug','URL slug'],['title','Title'],['category','Category'],['description','SEO description','textarea'],['date','Publication date','date'],['readTime','Reading time'],['intro','Introduction','textarea'],['sections','Sections (JSON)','json'],['takeaways','Key takeaways (one per line)','lines'],['relatedService','Related service slug'],['image','Cover image path'],['imageAlt','Cover image alt text'],['upload','Upload cover image','file']],
-  services:[['slug','URL slug'],['title','Title'],['category','Category'],['lead','Lead statement'],['description','Description','textarea'],['deliverables','Deliverables (one per line)','lines'],['outcome','Outcome','textarea'],['icon','Icon']],
+  services:[['slug','URL slug'],['title','Title'],['category','Category'],['lead','Lead statement'],['description','Description','textarea'],['seoTitle','Search title'],['seoDescription','Search description','textarea'],['deliverables','Deliverables (one per line)','lines'],['outcome','Outcome','textarea'],['sections','Detailed sections (JSON)','json'],['faqs','Common questions (JSON)','json'],['icon','Icon']],
   projects:[['slug','Slug'],['title','Title'],['category','Category'],['location','Location'],['description','Description','textarea'],['theme','Theme']],
   processSteps:[['number','Step number'],['title','Title'],['description','Description','textarea']]
 };
@@ -136,10 +136,10 @@ function renderForm() {
       else if (type === 'textarea') control.rows = 4;
     }
     wrapper.append(caption,control);
-    if (key === 'sections') {
+    if (key === 'sections' || key === 'faqs') {
       const help = document.createElement('p');
       help.className = 'field-help';
-      help.textContent = 'Each section needs a heading and a paragraphs array.';
+      help.textContent = key === 'faqs' ? 'Each question needs question and answer fields.' : 'Each section needs a heading and a paragraphs array.';
       wrapper.append(help);
     }
     container.append(wrapper);
@@ -156,7 +156,8 @@ function readForm() {
     else item[key] = value;
   }
   if (!item.title || ('slug' in item && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug))) throw new Error('Enter a title and a valid lowercase URL slug.');
-  if (currentTab === 'articles' && (!Array.isArray(item.sections) || item.sections.some(section => !section.heading || !Array.isArray(section.paragraphs)))) throw new Error('Sections must be a JSON array with heading and paragraphs.');
+  if ('sections' in item && (!Array.isArray(item.sections) || item.sections.some(section => !section.heading || !Array.isArray(section.paragraphs)))) throw new Error('Sections must be a JSON array with heading and paragraphs.');
+  if ('faqs' in item && (!Array.isArray(item.faqs) || item.faqs.some(faq => !faq.question || !faq.answer))) throw new Error('Questions must be a JSON array with question and answer.');
   if ('slug' in item && data[currentTab].some((entry,index) => index !== selected && entry.slug === item.slug)) throw new Error('This URL slug already exists.');
   return item;
 }
@@ -354,7 +355,7 @@ $('#logout').addEventListener('click',async () => {
   authenticated=false; isOwner=false; csrf=''; data=null; metrics=null; $('#workspace').hidden=true; $('#signin').hidden=false; $('#connection').textContent='Sign in required';
 });
 $('#add-item').addEventListener('click',() => {
-  const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',deliverables:[],outcome:'',icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
+  const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',seoTitle:'',seoDescription:'',deliverables:[],outcome:'',sections:[],faqs:[],icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
   data[currentTab].push(defaults[currentTab]);selected=data[currentTab].length-1;renderList();renderForm();
 });
 $('#delete-item').addEventListener('click',async () => {

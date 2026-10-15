@@ -2,6 +2,7 @@ import { cp, copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { articles, services } from '../src/content.mjs';
+import seoPages from '../src/seo-pages.json' with { type: 'json' };
 import { festiveOffer } from '../src/offer.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -11,21 +12,20 @@ const siteBase = process.env.SITE_BASE || '/';
 const publishRoot = process.env.PUBLISH_ROOT !== '0';
 const blogCoverPath = 'blog/ai-project-cover.png';
 const blogCoverUrl = `${siteUrl}${blogCoverPath}`;
-const offerPrice = `₹${new Intl.NumberFormat('en-IN').format(festiveOffer.price)}`;
 const template = await readFile(resolve(dist, 'app.html'), 'utf8');
 const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
 const mediaUrl = path => /^https?:\/\//.test(path) ? path : path.startsWith('api/media.php?') ? `https://cloudempire.tech/${path}` : `${siteUrl}${path}`;
 
 const routes = [
-  {path:'',title:`CloudEmpire | AI, Apps & Website Development from ${offerPrice}`,description:`Build with CloudEmpire: AI solutions, websites, and Android and iOS apps. Festive offer: ${festiveOffer.headline}. Explore our services.`},
-  {path:'about/',title:'About CloudEmpire — Global Technology Partner',description:'Meet CloudEmpire, a global technology partner combining strategy, design, AI, cloud, and engineering to create useful digital experiences.'},
-  {path:'services/',title:'Technology Services — AI, Web, Apps, Cloud & More | CloudEmpire',description:'Explore all 13 CloudEmpire services, including AI analytics, web and mobile development, Salesforce, cloud migration, security, SEO, and support.'},
-  ...services.map(service=>({path:`services/${service.slug}/`,title:service.slug==='web-development'?`Website Development from ${offerPrice} | CloudEmpire Festive Offer`:`${service.title} | CloudEmpire Services`,description:service.slug==='web-development'?`CloudEmpire builds fast, modern websites and web apps. Festive offer: ${festiveOffer.headline}. Tell us what you need for a tailored quote.`:service.description,service})),
-  {path:'work/',title:'Selected Work — CloudEmpire Portfolio',description:'Explore CloudEmpire projects across web platforms, Salesforce applications, education, and financial services.'},
-  {path:'process/',title:'Our Process — From Discovery to Support | CloudEmpire',description:'See CloudEmpire’s six-step process for digital projects: discovery, strategy, development, testing, launch, and support.'},
-  {path:'blog/',title:'CloudEmpire Blog — AI, Web, Mobile & Cloud Insights',description:'Read practical CloudEmpire guides on AI, websites, Android, iOS, Salesforce, cloud migration, automation, SEO, and UX.'},
+  {path:'',...seoPages['']},
+  {path:'about/',...seoPages.about},
+  {path:'services/',...seoPages.services},
+  ...services.map(service=>({path:`services/${service.slug}/`,title:service.seoTitle || `${service.title} | CloudEmpire Services`,description:service.seoDescription || service.description,service})),
+  {path:'work/',...seoPages.work},
+  {path:'process/',...seoPages.process},
+  {path:'blog/',...seoPages.blog},
   ...articles.map(article=>({path:`blog/${article.slug}/`,title:`${article.title} | CloudEmpire Blog`,description:article.description,article})),
-  {path:'contact/',title:'Contact CloudEmpire — Start a Technology Project',description:'Contact CloudEmpire about AI, website, Android, iOS, Salesforce, cloud, or digital transformation projects.'},
+  {path:'contact/',...seoPages.contact},
 ];
 
 function staticBody(route) {
@@ -37,39 +37,42 @@ function staticBody(route) {
   if (route.service) {
     const service = route.service;
     const offer = service.slug === 'web-development' ? `<h2>${escapeHtml(festiveOffer.label)}: ${escapeHtml(festiveOffer.headline)}</h2><p>Tell us what you need for a tailored quote.</p>` : '';
-    return `<main class="prerender"><h1>${escapeHtml(service.title)}</h1><p>${escapeHtml(service.description)}</p>${offer}<h2>What you get</h2><ul>${service.deliverables.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><p>${escapeHtml(service.outcome)}</p></main>`;
+    const sections = (service.sections || []).map(section=>`<section><h2>${escapeHtml(section.heading)}</h2>${section.paragraphs.map(paragraph=>`<p>${escapeHtml(paragraph)}</p>`).join('')}</section>`).join('');
+    const faqs = (service.faqs || []).length ? `<section><h2>Frequently asked questions</h2>${service.faqs.map(item=>`<h3>${escapeHtml(item.question)}</h3><p>${escapeHtml(item.answer)}</p>`).join('')}</section>` : '';
+    return `<main class="prerender"><h1>${escapeHtml(service.title)}</h1><p>${escapeHtml(service.description)}</p>${offer}<h2>What you get</h2><ul>${service.deliverables.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><p>${escapeHtml(service.outcome)}</p>${sections}${faqs}<p><a href="${siteBase}contact/">Discuss your project with CloudEmpire</a></p></main>`;
   }
   if (route.path === 'blog/') return `<main class="prerender"><h1>CloudEmpire Blog</h1><p>Practical guides on AI, websites, apps, cloud, design, and digital growth.</p><ul>${articles.map(article=>`<li><a href="${siteBase}blog/${article.slug}/">${escapeHtml(article.title)}</a> — ${escapeHtml(article.description)}</li>`).join('')}</ul></main>`;
   if (route.path === 'services/') return `<main class="prerender"><h1>CloudEmpire Services</h1><ul>${services.map(service=>`<li><a href="${siteBase}services/${service.slug}/">${escapeHtml(service.title)}</a> — ${escapeHtml(service.description)}</li>`).join('')}</ul></main>`;
-  if (route.path === '') return `<main class="prerender"><h1>CloudEmpire: AI, Websites, Android &amp; iOS</h1><p>${escapeHtml(route.description)}</p><p><a href="${siteBase}services/web-development/">${escapeHtml(festiveOffer.label)}: ${escapeHtml(festiveOffer.headline)}</a></p></main>`;
+  if (route.path === '') return `<main class="prerender"><h1>CloudEmpire: software, websites, AI, Android and iOS apps</h1><p>${escapeHtml(route.description)}</p><ul>${['custom-software-development','web-development','android-app-development','ios-app-development','ai-analytics'].map(slug=>`<li><a href="${siteBase}services/${slug}/">${escapeHtml(services.find(service=>service.slug===slug)?.title || slug)}</a></li>`).join('')}</ul><p><a href="${siteBase}services/web-development/">${escapeHtml(festiveOffer.label)}: ${escapeHtml(festiveOffer.headline)}</a></p></main>`;
   return `<main class="prerender"><h1>${escapeHtml(route.title.split(' — ')[0])}</h1><p>${escapeHtml(route.description)}</p></main>`;
 }
 
 function structuredData(route) {
-  if (route.article) return {
-    '@context':'https://schema.org', '@type':'BlogPosting',
-    headline:route.article.title, description:route.article.description,
-    datePublished:route.article.date, dateModified:route.article.date,
-    mainEntityOfPage:`${siteUrl}${route.path}`,
-    author:{'@type':'Organization',name:'CloudEmpire'},
-    publisher:{'@type':'Organization',name:'CloudEmpire',url:siteUrl},
-    ...(route.article.image ? {image:mediaUrl(route.article.image)} : {}),
-  };
-  if (route.service) return {
-    '@context':'https://schema.org', '@type':'Service',
-    name:route.service.title,description:route.service.description,
-    provider:{'@type':'Organization',name:'CloudEmpire',url:siteUrl},
-    url:`${siteUrl}${route.path}`,
-    ...(route.service.slug === 'web-development' ? {offers:{'@type':'Offer',url:`${siteUrl}${route.path}`,description:`${festiveOffer.label}: ${festiveOffer.headline}. Final quote depends on project scope.`,priceSpecification:{'@type':'PriceSpecification',minPrice:festiveOffer.price,priceCurrency:festiveOffer.currency}}} : {}),
-  };
-  return {'@context':'https://schema.org','@type':'WebPage',name:route.title,description:route.description,url:`${siteUrl}${route.path}`};
+  const canonical = `${siteUrl}${route.path}`;
+  const organizationId = `${siteUrl}#organization`;
+  const pageId = `${canonical}#webpage`;
+  const graph = [
+    {'@type':'Organization','@id':organizationId,name:'CloudEmpire',url:siteUrl,logo:`${siteUrl}favicon-192.png`,email:'contact@cloudempire.tech',telephone:'+91-94756-39634',address:{'@type':'PostalAddress',streetAddress:'328, Sahapur Colony, New Alipore',addressLocality:'Kolkata',postalCode:'700053',addressRegion:'West Bengal',addressCountry:'IN'},sameAs:['https://www.instagram.com/cloudempire.tech/','https://www.facebook.com/profile.php?id=61595421568280']},
+    {'@type':'WebSite','@id':`${siteUrl}#website`,name:'CloudEmpire',url:siteUrl,publisher:{'@id':organizationId},inLanguage:'en'},
+    {'@type':'WebPage','@id':pageId,name:route.title,description:route.description,url:canonical,isPartOf:{'@id':`${siteUrl}#website`},inLanguage:'en'},
+  ];
+  if (route.path) {
+    const items=[{name:'Home',item:siteUrl}];
+    if (route.service) items.push({name:'Services',item:`${siteUrl}services/`});
+    if (route.article) items.push({name:'Blog',item:`${siteUrl}blog/`});
+    items.push({name:route.service?.title || route.article?.title || route.title,item:canonical});
+    graph.push({'@type':'BreadcrumbList','@id':`${canonical}#breadcrumbs`,itemListElement:items.map((item,index)=>({'@type':'ListItem',position:index+1,...item}))});
+  }
+  if (route.service) graph.push({'@type':'Service','@id':`${canonical}#service`,name:route.service.title,description:route.service.description,url:canonical,provider:{'@id':organizationId}});
+  if (route.article) graph.push({'@type':'BlogPosting','@id':`${canonical}#article`,headline:route.article.title,description:route.article.description,datePublished:route.article.date,dateModified:route.article.date,mainEntityOfPage:{'@id':pageId},author:{'@id':organizationId},publisher:{'@id':organizationId},...(route.article.image ? {image:mediaUrl(route.article.image)} : {})});
+  return {'@context':'https://schema.org','@graph':graph};
 }
 
 for (const route of routes) {
   const canonical = `${siteUrl}${route.path}`;
   const data = JSON.stringify(structuredData(route)).replace(/</g,'\\u003c');
   const coverUrl = route.article?.image ? mediaUrl(route.article.image) : route.path === 'blog/' ? blogCoverUrl : '';
-  const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    <meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />${coverUrl?`\n    <meta property="og:image" content="${escapeHtml(coverUrl)}" />\n    <meta name="twitter:card" content="summary_large_image" />`:''}\n    <script type="application/ld+json">${data}</script>`;
+  const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    ${siteBase!=='/' ? '<meta name="robots" content="noindex, follow" />\n    ' : ''}<meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />\n    <meta name="twitter:card" content="${coverUrl?'summary_large_image':'summary'}" />${coverUrl?`\n    <meta property="og:image" content="${escapeHtml(coverUrl)}" />`:''}\n    <script type="application/ld+json">${data}</script>`;
   const html = template
     .replace('<base href="/" />', `<base href="${siteBase}" />`)
     .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(route.title)}</title>`)
