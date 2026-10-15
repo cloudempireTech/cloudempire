@@ -7,6 +7,7 @@ import './styles.css';
 import './pages.css';
 import './interaction.css';
 import './home-motion.css';
+import './hero-video.css';
 import './telemetry.js';
 
 const siteRoot = window.location.pathname.startsWith('/cloudempire/') ? '/cloudempire/' : '/';
@@ -62,6 +63,29 @@ function Count({value,suffix=''}) {
     return()=>observer.disconnect();
   },[value]);
   return <span ref={ref}>{count}{suffix}</span>;
+}
+
+function HeroVideo(){
+  const video=useRef(null);
+  const [reducedMotion,setReducedMotion]=useState(()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+  useEffect(()=>{
+    const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
+    const onChange=()=>setReducedMotion(preference.matches);
+    preference.addEventListener('change',onChange);
+    return()=>preference.removeEventListener('change',onChange);
+  },[]);
+  useEffect(()=>{
+    if(!video.current)return;
+    const observer=new IntersectionObserver(([entry])=>{
+      if(entry.isIntersecting)video.current?.play().catch(()=>{});
+      else video.current?.pause();
+    },{threshold:.05});
+    observer.observe(video.current);
+    return()=>observer.disconnect();
+  },[reducedMotion]);
+  return <div className="hero-media" aria-hidden="true" style={{backgroundImage:`url(${asset('media/cloudempire-hero-poster.webp')})`}}>
+    {!reducedMotion&&<video ref={video} className="hero-video" autoPlay muted loop playsInline preload="metadata" poster={asset('media/cloudempire-hero-poster.webp')}><source src={asset('media/cloudempire-hero.mp4')} type="video/mp4"/></video>}
+  </div>;
 }
 
 function Header(){
@@ -146,7 +170,7 @@ function Home(){
     return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',onKey);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
   },[]);
   return <main className="home-main">
-    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><div className="hero-noise"/><div className="hero-orb"><div className="orb-core"/><div className="orb-ring ring-one"/><div className="orb-ring ring-two"/><div className="orb-highlight"/></div><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
+    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroVideo/><div className="hero-noise"/><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
     {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
     <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>{siteCopy.finaleTitle}<br/><em>{siteCopy.finaleAccent}</em></h2><p>{siteCopy.finaleDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
     <nav className={`home-progress ${active===6?'is-hidden':''}`} aria-label="Home scenes">{['top','focus-1','focus-2','focus-3','focus-4','future'].map((id,i)=><a key={id} className={active===i?'active':''} href={`#${id}`} aria-label={`Go to scene ${i+1}`}/>)}</nav>
