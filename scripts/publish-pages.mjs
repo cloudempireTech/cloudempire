@@ -2,6 +2,7 @@ import { cp, copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { articles, services } from '../src/content.mjs';
+import { festiveOffer } from '../src/offer.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const dist = resolve(root, 'dist');
@@ -15,10 +16,10 @@ const escapeHtml = value => String(value).replace(/[&<>"']/g, character => ({'&'
 const mediaUrl = path => /^https?:\/\//.test(path) ? path : path.startsWith('api/media.php?') ? `https://cloudempire.tech/${path}` : `${siteUrl}${path}`;
 
 const routes = [
-  {path:'',title:'CloudEmpire — AI, Websites, Android & iOS Development',description:'CloudEmpire builds AI solutions, high-performance websites, and Android and iOS apps, supported by cloud and enterprise expertise.'},
+  {path:'',title:'CloudEmpire | AI, Apps & Website Development from ₹2,999',description:'Build with CloudEmpire: AI solutions, websites, and Android and iOS apps. Festive offer: websites starting at ₹2,999. Explore our services.'},
   {path:'about/',title:'About CloudEmpire — Global Technology Partner',description:'Meet CloudEmpire, a global technology partner combining strategy, design, AI, cloud, and engineering to create useful digital experiences.'},
   {path:'services/',title:'Technology Services — AI, Web, Apps, Cloud & More | CloudEmpire',description:'Explore all 13 CloudEmpire services, including AI analytics, web and mobile development, Salesforce, cloud migration, security, SEO, and support.'},
-  ...services.map(service=>({path:`services/${service.slug}/`,title:`${service.title} | CloudEmpire Services`,description:service.description,service})),
+  ...services.map(service=>({path:`services/${service.slug}/`,title:service.slug==='web-development'?'Website Development from ₹2,999 | CloudEmpire Festive Offer':`${service.title} | CloudEmpire Services`,description:service.slug==='web-development'?`CloudEmpire builds fast, modern websites and web apps. Festive offer: websites starting at ₹2,999. Tell us what you need for a tailored quote.`:service.description,service})),
   {path:'work/',title:'Selected Work — CloudEmpire Portfolio',description:'Explore CloudEmpire projects across web platforms, Salesforce applications, education, and financial services.'},
   {path:'process/',title:'Our Process — From Discovery to Support | CloudEmpire',description:'See CloudEmpire’s six-step process for digital projects: discovery, strategy, development, testing, launch, and support.'},
   {path:'blog/',title:'CloudEmpire Blog — AI, Web, Mobile & Cloud Insights',description:'Read practical CloudEmpire guides on AI, websites, Android, iOS, Salesforce, cloud migration, automation, SEO, and UX.'},
@@ -34,10 +35,12 @@ function staticBody(route) {
   }
   if (route.service) {
     const service = route.service;
-    return `<main class="prerender"><h1>${escapeHtml(service.title)}</h1><p>${escapeHtml(service.description)}</p><h2>What you get</h2><ul>${service.deliverables.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><p>${escapeHtml(service.outcome)}</p></main>`;
+    const offer = service.slug === 'web-development' ? `<h2>${escapeHtml(festiveOffer.label)}: ${escapeHtml(festiveOffer.headline)}</h2><p>Tell us what you need for a tailored quote.</p>` : '';
+    return `<main class="prerender"><h1>${escapeHtml(service.title)}</h1><p>${escapeHtml(service.description)}</p>${offer}<h2>What you get</h2><ul>${service.deliverables.map(item=>`<li>${escapeHtml(item)}</li>`).join('')}</ul><p>${escapeHtml(service.outcome)}</p></main>`;
   }
   if (route.path === 'blog/') return `<main class="prerender"><h1>CloudEmpire Blog</h1><p>Practical guides on AI, websites, apps, cloud, design, and digital growth.</p><ul>${articles.map(article=>`<li><a href="${siteBase}blog/${article.slug}/">${escapeHtml(article.title)}</a> — ${escapeHtml(article.description)}</li>`).join('')}</ul></main>`;
   if (route.path === 'services/') return `<main class="prerender"><h1>CloudEmpire Services</h1><ul>${services.map(service=>`<li><a href="${siteBase}services/${service.slug}/">${escapeHtml(service.title)}</a> — ${escapeHtml(service.description)}</li>`).join('')}</ul></main>`;
+  if (route.path === '') return `<main class="prerender"><h1>CloudEmpire: AI, Websites, Android &amp; iOS</h1><p>${escapeHtml(route.description)}</p><p><a href="${siteBase}services/web-development/">${escapeHtml(festiveOffer.label)}: ${escapeHtml(festiveOffer.headline)}</a></p></main>`;
   return `<main class="prerender"><h1>${escapeHtml(route.title.split(' — ')[0])}</h1><p>${escapeHtml(route.description)}</p></main>`;
 }
 
@@ -56,6 +59,7 @@ function structuredData(route) {
     name:route.service.title,description:route.service.description,
     provider:{'@type':'Organization',name:'CloudEmpire',url:siteUrl},
     url:`${siteUrl}${route.path}`,
+    ...(route.service.slug === 'web-development' ? {offers:{'@type':'Offer',url:`${siteUrl}${route.path}`,description:`${festiveOffer.label}: ${festiveOffer.headline}. Final quote depends on project scope.`,priceSpecification:{'@type':'PriceSpecification',minPrice:festiveOffer.price,priceCurrency:festiveOffer.currency}}} : {}),
   };
   return {'@context':'https://schema.org','@type':'WebPage',name:route.title,description:route.description,url:`${siteUrl}${route.path}`};
 }
