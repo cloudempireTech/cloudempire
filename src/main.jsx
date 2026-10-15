@@ -333,5 +333,10 @@ function App(){let page;if(route.length===0)page=<Home/>;else if(route[0]==='abo
 const root=createRoot(document.getElementById('root'));
 const render=()=>root.render(<App/>);
 if(window.__CLOUDEMPIRE_CONTENT__){applyContent(window.__CLOUDEMPIRE_CONTENT__);render();}
-else if(siteRoot==='/'){fetch('/api/site-content.php',{cache:'no-store'}).then(response=>response.ok?response.json():null).then(result=>applyContent(result?.content)).catch(()=>{}).finally(render);}
-else render();
+else {
+  render();
+  if(siteRoot==='/')fetch('/api/site-content.php',{cache:'no-store'})
+    .then(response=>response.ok?response.json():null)
+    .then(result=>{if(result?.content){applyContent(result.content);render();}})
+    .catch(()=>{});
+}

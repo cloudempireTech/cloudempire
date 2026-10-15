@@ -13,6 +13,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#050810" />
+    <style>
+      html,body{background:#030712}
+      #root>.prerender{max-width:780px;margin:0 auto;padding:110px 24px;color:#eef3ff;font:16px/1.6 system-ui,sans-serif}
+      #root>.prerender a{color:#91baff}
+      .js:not(.show-prerender) #root>.prerender{display:none}
+    </style>
+    <script>
+      document.documentElement.classList.add('js');
+      setTimeout(function(){
+        if(document.querySelector('#root > .prerender')) document.documentElement.classList.add('show-prerender');
+      },4000);
+    </script>
     <meta name="description" content="We streamline repetitive tasks with thoughtfully designed automation and connected workflows." />
     <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32-BUYFlznn.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="./assets/favicon-192-VvkKMwBv.png" />
@@ -21,7 +33,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>Business Process Automation | CloudEmpire Services</title>
-    <script type="module" crossorigin src="./assets/app-Btx5i1aX.js"></script>
+    <script type="module" crossorigin src="./assets/app-5C85QTcd.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/app-oYb50XwV.css">
       <link rel="canonical" href="https://cloudempire.tech/services/automation/" />
     <meta property="og:type" content="website" />

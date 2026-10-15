@@ -13,6 +13,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#050810" />
+    <style>
+      html,body{background:#030712}
+      #root>.prerender{max-width:780px;margin:0 auto;padding:110px 24px;color:#eef3ff;font:16px/1.6 system-ui,sans-serif}
+      #root>.prerender a{color:#91baff}
+      .js:not(.show-prerender) #root>.prerender{display:none}
+    </style>
+    <script>
+      document.documentElement.classList.add('js');
+      setTimeout(function(){
+        if(document.querySelector('#root > .prerender')) document.documentElement.classList.add('show-prerender');
+      },4000);
+    </script>
     <meta name="description" content="CloudEmpire builds intelligent AI solutions, standout websites, and seamless Android and iOS apps. Explore what we can create together." />
     <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="./favicon-192.png" />
