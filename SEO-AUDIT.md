@@ -20,7 +20,7 @@ This audit checked the live public HTML, robots.txt, sitemap, repository templat
 
 - Production build publishes 33 canonical pages and a sitemap.
 - All 33 generated pages have unique titles, descriptions, one canonical URL, a heading, and parseable JSON-LD.
-- PHP files passed a PHP 8.2 syntax parser check. Live PHP behavior and redirect responses still need checking after deployment.
+- PHP files passed a PHP 8.2 syntax parser check. On the live site, the new service pages return 200 with their detailed content and Service schema; legacy PHP URLs and `www` return 301 to canonical pages.
 
 ## Next actions in Google Search Console
 
