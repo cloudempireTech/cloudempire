@@ -70,30 +70,49 @@ function HeroArt(){
   return <div className="hero-art" aria-hidden="true">
     <svg className="hero-art-svg" viewBox="0 0 1100 780" fill="none" xmlns="http://www.w3.org/2000/svg">
       <defs>
-        <radialGradient id="heroAura"><stop stopColor="#164fe0" stopOpacity=".45"/><stop offset=".55" stopColor="#0a286e" stopOpacity=".15"/><stop offset="1" stopColor="#030712" stopOpacity="0"/></radialGradient>
-        <linearGradient id="heroOrbit" x1="200" y1="220" x2="910" y2="610" gradientUnits="userSpaceOnUse"><stop stopColor="#113988" stopOpacity="0"/><stop offset=".22" stopColor="#1264ea" stopOpacity=".72"/><stop offset=".5" stopColor="#91dbff"/><stop offset=".78" stopColor="#155bde" stopOpacity=".8"/><stop offset="1" stopColor="#0a317e" stopOpacity="0"/></linearGradient>
-        <linearGradient id="heroGlass" x1="380" y1="220" x2="755" y2="570" gradientUnits="userSpaceOnUse"><stop stopColor="#4e9cff" stopOpacity=".38"/><stop offset=".32" stopColor="#133875" stopOpacity=".22"/><stop offset=".75" stopColor="#071735" stopOpacity=".8"/><stop offset="1" stopColor="#112b62" stopOpacity=".5"/></linearGradient>
-        <linearGradient id="heroEdge" x1="380" y1="220" x2="750" y2="590" gradientUnits="userSpaceOnUse"><stop stopColor="#a2dcff" stopOpacity=".85"/><stop offset=".24" stopColor="#3a86f2" stopOpacity=".48"/><stop offset=".68" stopColor="#1e55a6" stopOpacity=".45"/><stop offset="1" stopColor="#86cfff" stopOpacity=".8"/></linearGradient>
-        <radialGradient id="heroCore" cx="539" cy="424" r="122" fx="492" fy="344" gradientUnits="userSpaceOnUse"><stop stopColor="#4a9cff"/><stop offset=".37" stopColor="#1b5ec8"/><stop offset=".76" stopColor="#0b2b70"/><stop offset="1" stopColor="#020b22"/></radialGradient>
-        <linearGradient id="heroShine" x1="442" y1="271" x2="672" y2="535" gradientUnits="userSpaceOnUse"><stop stopColor="#d4f2ff" stopOpacity=".68"/><stop offset=".4" stopColor="#64b2ff" stopOpacity=".2"/><stop offset="1" stopColor="#4c9aff" stopOpacity=".05"/></linearGradient>
-        <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
-        <filter id="heroSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="35"/></filter>
+        <radialGradient id="heroAura"><stop stopColor="#155ac5" stopOpacity=".34"/><stop offset=".58" stopColor="#0b286b" stopOpacity=".13"/><stop offset="1" stopColor="#030712" stopOpacity="0"/></radialGradient>
+        <linearGradient id="heroPanel" x1="226" y1="132" x2="935" y2="659" gradientUnits="userSpaceOnUse"><stop stopColor="#162e58" stopOpacity=".86"/><stop offset=".42" stopColor="#0b1832" stopOpacity=".95"/><stop offset="1" stopColor="#071226" stopOpacity=".98"/></linearGradient>
+        <linearGradient id="heroFrame" x1="226" y1="125" x2="934" y2="659" gradientUnits="userSpaceOnUse"><stop stopColor="#91d4ff" stopOpacity=".85"/><stop offset=".35" stopColor="#367bde" stopOpacity=".38"/><stop offset=".75" stopColor="#1b477f" stopOpacity=".36"/><stop offset="1" stopColor="#82c9ff" stopOpacity=".72"/></linearGradient>
+        <linearGradient id="heroSignal" x1="290" y1="250" x2="880" y2="580" gradientUnits="userSpaceOnUse"><stop stopColor="#48a4ff" stopOpacity=".12"/><stop offset=".5" stopColor="#75d9ff"/><stop offset="1" stopColor="#377cff" stopOpacity=".2"/></linearGradient>
+        <linearGradient id="heroChip" x1="483" y1="300" x2="670" y2="514" gradientUnits="userSpaceOnUse"><stop stopColor="#58a6ff"/><stop offset=".44" stopColor="#1c4eaa"/><stop offset="1" stopColor="#0a1b46"/></linearGradient>
+        <linearGradient id="heroScan" x1="0" y1="0" x2="0" y2="80" gradientUnits="userSpaceOnUse"><stop stopColor="#67c8ff" stopOpacity="0"/><stop offset=".8" stopColor="#4fbcff" stopOpacity=".025"/><stop offset="1" stopColor="#8ce1ff" stopOpacity=".14"/></linearGradient>
+        <pattern id="heroGrid" width="32" height="32" patternUnits="userSpaceOnUse"><path d="M32 0H0V32" stroke="#7fbfff" strokeOpacity=".11" strokeWidth="1"/><circle cx="0" cy="0" r="1.4" fill="#7cb9ff" fillOpacity=".27"/></pattern>
+        <clipPath id="heroPanelClip"><rect x="225" y="132" width="720" height="520" rx="34"/></clipPath>
+        <filter id="heroGlow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="10"/></filter>
+        <filter id="heroSoft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="30"/></filter>
       </defs>
-      <ellipse cx="571" cy="400" rx="485" ry="350" fill="url(#heroAura)"/>
-      <g className="hero-orbit hero-orbit-back"><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="#1c68dd" strokeOpacity=".52" strokeWidth="28" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="url(#heroOrbit)" strokeWidth="9"/><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="#85d8ff" strokeOpacity=".42" strokeWidth="1.5"/></g>
-      <g className="hero-orbit hero-orbit-tall"><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="#1c68dd" strokeOpacity=".5" strokeWidth="21" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="url(#heroOrbit)" strokeWidth="6"/><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="#b4e6ff" strokeOpacity=".3" strokeWidth="1"/></g>
-      <g className="hero-cloud">
-        <path d="M319 549C255 549 206 502 206 444c0-57 44-105 101-109 26-75 94-121 169-110 54 8 94 41 116 87 22-19 48-28 78-28 68 0 122 50 126 113 42 18 68 55 68 99 0 56-43 98-101 98H319Z" fill="url(#heroGlass)" stroke="url(#heroEdge)" strokeWidth="5"/>
-        <path d="M311 343c31-74 101-115 169-104 57 9 91 50 111 87 20-15 47-27 78-27 64 0 113 47 114 106 45 11 70 50 67 93" stroke="#b4e6ff" strokeOpacity=".45" strokeWidth="14" strokeLinecap="round" filter="url(#heroGlow)"/>
-        <path d="M307 338c26-75 94-121 169-110 54 8 94 41 116 87 22-19 48-28 78-28 68 0 122 50 126 113" stroke="url(#heroShine)" strokeWidth="8" strokeLinecap="round"/>
-        <path d="M283 535c110 52 311 64 483 24" stroke="#4d9aff" strokeOpacity=".35" strokeWidth="3"/>
-        <circle cx="539" cy="424" r="130" fill="#1875ec" fillOpacity=".16" filter="url(#heroSoft)"/>
-        <circle cx="539" cy="424" r="122" fill="url(#heroCore)" stroke="url(#heroEdge)" strokeWidth="4"/>
-        <path d="M440 365c27-53 97-73 151-40 29 18 48 44 59 75" stroke="url(#heroShine)" strokeWidth="11" strokeLinecap="round"/>
-        <path d="M461 493c47 37 119 37 165-3" stroke="#277fe9" strokeOpacity=".48" strokeWidth="4" strokeLinecap="round"/>
+      <ellipse cx="590" cy="395" rx="505" ry="355" fill="url(#heroAura)"/>
+      <g className="hero-system">
+        <rect x="224" y="131" width="722" height="522" rx="35" fill="#144c9e" fillOpacity=".42" filter="url(#heroGlow)"/>
+        <rect x="225" y="132" width="720" height="520" rx="34" fill="url(#heroPanel)" stroke="url(#heroFrame)" strokeWidth="2"/>
+        <g clipPath="url(#heroPanelClip)">
+          <rect x="225" y="132" width="720" height="520" fill="url(#heroGrid)"/>
+          <rect className="hero-scan" x="225" y="132" width="720" height="80" fill="url(#heroScan)"/>
+          <path d="M225 195H945M225 589H945" stroke="#68aaff" strokeOpacity=".2"/>
+          <path d="M260 195V175H284M910 195V175H886M260 589V610H284M910 589V610H886" stroke="#7ccfff" strokeOpacity=".65" strokeWidth="2"/>
+          <path className="hero-data-line" d="M290 297H394V344H449M287 509H397V463H449M722 340H788V276H867M722 467H785V535H869" stroke="url(#heroSignal)" strokeWidth="2" strokeDasharray="8 10"/>
+          <path d="M290 297H394V344H449M287 509H397V463H449M722 340H788V276H867M722 467H785V535H869" stroke="#3d80dc" strokeOpacity=".2" strokeWidth="8" filter="url(#heroGlow)"/>
+          <g className="hero-metric"><rect x="262" y="240" width="151" height="112" rx="13" fill="#0c2145" fillOpacity=".83" stroke="#4486d2" strokeOpacity=".55"/><path d="M283 317L305 304 326 311 348 277 370 289 391 268" stroke="#73d8ff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/><path d="M283 328H391M283 272H334" stroke="#5797e8" strokeOpacity=".44" strokeWidth="2"/><circle cx="391" cy="268" r="4" fill="#a4e9ff"/></g>
+          <g className="hero-metric hero-metric-two"><rect x="759" y="233" width="145" height="111" rx="13" fill="#0c2145" fillOpacity=".83" stroke="#4486d2" strokeOpacity=".55"/><path d="M780 312H884M780 288H853M780 264H829" stroke="#5797e8" strokeOpacity=".48" strokeWidth="3" strokeLinecap="round"/><circle cx="869" cy="264" r="7" stroke="#83dfff" strokeWidth="2"/><circle cx="869" cy="264" r="2" fill="#83dfff"/></g>
+          <g className="hero-metric hero-metric-three"><rect x="260" y="472" width="169" height="94" rx="13" fill="#0c2145" fillOpacity=".83" stroke="#4486d2" strokeOpacity=".55"/><path d="M284 536H405" stroke="#5797e8" strokeOpacity=".48" strokeWidth="2"/><path d="M286 520V503M307 520V495M328 520V506M349 520V487M370 520V497M391 520V482" stroke="#74cfff" strokeWidth="6" strokeLinecap="round"/></g>
+          <g className="hero-metric hero-metric-four"><rect x="760" y="479" width="146" height="91" rx="13" fill="#0c2145" fillOpacity=".83" stroke="#4486d2" strokeOpacity=".55"/><circle cx="795" cy="524" r="18" stroke="#4e93e4" strokeWidth="4"/><path d="M795 506a18 18 0 0 1 17 14" stroke="#a3e4ff" strokeWidth="4" strokeLinecap="round"/><path d="M825 507H882M825 524H863M825 541H875" stroke="#5797e8" strokeOpacity=".48" strokeWidth="3" strokeLinecap="round"/></g>
+          <circle cx="585" cy="404" r="169" fill="#2279e5" fillOpacity=".15" filter="url(#heroSoft)"/>
+          <circle cx="585" cy="404" r="156" stroke="#428bdd" strokeOpacity=".25" strokeWidth="1"/>
+          <g className="hero-ring hero-ring-outer"><circle cx="585" cy="404" r="142" stroke="#84d9ff" strokeOpacity=".58" strokeWidth="2" strokeDasharray="88 24 9 24"/><circle cx="585" cy="404" r="136" stroke="#3d8cf4" strokeOpacity=".35" strokeWidth="1" strokeDasharray="3 15"/></g>
+          <g className="hero-ring hero-ring-inner"><circle cx="585" cy="404" r="116" stroke="#5baeff" strokeOpacity=".58" strokeWidth="2" strokeDasharray="47 22"/><circle cx="585" cy="404" r="109" stroke="#68cfff" strokeOpacity=".25"/></g>
+          <path d="M585 276L696 340V468L585 532 474 468V340Z" fill="#0a1e48" fillOpacity=".76" stroke="#4e9af0" strokeOpacity=".6" strokeWidth="2"/>
+          <path d="M585 303L672 354V455L585 505 498 455V354Z" fill="url(#heroChip)" fillOpacity=".78" stroke="#93dcff" strokeOpacity=".7" strokeWidth="2"/>
+          <path d="M585 333L646 368V439L585 474 524 439V368Z" fill="#071b42" stroke="#88d9ff" strokeOpacity=".8" strokeWidth="2"/>
+          <g className="hero-core"><path d="M585 351L629 377 585 403 541 377Z" fill="#8cddff"/><path d="M541 377L585 403V456L541 430Z" fill="#2768d5"/><path d="M629 377L585 403V456L629 430Z" fill="#4a9eff"/><path d="M585 403V456" stroke="#d0f4ff" strokeOpacity=".75" strokeWidth="2"/></g>
+          <path d="M585 250V273M585 535V558M431 404H454M716 404H739" stroke="#89d8ff" strokeWidth="3" strokeLinecap="round"/>
+          <circle className="hero-node hero-node-one" cx="394" cy="344" r="5" fill="#9ee6ff"/><circle className="hero-node hero-node-two" cx="397" cy="463" r="5" fill="#9ee6ff"/><circle className="hero-node hero-node-three" cx="788" cy="340" r="5" fill="#9ee6ff"/><circle className="hero-node hero-node-four" cx="785" cy="467" r="5" fill="#9ee6ff"/>
+          <path d="M247 151H310M862 632H922" stroke="#b2ebff" strokeOpacity=".7" strokeWidth="3" strokeLinecap="round"/>
+        </g>
+        <circle cx="267" cy="164" r="5" fill="#62d7ff"/><circle cx="286" cy="164" r="5" fill="#4285dc"/><circle cx="305" cy="164" r="5" fill="#4285dc"/>
+        <path d="M350 165H490M829 165H902" stroke="#4781c7" strokeOpacity=".45" strokeWidth="2" strokeLinecap="round"/>
       </g>
-      <g className="hero-orbit hero-orbit-front"><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="#0d62f0" strokeOpacity=".48" strokeWidth="30" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="url(#heroOrbit)" strokeWidth="10"/><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="#b2e7ff" strokeOpacity=".42" strokeWidth="1.5"/></g>
-      <circle className="hero-spark hero-spark-one" cx="884" cy="292" r="3" fill="#8dd7ff"/><circle className="hero-spark hero-spark-two" cx="234" cy="532" r="2.5" fill="#6dbbff"/><circle className="hero-spark hero-spark-three" cx="832" cy="593" r="2" fill="#6dbbff"/>
+      <g className="hero-satellite hero-satellite-one"><rect x="822" y="98" width="92" height="38" rx="10" fill="#0d274f" stroke="#4a9de8"/><circle cx="844" cy="117" r="5" fill="#81e2ff"/><path d="M859 117H892" stroke="#77bfff" strokeWidth="2" strokeLinecap="round"/></g>
+      <g className="hero-satellite hero-satellite-two"><rect x="163" y="589" width="93" height="38" rx="10" fill="#0d274f" stroke="#4a9de8"/><path d="M183 609H235" stroke="#77bfff" strokeWidth="2" strokeLinecap="round"/><circle cx="204" cy="609" r="5" fill="#81e2ff"/></g>
     </svg>
   </div>;
 }
