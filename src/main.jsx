@@ -176,10 +176,40 @@ function HeroCarousel(){
 
 function Home(){
   const [active,setActive]=useState(0);
+  const [mobileScenes,setMobileScenes]=useState(()=>matchMedia('(max-width: 760px)').matches);
+  useEffect(()=>{
+    const query=matchMedia('(max-width: 760px)');
+    const update=()=>setMobileScenes(query.matches);
+    query.addEventListener('change',update);
+    return()=>query.removeEventListener('change',update);
+  },[]);
   useEffect(()=>{
     document.documentElement.classList.add('snap-home');
     const targets=[...document.querySelectorAll('.home-section')];
     const reduced=matchMedia('(prefers-reduced-motion: reduce)');
+    // Phones use native scroll snapping and one entrance transition per scene.
+    // Avoid measuring and writing every full-screen scene on every touch frame.
+    if(mobileScenes){
+      for(const target of targets){
+        target.removeAttribute('data-motion');
+        target.style.removeProperty('--scene-opacity');
+        target.style.removeProperty('--scene-shift');
+        target.style.removeProperty('--scene-art-shift');
+        target.style.removeProperty('--scene-scale');
+      }
+      const footer=document.querySelector('.multi-footer');
+      const observer=new IntersectionObserver(entries=>{
+        for(const entry of entries){
+          if(!entry.isIntersecting)continue;
+          const scene=entry.target===footer?6:Number(entry.target.dataset.scene);
+          setActive(previous=>previous===scene?previous:scene);
+          if(scene===5)entry.target.dataset.motionReady='true';
+        }
+      },{rootMargin:'-35% 0px -35% 0px'});
+      targets.forEach(target=>observer.observe(target));
+      if(footer)observer.observe(footer);
+      return()=>{observer.disconnect();document.documentElement.classList.remove('snap-home');};
+    }
     let frame=0;
     const update=()=>{
       frame=0;
@@ -241,7 +271,7 @@ function Home(){
     window.addEventListener('resize',schedule);
     reduced.addEventListener('change',schedule);
     return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',onKey);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
-  },[]);
+  },[mobileScenes]);
   return <main className="home-main">
     <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroArt/><HeroCarousel/></section>
     {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
