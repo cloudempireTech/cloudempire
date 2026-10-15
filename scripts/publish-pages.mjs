@@ -71,7 +71,7 @@ for (const route of routes) {
   const coverUrl = route.article?.image ? mediaUrl(route.article.image) : route.path === 'blog/' ? blogCoverUrl : '';
   const metadata = `<link rel="canonical" href="${escapeHtml(canonical)}" />\n    <meta property="og:type" content="${route.article?'article':'website'}" />\n    <meta property="og:title" content="${escapeHtml(route.title)}" />\n    <meta property="og:description" content="${escapeHtml(route.description)}" />\n    <meta property="og:url" content="${escapeHtml(canonical)}" />${coverUrl?`\n    <meta property="og:image" content="${escapeHtml(coverUrl)}" />\n    <meta name="twitter:card" content="summary_large_image" />`:''}\n    <script type="application/ld+json">${data}</script>`;
   const html = template
-    .replace('<head>', `<head>\n    <base href="${siteBase}" />`)
+    .replace('<base href="/" />', `<base href="${siteBase}" />`)
     .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(route.title)}</title>`)
     .replace(/<meta name="description" content="[^"]*" \/>/, `<meta name="description" content="${escapeHtml(route.description)}" />`)
     .replace('</head>', `    ${metadata}\n  </head>`)
