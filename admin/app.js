@@ -381,13 +381,13 @@ $('#database-form').addEventListener('submit',async event => {
   } catch(error) { notice(error.message,true); }
   finally { button.disabled=false; }
 });
-const siteCopyFields=[['heroTitle','Home headline'],['heroAccent','Home highlighted word'],['heroDescription','Home introduction'],['finaleTitle','Final section headline'],['finaleAccent','Final section highlighted line'],['finaleDescription','Final section description'],['footerTitle','Footer headline'],['footerAccent','Footer highlighted line'],['footerDescription','Footer invitation']];
+const siteCopyFields=[['heroTitle','Home headline'],['heroAccent','Home highlighted word'],['heroDescription','Home introduction'],['heroAiTitle','AI slide headline','AI that'],['heroAiAccent','AI slide highlighted line','thinks ahead.'],['heroAiDescription','AI slide description','Purpose-built AI and analytics that turn information into decisions, automation, and better experiences.'],['heroWebTitle','Website slide headline','Websites'],['heroWebAccent','Website slide highlighted line','with impact.'],['heroWebDescription','Website slide description','Fast, expressive websites and web apps that make every interaction count.'],['heroAppsTitle','Android & iOS slide headline','Apps made'],['heroAppsAccent','Android & iOS slide highlighted line','for real life.'],['heroAppsDescription','Android & iOS slide description','Thoughtful Android and iOS experiences, engineered to feel effortless from the first tap.'],['finaleTitle','Final section headline'],['finaleAccent','Final section highlighted line'],['finaleDescription','Final section description'],['footerTitle','Footer headline'],['footerAccent','Footer highlighted line'],['footerDescription','Footer invitation']];
 function renderSiteCopy() {
   const form=$('#site-copy-form');form.replaceChildren();
-  for (const [key,label] of siteCopyFields) {
+  for (const [key,label,defaultValue] of siteCopyFields) {
     const field=document.createElement('div');field.className='form-field';
     const caption=document.createElement('label');caption.htmlFor='copy-'+key;caption.textContent=label;
-    const control=document.createElement('textarea');control.id='copy-'+key;control.rows=2;control.value=data.siteCopy?.[key] || '';
+    const control=document.createElement('textarea');control.id='copy-'+key;control.rows=2;control.value=data.siteCopy?.[key] ?? defaultValue ?? '';
     field.append(caption,control);form.append(field);
   }
   const button=document.createElement('button');button.className='primary';button.type='submit';button.textContent='Save site copy';form.append(button);

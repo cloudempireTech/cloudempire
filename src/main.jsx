@@ -110,6 +110,49 @@ function Header(){
 
 function Footer(){return <footer className="multi-footer"><div className="container"><div className="footer-invite"><div><span className="footer-kicker"><span className="live-dot"/> READY WHEN YOU ARE</span><h2>{siteCopy.footerTitle}<br/><em>{siteCopy.footerAccent}</em></h2><p>{siteCopy.footerDescription}</p></div><a className="footer-invite-link" href={url('contact/')} aria-label="Start a project with CloudEmpire"><ArrowUpRight size={35}/></a></div><div className="footer-directory"><div className="footer-brand"><a href={url('')} aria-label="CloudEmpire home"><img src={asset('logo-light.png')} alt="CloudEmpire"/></a><p>Intelligent products. Thoughtful design.<br/>Technology made for people.</p><div className="footer-socials" aria-label="CloudEmpire social media"><a href="https://www.instagram.com/cloudempire.tech/" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Instagram"><Instagram size={18}/></a><a href="https://www.facebook.com/profile.php?id=61595421568280" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Facebook"><Facebook size={18}/></a></div></div><div className="footer-links"><div><span>EXPLORE</span><a href={url('about/')}>About us</a><a href={url('services/')}>Services</a><a href={url('work/')}>Selected work</a><a href={url('process/')}>Our process</a></div><div><span>INSIGHTS</span><a href={url('blog/')}>Journal</a><a href={url('services/ai-analytics/')}>Artificial intelligence</a><a href={url('services/web-development/')}>Web development</a><a href={url('services/app-development/')}>Mobile apps</a></div><div><span>CONNECT</span><a href={url('contact/')}>Contact us</a><a href="mailto:contact@cloudempire.tech">Email</a><a href="https://wa.me/919475639634" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={13}/></a><a href="tel:+919475639634">+91 94756 39634</a></div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. Made for what’s next.</span><span>Kolkata, India · Working everywhere</span><a href="#top" onClick={e=>{if(route.length){e.preventDefault();window.location.href=url('');}}}>Back to top ↑</a></div></div></footer>}
 
+const heroDuration=6500;
+function HeroCarousel(){
+  const anchor=useRef(null);
+  const [slide,setSlide]=useState(0);
+  const [visible,setVisible]=useState(false);
+  const [pageVisible,setPageVisible]=useState(!document.hidden);
+  const [reducedMotion,setReducedMotion]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const slides=[
+    {label:'OVERVIEW',eyebrow:'DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW',title:siteCopy.heroTitle,accent:siteCopy.heroAccent,description:siteCopy.heroDescription},
+    {label:'AI',eyebrow:'ARTIFICIAL INTELLIGENCE',title:siteCopy.heroAiTitle || 'AI that',accent:siteCopy.heroAiAccent || 'thinks ahead.',description:siteCopy.heroAiDescription || 'Purpose-built AI and analytics that turn information into decisions, automation, and better experiences.'},
+    {label:'WEB',eyebrow:'WEBSITES & WEB APPS',title:siteCopy.heroWebTitle || 'Websites',accent:siteCopy.heroWebAccent || 'with impact.',description:siteCopy.heroWebDescription || 'Fast, expressive websites and web apps that make every interaction count.'},
+    {label:'APPS',eyebrow:'ANDROID & IOS APPLICATIONS',title:siteCopy.heroAppsTitle || 'Apps made',accent:siteCopy.heroAppsAccent || 'for real life.',description:siteCopy.heroAppsDescription || 'Thoughtful Android and iOS experiences, engineered to feel effortless from the first tap.'},
+  ];
+  useEffect(()=>{
+    const observer=new IntersectionObserver(([entry])=>setVisible(entry.isIntersecting),{threshold:.35});
+    if(anchor.current)observer.observe(anchor.current);
+    const onVisibility=()=>setPageVisible(!document.hidden);
+    const media=matchMedia('(prefers-reduced-motion: reduce)');
+    const onMotion=()=>setReducedMotion(media.matches);
+    document.addEventListener('visibilitychange',onVisibility);
+    media.addEventListener('change',onMotion);
+    return()=>{observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);media.removeEventListener('change',onMotion);};
+  },[]);
+  const playing=visible&&pageVisible&&!reducedMotion;
+  useEffect(()=>{
+    if(!playing)return;
+    const timer=setTimeout(()=>setSlide(current=>(current+1)%slides.length),heroDuration);
+    return()=>clearTimeout(timer);
+  },[slide,playing]);
+  const current=slides[slide];
+  return <>
+    <div ref={anchor} className="container hero-content hero-carousel">
+      <div key={slide} className="hero-slide-copy" aria-live="off">
+        <div className="eyebrow"><span className="eyebrow-line"/> {current.eyebrow}</div>
+        <h1>{current.title}<br/><span>{current.accent}</span></h1>
+        <p>{current.description}</p>
+      </div>
+      <div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div>
+    </div>
+    <div className="hero-bottom container"><div className="hero-slide-tabs" role="group" aria-label="Hero messages">{slides.map((item,index)=><button key={item.label} type="button" className={`hero-slide-tab ${index===slide?'is-current':''} ${playing?'is-playing':''}`} aria-label={`Show ${item.label.toLowerCase()} message`} aria-pressed={index===slide} onClick={()=>setSlide(index)}><span className="hero-slide-number">0{index+1}</span><span className="hero-slide-name">{item.label}</span><span key={index===slide&&playing?`progress-${slide}`:'idle'} className="hero-slide-track"/></button>)}</div><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div>
+  </>;
+}
+
 function Home(){
   const [active,setActive]=useState(0);
   useEffect(()=>{
@@ -179,7 +222,7 @@ function Home(){
     return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',onKey);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
   },[]);
   return <main className="home-main">
-    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroArt/><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
+    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroArt/><HeroCarousel/></section>
     {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
     <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>{siteCopy.finaleTitle}<br/><em>{siteCopy.finaleAccent}</em></h2><p>{siteCopy.finaleDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
     <nav className={`home-progress ${active===6?'is-hidden':''}`} aria-label="Home scenes">{['top','focus-1','focus-2','focus-3','focus-4','future'].map((id,i)=><a key={id} className={active===i?'active':''} href={`#${id}`} aria-label={`Go to scene ${i+1}`}/>)}</nav>
