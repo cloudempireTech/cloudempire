@@ -1,0 +1,27 @@
+.home-hero{background:radial-gradient(ellipse at 75% 47%,#0c1a43 0%,#060e25 37%,#030712 76%)}
+.home-hero .hero-art{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.home-hero .hero-art-svg{position:absolute;width:min(77vw,1120px);height:auto;right:-7%;top:50%;transform:translateY(-50%);overflow:visible;filter:drop-shadow(0 0 26px rgba(25,91,223,.13))}
+.home-hero .hero-cloud{transform-origin:539px 424px;animation:heroCloudFloat 11s ease-in-out infinite}
+.home-hero .hero-orbit{transform-origin:566px 398px;will-change:transform}
+.home-hero .hero-orbit-back{animation:heroOrbitBack 18s ease-in-out infinite}
+.home-hero .hero-orbit-tall{animation:heroOrbitTall 22s ease-in-out infinite}
+.home-hero .hero-orbit-front{animation:heroOrbitFront 16s ease-in-out infinite}
+.home-hero .hero-spark{filter:drop-shadow(0 0 5px #6abaff);animation:heroSpark 4s ease-in-out infinite}
+.home-hero .hero-spark-two{animation-delay:-1.4s}
+.home-hero .hero-spark-three{animation-delay:-2.6s}
+.home-hero:before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(2,5,14,.91),rgba(2,5,14,.57) 39%,transparent 74%),linear-gradient(0deg,rgba(2,5,14,.34),transparent 25%)}
+.home-hero:after{z-index:2}
+.home-hero .hero-content{z-index:3}
+@keyframes heroCloudFloat{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-12px,0) scale(1.015)}}
+@keyframes heroOrbitBack{0%,100%{transform:rotate(-3deg) scale(1)}50%{transform:rotate(5deg) scale(1.025)}}
+@keyframes heroOrbitTall{0%,100%{transform:rotate(5deg) scale(1)}50%{transform:rotate(-6deg) scale(.985)}}
+@keyframes heroOrbitFront{0%,100%{transform:rotate(2deg) scale(1)}50%{transform:rotate(-5deg) scale(1.035)}}
+@keyframes heroSpark{0%,100%{opacity:.2;transform:scale(.65)}50%{opacity:1;transform:scale(1.3)}}
+@media(max-width:760px){
+  .home-hero .hero-art-svg{width:185vw;max-width:none;right:-75vw;top:48%;opacity:.82}
+  .home-hero:before{background:linear-gradient(90deg,rgba(2,5,14,.73),rgba(2,5,14,.28)),linear-gradient(0deg,rgba(2,5,14,.5),transparent 35%)}
+  .home-hero .hero-content{text-shadow:0 2px 22px rgba(0,0,0,.5)}
+}
+@media(prefers-reduced-motion:reduce){
+  .home-hero .hero-cloud,.home-hero .hero-orbit,.home-hero .hero-spark{animation:none}
+}

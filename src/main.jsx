@@ -7,7 +7,7 @@ import './styles.css';
 import './pages.css';
 import './interaction.css';
 import './home-motion.css';
-import './hero-video.css';
+import './hero-art.css';
 import './telemetry.js';
 
 const siteRoot = window.location.pathname.startsWith('/cloudempire/') ? '/cloudempire/' : '/';
@@ -65,26 +65,35 @@ function Count({value,suffix=''}) {
   return <span ref={ref}>{count}{suffix}</span>;
 }
 
-function HeroVideo(){
-  const video=useRef(null);
-  const [reducedMotion,setReducedMotion]=useState(()=>window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  useEffect(()=>{
-    const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
-    const onChange=()=>setReducedMotion(preference.matches);
-    preference.addEventListener('change',onChange);
-    return()=>preference.removeEventListener('change',onChange);
-  },[]);
-  useEffect(()=>{
-    if(!video.current)return;
-    const observer=new IntersectionObserver(([entry])=>{
-      if(entry.isIntersecting)video.current?.play().catch(()=>{});
-      else video.current?.pause();
-    },{threshold:.05});
-    observer.observe(video.current);
-    return()=>observer.disconnect();
-  },[reducedMotion]);
-  return <div className="hero-media" aria-hidden="true" style={{backgroundImage:`url(${asset('media/cloudempire-hero-poster.webp')})`}}>
-    {!reducedMotion&&<video ref={video} className="hero-video" autoPlay muted loop playsInline preload="metadata" poster={asset('media/cloudempire-hero-poster.webp')}><source src={asset('media/cloudempire-hero.mp4')} type="video/mp4"/></video>}
+function HeroArt(){
+  return <div className="hero-art" aria-hidden="true">
+    <svg className="hero-art-svg" viewBox="0 0 1100 780" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="heroAura"><stop stopColor="#164fe0" stopOpacity=".45"/><stop offset=".55" stopColor="#0a286e" stopOpacity=".15"/><stop offset="1" stopColor="#030712" stopOpacity="0"/></radialGradient>
+        <linearGradient id="heroOrbit" x1="200" y1="220" x2="910" y2="610" gradientUnits="userSpaceOnUse"><stop stopColor="#113988" stopOpacity="0"/><stop offset=".22" stopColor="#1264ea" stopOpacity=".72"/><stop offset=".5" stopColor="#91dbff"/><stop offset=".78" stopColor="#155bde" stopOpacity=".8"/><stop offset="1" stopColor="#0a317e" stopOpacity="0"/></linearGradient>
+        <linearGradient id="heroGlass" x1="380" y1="220" x2="755" y2="570" gradientUnits="userSpaceOnUse"><stop stopColor="#4e9cff" stopOpacity=".38"/><stop offset=".32" stopColor="#133875" stopOpacity=".22"/><stop offset=".75" stopColor="#071735" stopOpacity=".8"/><stop offset="1" stopColor="#112b62" stopOpacity=".5"/></linearGradient>
+        <linearGradient id="heroEdge" x1="380" y1="220" x2="750" y2="590" gradientUnits="userSpaceOnUse"><stop stopColor="#a2dcff" stopOpacity=".85"/><stop offset=".24" stopColor="#3a86f2" stopOpacity=".48"/><stop offset=".68" stopColor="#1e55a6" stopOpacity=".45"/><stop offset="1" stopColor="#86cfff" stopOpacity=".8"/></linearGradient>
+        <radialGradient id="heroCore" cx="539" cy="424" r="122" fx="492" fy="344" gradientUnits="userSpaceOnUse"><stop stopColor="#4a9cff"/><stop offset=".37" stopColor="#1b5ec8"/><stop offset=".76" stopColor="#0b2b70"/><stop offset="1" stopColor="#020b22"/></radialGradient>
+        <linearGradient id="heroShine" x1="442" y1="271" x2="672" y2="535" gradientUnits="userSpaceOnUse"><stop stopColor="#d4f2ff" stopOpacity=".68"/><stop offset=".4" stopColor="#64b2ff" stopOpacity=".2"/><stop offset="1" stopColor="#4c9aff" stopOpacity=".05"/></linearGradient>
+        <filter id="heroGlow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="12"/></filter>
+        <filter id="heroSoft" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="35"/></filter>
+      </defs>
+      <ellipse cx="571" cy="400" rx="485" ry="350" fill="url(#heroAura)"/>
+      <g className="hero-orbit hero-orbit-back"><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="#1c68dd" strokeOpacity=".52" strokeWidth="28" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="url(#heroOrbit)" strokeWidth="9"/><ellipse cx="566" cy="398" rx="416" ry="148" transform="rotate(-24 566 398)" stroke="#85d8ff" strokeOpacity=".42" strokeWidth="1.5"/></g>
+      <g className="hero-orbit hero-orbit-tall"><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="#1c68dd" strokeOpacity=".5" strokeWidth="21" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="url(#heroOrbit)" strokeWidth="6"/><ellipse cx="566" cy="398" rx="380" ry="128" transform="rotate(53 566 398)" stroke="#b4e6ff" strokeOpacity=".3" strokeWidth="1"/></g>
+      <g className="hero-cloud">
+        <path d="M319 549C255 549 206 502 206 444c0-57 44-105 101-109 26-75 94-121 169-110 54 8 94 41 116 87 22-19 48-28 78-28 68 0 122 50 126 113 42 18 68 55 68 99 0 56-43 98-101 98H319Z" fill="url(#heroGlass)" stroke="url(#heroEdge)" strokeWidth="5"/>
+        <path d="M311 343c31-74 101-115 169-104 57 9 91 50 111 87 20-15 47-27 78-27 64 0 113 47 114 106 45 11 70 50 67 93" stroke="#b4e6ff" strokeOpacity=".45" strokeWidth="14" strokeLinecap="round" filter="url(#heroGlow)"/>
+        <path d="M307 338c26-75 94-121 169-110 54 8 94 41 116 87 22-19 48-28 78-28 68 0 122 50 126 113" stroke="url(#heroShine)" strokeWidth="8" strokeLinecap="round"/>
+        <path d="M283 535c110 52 311 64 483 24" stroke="#4d9aff" strokeOpacity=".35" strokeWidth="3"/>
+        <circle cx="539" cy="424" r="130" fill="#1875ec" fillOpacity=".16" filter="url(#heroSoft)"/>
+        <circle cx="539" cy="424" r="122" fill="url(#heroCore)" stroke="url(#heroEdge)" strokeWidth="4"/>
+        <path d="M440 365c27-53 97-73 151-40 29 18 48 44 59 75" stroke="url(#heroShine)" strokeWidth="11" strokeLinecap="round"/>
+        <path d="M461 493c47 37 119 37 165-3" stroke="#277fe9" strokeOpacity=".48" strokeWidth="4" strokeLinecap="round"/>
+      </g>
+      <g className="hero-orbit hero-orbit-front"><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="#0d62f0" strokeOpacity=".48" strokeWidth="30" filter="url(#heroGlow)"/><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="url(#heroOrbit)" strokeWidth="10"/><ellipse cx="566" cy="398" rx="424" ry="140" transform="rotate(19 566 398)" stroke="#b2e7ff" strokeOpacity=".42" strokeWidth="1.5"/></g>
+      <circle className="hero-spark hero-spark-one" cx="884" cy="292" r="3" fill="#8dd7ff"/><circle className="hero-spark hero-spark-two" cx="234" cy="532" r="2.5" fill="#6dbbff"/><circle className="hero-spark hero-spark-three" cx="832" cy="593" r="2" fill="#6dbbff"/>
+    </svg>
   </div>;
 }
 
@@ -170,7 +179,7 @@ function Home(){
     return()=>{document.documentElement.classList.remove('snap-home');window.removeEventListener('wheel',onWheel);window.removeEventListener('keydown',onKey);window.removeEventListener('scroll',schedule);window.removeEventListener('resize',schedule);reduced.removeEventListener('change',schedule);cancelAnimationFrame(frame);};
   },[]);
   return <main className="home-main">
-    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroVideo/><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
+    <section className="hero home-hero home-section" style={{zIndex:1}} data-scene="0" id="top"><HeroArt/><div className="container hero-content"><div className="eyebrow"><span className="eyebrow-line"/> DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW</div><h1>{siteCopy.heroTitle}<br/><span>{siteCopy.heroAccent}</span></h1><p>{siteCopy.heroDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div></div><div className="hero-bottom container"><span>TECHNOLOGY WITH PURPOSE. IMPACT WITHOUT LIMITS.</span><a href="#focus-1"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div></section>
     {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
     <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>{siteCopy.finaleTitle}<br/><em>{siteCopy.finaleAccent}</em></h2><p>{siteCopy.finaleDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
     <nav className={`home-progress ${active===6?'is-hidden':''}`} aria-label="Home scenes">{['top','focus-1','focus-2','focus-3','focus-4','future'].map((id,i)=><a key={id} className={active===i?'active':''} href={`#${id}`} aria-label={`Go to scene ${i+1}`}/>)}</nav>
