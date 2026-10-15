@@ -1,4 +1,5 @@
 import { cp, copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { articles, services } from '../src/content.mjs';
 
@@ -95,7 +96,9 @@ if (publishRoot) {
   await cp(resolve(dist,'assets'),resolve(root,'assets'),{recursive:true,force:true});
   for(const name of ['favicon-32.png','favicon-192.png','logo-light.png'])await copyFile(resolve(dist,name),resolve(root,name));
   await cp(resolve(dist,'blog'),resolve(root,'blog'),{recursive:true,force:true});
-  await cp(resolve(dist,'media'),resolve(root,'media'),{recursive:true,force:true});
+  if (existsSync(resolve(dist,'media'))) {
+    await cp(resolve(dist,'media'),resolve(root,'media'),{recursive:true,force:true});
+  }
   await cp(resolve(dist,'admin'),resolve(root,'admin'),{recursive:true,force:true});
 }
 
