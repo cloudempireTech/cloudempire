@@ -13,7 +13,7 @@
 .home-hero:after{z-index:2}
 .home-hero .hero-content{z-index:3}
 .home-hero .hero-carousel h1{font-size:clamp(72px,9.2vw,138px);max-width:950px}
-.home-hero .hero-slide-copy{animation:heroSlideIn .8s cubic-bezier(.22,1,.36,1) both}
+.home-hero .hero-slide-copy{animation:heroSlideIn .45s cubic-bezier(.22,1,.36,1) both}
 .home-hero .hero-slide-copy>p{font-size:17px;color:#c4cce0;max-width:530px;line-height:1.7}
 .home-hero .hero-slide-tabs{display:flex;align-items:end;gap:12px}
 .home-hero .hero-slide-tab{position:relative;display:flex;align-items:center;gap:8px;width:115px;padding:0 0 13px;border:0;background:none;color:#7f8ba7;text-align:left;font:700 10px/1.1 Manrope,sans-serif;letter-spacing:.12em;cursor:pointer;transition:color .3s}
@@ -23,7 +23,7 @@
 .home-hero .hero-slide-track{position:absolute;left:0;bottom:0;width:100%;height:2px;background:rgba(135,162,216,.25);overflow:hidden}
 .home-hero .hero-slide-track:after{content:"";display:block;width:100%;height:100%;background:linear-gradient(90deg,#3e87ff,#a4d6ff);transform:scaleX(0);transform-origin:left}
 .home-hero .hero-slide-tab.is-current:not(.is-playing) .hero-slide-track:after{transform:scaleX(1)}
-.home-hero .hero-slide-tab.is-current.is-playing .hero-slide-track:after{animation:heroSlideProgress 3.5s linear both}
+.home-hero .hero-slide-tab.is-current.is-playing .hero-slide-track:after{animation:heroSlideProgress 2s linear both}
 @keyframes heroSlideIn{from{opacity:0;transform:translateY(22px);filter:blur(7px)}to{opacity:1;transform:translateY(0);filter:blur(0)}}
 @keyframes heroSlideProgress{from{transform:scaleX(0)}to{transform:scaleX(1)}}
 @keyframes heroCloudFloat{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(0,-12px,0) scale(1.015)}}
