@@ -90,7 +90,11 @@ if ($path!=='') {
     $graph[]=['@type'=>'BreadcrumbList','@id'=>$canonical.'#breadcrumbs','itemListElement'=>array_map(static fn($item,$index)=>['@type'=>'ListItem','position'=>$index+1,'name'=>$item['name'],'item'=>$item['item']],$crumbs,array_keys($crumbs))];
 }
 if ($service) $graph[]=['@type'=>'Service','@id'=>$canonical.'#service','name'=>$service['title'],'description'=>$service['description'],'url'=>$canonical,'provider'=>['@id'=>$organizationId]];
-if ($article) $graph[]=['@type'=>'BlogPosting','@id'=>$canonical.'#article','headline'=>$article['title'],'description'=>$description,'datePublished'=>$article['date'] ?? null,'dateModified'=>$article['date'] ?? null,'mainEntityOfPage'=>['@id'=>$pageId],'author'=>['@id'=>$organizationId],'publisher'=>['@id'=>$organizationId],...($cover ? ['image'=>$cover] : [])];
+if ($article) {
+    $articleSchema=['@type'=>'BlogPosting','@id'=>$canonical.'#article','headline'=>$article['title'],'description'=>$description,'datePublished'=>$article['date'] ?? null,'dateModified'=>$article['date'] ?? null,'mainEntityOfPage'=>['@id'=>$pageId],'author'=>['@id'=>$organizationId],'publisher'=>['@id'=>$organizationId]];
+    if ($cover) $articleSchema['image']=$cover;
+    $graph[]=$articleSchema;
+}
 $schema=['@context'=>'https://schema.org','@graph'=>$graph];
 $schemaJson=json_encode($schema,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_INVALID_UTF8_SUBSTITUTE);
 $html=preg_replace_callback('~<script type="application/ld\+json"[^>]*>.*?</script>~s',static fn()=>'<script type="application/ld+json">'.$schemaJson.'</script>',$html,1);
