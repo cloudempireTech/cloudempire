@@ -40,6 +40,8 @@ jobs:
         run: npm ci
       - name: Build Hostinger site
         run: npm run publish:pages
+      - name: Verify Hostinger export
+        run: npm run check:export
       - name: Commit published files
         run: |
           git config user.name "github-actions[bot]"
@@ -55,6 +57,8 @@ jobs:
           SITE_BASE: /cloudempire/
           PUBLISH_ROOT: '0'
         run: npm run publish:pages
+      - name: Verify GitHub Pages preview
+        run: npm run check:export
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact

@@ -61,7 +61,7 @@ async function initialize() {
     const state=await api(authUrl);
     if (state.loggedIn) { csrf=state.csrf;isOwner=state.isOwner; await openWorkspace(); }
     else { $('#signin').hidden=state.setupRequired; $('#bootstrap').hidden=!state.setupRequired; }
-  } catch(error) { $('#signin').hidden=true; $('#bootstrap').hidden=true; $('#connection').textContent=error.message; }
+  } catch(error) { $('#signin').hidden=false; $('#bootstrap').hidden=true; $('#connection').textContent=String(error?.message || 'Connection unavailable'); }
 }
 function switchTab(tab) {
   if (!tabs.includes(tab) || !authenticated) return;

@@ -1,21 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { createRoot } from 'react-dom/client';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { ArrowDown, ArrowRight, ArrowUpRight, Check, ChevronDown, Clock3, Facebook, Globe2, Instagram, Layers3, Menu, ShieldCheck, Sparkles, X, Zap } from 'lucide-react';
 import { DeviceVisual } from './DeviceVisual.jsx';
 import { articles as seedArticles, processSteps as seedProcessSteps, projects as seedProjects, services as seedServices } from './content.mjs';
 import { festiveOffer } from './offer.mjs';
-import './styles.css';
-import './pages.css';
-import './interaction.css';
-import './home-motion.css';
-import './hero-art.css';
-import './telemetry.js';
-
-const siteRoot = window.location.pathname.startsWith('/cloudempire/') ? '/cloudempire/' : '/';
+const siteRoot = process.env.NEXT_PUBLIC_SITE_BASE || '/';
 const url = path => `${siteRoot}${path}`;
 const asset = name => /^https?:\/\//.test(name) ? name : name.startsWith('api/media.php?') ? `https://cloudempire.tech/${name}` : url(name);
-const segments = window.location.pathname.slice(siteRoot.length).split('/').filter(Boolean);
-const route = segments[0] === 'app.html' || segments[0] === 'index.html' ? [] : segments;
+const RouteContext = React.createContext([]);
 let articles=seedArticles,processSteps=seedProcessSteps,projects=seedProjects,services=seedServices;
 let siteCopy={heroTitle:'Build what’s',heroAccent:'next.',heroDescription:'AI that thinks ahead. Websites that stand apart. Android and iOS apps that feel effortless. We bring ambitious ideas to life.',finaleTitle:'Everything you need.',finaleAccent:'One team to make it happen.',finaleDescription:'From strategy and design to cloud, Salesforce, security, and long-term support, we’re ready to build what comes next with you.',footerTitle:'Let’s make',footerAccent:'what’s next.',footerDescription:'One conversation can change everything. Tell us what you’re building.'};
 function applyContent(content){
@@ -112,8 +103,10 @@ function HeroArt(){
     </svg>
   </div>;
 }
+const StableHeroArt=React.memo(HeroArt);
+const StableDeviceVisual=React.memo(DeviceVisual);
 
-function Header(){
+function Header(){const route=useContext(RouteContext);
   const [open,setOpen]=useState(false);
   const nav=[['Home',''],['About','about/'],['Services','services/'],['Work','work/'],['Process','process/'],['Blog','blog/'],['Contact','contact/']];
   return <header className="site-header multi-header">
@@ -124,15 +117,15 @@ function Header(){
   </header>;
 }
 
-function Footer(){return <footer className="multi-footer"><div className="container"><div className="footer-invite"><div><span className="footer-kicker"><span className="live-dot"/> READY WHEN YOU ARE</span><h2>{siteCopy.footerTitle}<br/><em>{siteCopy.footerAccent}</em></h2><p>{siteCopy.footerDescription}</p></div><a className="footer-invite-link" href={url('contact/')} aria-label="Start a project with CloudEmpire"><ArrowUpRight size={35}/></a></div><div className="footer-directory"><div className="footer-brand"><a href={url('')} aria-label="CloudEmpire home"><img src={asset('logo-light.png')} alt="CloudEmpire"/></a><p>Intelligent products. Thoughtful design.<br/>Technology made for people.</p><div className="footer-socials" aria-label="CloudEmpire social media"><a href="https://www.instagram.com/cloudempire.tech/" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Instagram"><Instagram size={18}/></a><a href="https://www.facebook.com/profile.php?id=61595421568280" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Facebook"><Facebook size={18}/></a></div></div><div className="footer-links"><div><span>EXPLORE</span><a href={url('about/')}>About us</a><a href={url('services/')}>Services</a><a href={url('work/')}>Selected work</a><a href={url('process/')}>Our process</a></div><div><span>INSIGHTS</span><a href={url('blog/')}>Journal</a><a href={url('services/ai-analytics/')}>Artificial intelligence</a><a href={url('services/web-development/')}>Web development</a><a href={url('services/custom-software-development/')}>Custom software</a><a href={url('services/android-app-development/')}>Android apps</a><a href={url('services/ios-app-development/')}>iOS apps</a></div><div><span>CONNECT</span><a href={url('contact/')}>Contact us</a><a href="mailto:contact@cloudempire.tech">Email</a><a href="https://wa.me/919475639634" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={13}/></a><a href="tel:+919475639634">+91 94756 39634</a></div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. Made for what’s next.</span><span>Kolkata, India · Working everywhere</span><a href="#top" onClick={e=>{if(route.length){e.preventDefault();window.location.href=url('');}}}>Back to top ↑</a></div></div></footer>}
+function Footer(){const route=useContext(RouteContext);return <footer className="multi-footer"><div className="container"><div className="footer-invite"><div><span className="footer-kicker"><span className="live-dot"/> READY WHEN YOU ARE</span><h2>{siteCopy.footerTitle}<br/><em>{siteCopy.footerAccent}</em></h2><p>{siteCopy.footerDescription}</p></div><a className="footer-invite-link" href={url('contact/')} aria-label="Start a project with CloudEmpire"><ArrowUpRight size={35}/></a></div><div className="footer-directory"><div className="footer-brand"><a href={url('')} aria-label="CloudEmpire home"><img src={asset('logo-light.png')} alt="CloudEmpire"/></a><p>Intelligent products. Thoughtful design.<br/>Technology made for people.</p><div className="footer-socials" aria-label="CloudEmpire social media"><a href="https://www.instagram.com/cloudempire.tech/" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Instagram"><Instagram size={18}/></a><a href="https://www.facebook.com/profile.php?id=61595421568280" target="_blank" rel="noopener noreferrer" aria-label="CloudEmpire on Facebook"><Facebook size={18}/></a></div></div><div className="footer-links"><div><span>EXPLORE</span><a href={url('about/')}>About us</a><a href={url('services/')}>Services</a><a href={url('work/')}>Selected work</a><a href={url('process/')}>Our process</a></div><div><span>INSIGHTS</span><a href={url('blog/')}>Journal</a><a href={url('services/ai-analytics/')}>Artificial intelligence</a><a href={url('services/web-development/')}>Web development</a><a href={url('services/custom-software-development/')}>Custom software</a><a href={url('services/android-app-development/')}>Android apps</a><a href={url('services/ios-app-development/')}>iOS apps</a></div><div><span>CONNECT</span><a href={url('contact/')}>Contact us</a><a href="mailto:contact@cloudempire.tech">Email</a><a href="https://wa.me/919475639634" target="_blank" rel="noopener noreferrer">WhatsApp <ArrowUpRight size={13}/></a><a href="tel:+919475639634">+91 94756 39634</a></div></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} CloudEmpire. Made for what’s next.</span><span>Kolkata, India · Working everywhere</span><a href="#top" onClick={e=>{if(route.length){e.preventDefault();window.location.href=url('');}}}>Back to top ↑</a></div></div></footer>}
 
 const heroDuration=2000;
 function HeroCarousel(){
   const anchor=useRef(null);
   const [slide,setSlide]=useState(0);
   const [visible,setVisible]=useState(false);
-  const [pageVisible,setPageVisible]=useState(!document.hidden);
-  const [reducedMotion,setReducedMotion]=useState(()=>matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const [pageVisible,setPageVisible]=useState(true);
+  const [reducedMotion,setReducedMotion]=useState(false);
   const slides=[
     {label:'OVERVIEW',eyebrow:'DIGITAL EXPERIENCES, ENGINEERED FOR TOMORROW',title:siteCopy.heroTitle,accent:siteCopy.heroAccent,description:siteCopy.heroDescription},
     {label:'AI',eyebrow:'ARTIFICIAL INTELLIGENCE',title:siteCopy.heroAiTitle || 'AI that',accent:siteCopy.heroAiAccent || 'thinks ahead.',description:siteCopy.heroAiDescription || 'Purpose-built AI and analytics that turn information into decisions, automation, and better experiences.'},
@@ -145,6 +138,8 @@ function HeroCarousel(){
     const onVisibility=()=>setPageVisible(!document.hidden);
     const media=matchMedia('(prefers-reduced-motion: reduce)');
     const onMotion=()=>setReducedMotion(media.matches);
+    onMotion();
+    onVisibility();
     document.addEventListener('visibilitychange',onVisibility);
     media.addEventListener('change',onMotion);
     return()=>{observer.disconnect();document.removeEventListener('visibilitychange',onVisibility);media.removeEventListener('change',onMotion);};
@@ -189,8 +184,8 @@ function Home(){
     return()=>{observer.disconnect();document.documentElement.classList.remove('snap-home');};
   },[]);
   return <main className="home-main">
-    <section className={`hero home-hero home-section ${active===0?'is-active':''}`} style={{zIndex:1}} data-scene="0" id="top"><HeroArt/><HeroCarousel/></section>
-    {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art"><DeviceVisual active={i}/></div></div></section>)}
+    <section className={`hero home-hero home-section ${active===0?'is-active':''}`} style={{zIndex:1}} data-scene="0" id="top"><StableHeroArt/><HeroCarousel/></section>
+    {focus.map((item,i)=><section key={item.number} style={{zIndex:i+2}} className={`home-section home-focus focus-${i} ${active===i+1?'is-active':''}`} data-scene={i+1} id={`focus-${i+1}`}><div className="container focus-layout"><div className="focus-copy"><div className="section-label"><span>{item.label}</span><i/></div><span className="focus-eyebrow">{item.eyebrow}</span><h2>{item.title}</h2><p>{item.description}</p><a href={url(`services/${item.link}/`)} className="inline-link">Explore this service <ArrowUpRight size={18}/></a><div className="focus-count">{item.number} <span>/ 04</span></div></div><div className="focus-art">{(i<2||active>=i-1)&&<StableDeviceVisual active={i}/>}</div></div></section>)}
     <section className="home-section home-finale" style={{zIndex:6}} data-scene="5" id="future"><div className="container"><div className="section-label"><span>06 / THE NEXT STEP</span><i/></div><h2>{siteCopy.finaleTitle}<br/><em>{siteCopy.finaleAccent}</em></h2><p>{siteCopy.finaleDescription}</p><div className="hero-actions"><a className="button button-primary" href={url('services/')}>See every service <ArrowUpRight size={18}/></a><a className="text-link" href={url('contact/')}>Start a conversation <ArrowRight size={18}/></a></div></div></section>
     <nav className={`home-progress ${active===6?'is-hidden':''}`} aria-label="Home scenes">{['top','focus-1','focus-2','focus-3','focus-4','future'].map((id,i)=><a key={id} className={active===i?'active':''} href={`#${id}`} aria-label={`Go to scene ${i+1}`}/>)}</nav>
   </main>;
@@ -240,15 +235,21 @@ function ScrollAnimations(){
   return null;
 }
 
-function App(){let page;if(route.length===0)page=<Home/>;else if(route[0]==='about'&&route.length===1)page=<AboutPage/>;else if(route[0]==='services'&&route.length===1)page=<ServicesPage/>;else if(route[0]==='services'&&route.length===2)page=services.find(item=>item.slug===route[1])?<ServiceDetail service={services.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='work'&&route.length===1)page=<WorkPage/>;else if(route[0]==='process'&&route.length===1)page=<ProcessPage/>;else if(route[0]==='blog'&&route.length===1)page=<BlogPage/>;else if(route[0]==='blog'&&route.length===2)page=articles.find(item=>item.slug===route[1])?<ArticlePage article={articles.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='contact'&&route.length===1)page=<ContactPage/>;else page=<NotFound/>;return <><Header/>{page}<Footer/><ScrollAnimations/></>}
+function App({route}){let page;if(route.length===0)page=<Home/>;else if(route[0]==='about'&&route.length===1)page=<AboutPage/>;else if(route[0]==='services'&&route.length===1)page=<ServicesPage/>;else if(route[0]==='services'&&route.length===2)page=services.find(item=>item.slug===route[1])?<ServiceDetail service={services.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='work'&&route.length===1)page=<WorkPage/>;else if(route[0]==='process'&&route.length===1)page=<ProcessPage/>;else if(route[0]==='blog'&&route.length===1)page=<BlogPage/>;else if(route[0]==='blog'&&route.length===2)page=articles.find(item=>item.slug===route[1])?<ArticlePage article={articles.find(item=>item.slug===route[1])}/>:<NotFound/>;else if(route[0]==='contact'&&route.length===1)page=<ContactPage/>;else page=<NotFound/>;return <RouteContext.Provider value={route}><Header/>{page}<Footer/><ScrollAnimations/></RouteContext.Provider>}
 
-const root=createRoot(document.getElementById('root'));
-const render=()=>root.render(<App/>);
-if(window.__CLOUDEMPIRE_CONTENT__){applyContent(window.__CLOUDEMPIRE_CONTENT__);render();}
-else {
-  render();
-  if(siteRoot==='/')fetch('/api/site-content.php',{cache:'no-store'})
-    .then(response=>response.ok?response.json():null)
-    .then(result=>{if(result?.content){applyContent(result.content);render();}})
-    .catch(()=>{});
+export default function SiteClient({route=[]}){
+  const [,setRevision]=useState(0);
+  const [currentRoute,setCurrentRoute]=useState(route);
+  useEffect(()=>{
+    import('./telemetry.js');
+    const liveRoute=window.location.pathname.slice(siteRoot.length).split('/').filter(Boolean);
+    if(liveRoute.join('/')!==route.join('/'))setCurrentRoute(liveRoute);
+    const update=content=>{applyContent(content);setRevision(value=>value+1);};
+    if(window.__CLOUDEMPIRE_CONTENT__)update(window.__CLOUDEMPIRE_CONTENT__);
+    else if(siteRoot==='/')fetch('/api/site-content.php',{cache:'no-store'})
+      .then(response=>response.ok?response.json():null)
+      .then(result=>{if(result?.content)update(result.content);})
+      .catch(()=>{});
+  },[]);
+  return <App route={currentRoute}/>;
 }

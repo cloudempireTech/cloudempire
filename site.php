@@ -60,18 +60,20 @@ if ($article) {
     }
 }
 $body.='</main>';
-$template=file_get_contents(__DIR__.'/index.html');
+$routeTemplate=preg_match('~^[a-z0-9]+(?:[-/][a-z0-9]+)*$~',$path) ? __DIR__.'/'.$path.'/index.html' : '';
+$template=file_get_contents($routeTemplate && is_file($routeTemplate) ? $routeTemplate : __DIR__.'/index.html');
 if ($template===false) { http_response_code(503); exit('Site template unavailable.'); }
-$html=preg_replace('~<title>.*?</title>~s','<title>'.e($title).'</title>',$template,1);
-$html=preg_replace('~<meta name="description" content="[^"]*"\s*/?>~','<meta name="description" content="'.e($description).'" />',$html,1);
-$html=preg_replace('~<link rel="canonical" href="[^"]*"\s*/?>~','<link rel="canonical" href="'.e($canonical).'" />',$html,1);
+$html=preg_replace('~<title\b[^>]*>.*?</title>~s','<title>'.e($title).'</title>',$template,1);
+$html=preg_replace('~<meta name="description"[^>]*>~','<meta name="description" content="'.e($description).'"/>',$html,1);
+$html=preg_replace('~<link rel="canonical"[^>]*>~','<link rel="canonical" href="'.e($canonical).'"/>',$html,1);
 $openGraph=['og:type'=>$article ? 'article' : 'website','og:title'=>$title,'og:description'=>$description,'og:url'=>$canonical];
 foreach ($openGraph as $key=>$value) {
-    $html=preg_replace_callback('~<meta property="'.preg_quote($key,'~').'" content="[^"]*"\s*/?>~',static fn()=>'<meta property="'.$key.'" content="'.e($value).'" />',$html,1);
+    $html=preg_replace_callback('~<meta property="'.preg_quote($key,'~').'"[^>]*>~',static fn()=>'<meta property="'.$key.'" content="'.e($value).'"/>',$html,1);
 }
 if ($cover) {
-    $html=preg_replace('~<meta name="twitter:card" content="[^"]*"\s*/?>~','<meta name="twitter:card" content="summary_large_image" />',$html,1);
-    $html=str_replace('</head>','<meta property="og:image" content="'.e($cover).'" /></head>',$html);
+    $html=preg_replace('~<meta name="twitter:card"[^>]*>~','<meta name="twitter:card" content="summary_large_image"/>',$html,1);
+    $imageTag='<meta property="og:image" content="'.e($cover).'"/>';
+    $html=preg_match('~<meta property="og:image"[^>]*>~',$html) ? preg_replace('~<meta property="og:image"[^>]*>~',$imageTag,$html,1) : str_replace('</head>',$imageTag.'</head>',$html);
 }
 $organizationId='https://cloudempire.tech/#organization';
 $pageId=$canonical.'#webpage';
@@ -91,8 +93,7 @@ if ($service) $graph[]=['@type'=>'Service','@id'=>$canonical.'#service','name'=>
 if ($article) $graph[]=['@type'=>'BlogPosting','@id'=>$canonical.'#article','headline'=>$article['title'],'description'=>$description,'datePublished'=>$article['date'] ?? null,'dateModified'=>$article['date'] ?? null,'mainEntityOfPage'=>['@id'=>$pageId],'author'=>['@id'=>$organizationId],'publisher'=>['@id'=>$organizationId],...($cover ? ['image'=>$cover] : [])];
 $schema=['@context'=>'https://schema.org','@graph'=>$graph];
 $schemaJson=json_encode($schema,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_INVALID_UTF8_SUBSTITUTE);
-$html=preg_replace_callback('~<script type="application/ld\+json">.*?</script>~s',static fn()=>'<script type="application/ld+json">'.$schemaJson.'</script>',$html,1);
-$html=preg_replace_callback('~<div id="root">.*?</div>~s',static fn()=>'<div id="root">'.$body.'</div>',$html,1);
+$html=preg_replace_callback('~<script type="application/ld\+json"[^>]*>.*?</script>~s',static fn()=>'<script type="application/ld+json">'.$schemaJson.'</script>',$html,1);
 $json=json_encode($data,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE);
 $html=str_replace('</head>','<script>window.__CLOUDEMPIRE_CONTENT__='.$json.';</script></head>',$html);
 echo $html;

@@ -9,9 +9,11 @@ npm install
 npm run dev
 ```
 
-Vite opens `app.html`, the editable source entry. Before pushing changes, run `npm run publish:pages`. It builds the site and generates a static HTML entry for every route, then copies the pages and assets to the repository root for Hostinger at `https://cloudempire.tech/`. The GitHub Actions workflow also builds a separate `/cloudempire/` preview for GitHub Pages.
+Next.js opens the site at `http://localhost:3000/`. The public site and admin shell use the Next.js Pages Router with a static export so the existing Hostinger PHP/MySQL APIs and hosting can continue to run. Local development does not execute PHP endpoints, so admin sign-in and database editing must be checked on Hostinger.
 
-The root page directories, root `index.html`, root `assets/`, `sitemap.xml`, and `robots.txt` are generated files. Edit `app.html`, `src/`, and `public/`, then run `npm run publish:pages` again. The generator adds unique page titles, descriptions, canonical links, structured data, and readable article content to the HTML before React loads.
+Before pushing changes, run `npm run publish:pages` and `npm run check:export`. The first command builds Next.js and copies its exported pages and `_next/` assets to the repository root for Hostinger at `https://cloudempire.tech/`. The GitHub Actions workflow repeats that build and also publishes a separate `/cloudempire/` preview to GitHub Pages. Edit `pages/`, `src/`, and `public/`; the root page directories, root `index.html`, root `_next/`, `sitemap.xml`, and `robots.txt` are generated files.
+
+The exported HTML contains the page content, unique metadata, canonical links, and structured data before JavaScript loads. On Hostinger, `site.php` injects current MySQL content and metadata into these pages. The homepage delays offscreen showcase visuals and skips offscreen painting to reduce initial work, while its native scroll snapping and reduced-motion behavior remain available.
 
 ## Admin dashboard
 
