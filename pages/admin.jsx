@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import Head from 'next/head';
 
 export async function getStaticProps(){
-  const template=await readFile(resolve(process.cwd(),'src','admin-template.html'),'utf8');
+  const template=(await readFile(resolve(process.cwd(),'src','admin-template.html'),'utf8')).replace(/\r\n/g,'\n');
   const body=template.match(/<body[^>]*>([\s\S]*?)<script type="module"/i)?.[1];
   if(!body)throw new Error('Admin template body was not found');
   return {props:{body}};
