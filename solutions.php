@@ -56,7 +56,7 @@ if ($page) {
   <?php if ($image): ?><meta property="og:image" content="<?=h($image)?>"><?php endif; ?>
   <meta name="twitter:card" content="<?=$image ? 'summary_large_image' : 'summary'?>">
   <script type="application/ld+json"><?=json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE)?></script>
-  <link rel="stylesheet" href="/solutions.css?v=1">
+  <link rel="stylesheet" href="/solutions.css?v=2">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
