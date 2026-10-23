@@ -4,7 +4,7 @@ RewriteEngine On
 </IfModule>
 <IfModule mod_headers.c>
   <IfModule mod_setenvif.c>
-    SetEnvIf Request_URI "^/(_next/static/|fonts/|logo-light-(200|400)-v1\.(webp|avif)$)" LONG_LIVED_ASSET=1
+    SetEnvIf Request_URI "^/(_next/static/|fonts/|logo-light-(200|400)-v[12]\.(webp|avif)$)" LONG_LIVED_ASSET=1
     Header set Cache-Control "public, max-age=31536000, immutable" env=LONG_LIVED_ASSET
   </IfModule>
 </IfModule>
