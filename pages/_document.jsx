@@ -1,12 +1,11 @@
 import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function CloudEmpireDocument() {
+  const base = process.env.NEXT_PUBLIC_SITE_BASE || '/';
   return <Html lang="en"><Head>
-    <link rel="icon" type="image/png" href={`${process.env.NEXT_PUBLIC_SITE_BASE||'/'}favicon-32.png`}/>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-93JQKBW9X3" />
-    <script dangerouslySetInnerHTML={{__html:"window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-93JQKBW9X3');"}} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="icon" type="image/png" href={`${base}favicon-32.png`}/>
+    <link rel="preload" href={`${base}fonts/manrope-latin-v20.woff2`} as="font" type="font/woff2" crossOrigin="anonymous" />
+    <link rel="preload" href={`${base}fonts/dm-sans-latin-v17.woff2`} as="font" type="font/woff2" crossOrigin="anonymous" />
+    <style dangerouslySetInnerHTML={{__html:`@font-face{font-family:'DM Sans';font-style:normal;font-weight:400 700;font-display:swap;src:url('${base}fonts/dm-sans-latin-v17.woff2') format('woff2')}@font-face{font-family:Manrope;font-style:normal;font-weight:400 800;font-display:swap;src:url('${base}fonts/manrope-latin-v20.woff2') format('woff2')}`}} />
   </Head><body><Main/><NextScript/></body></Html>;
 }

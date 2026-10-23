@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__.'/api/content-store.php';
+header('Cache-Control: public, max-age=0, must-revalidate');
 header('Content-Type: text/html; charset=utf-8');
 $data=load_site_content(content_database())['content'];
 $seoPages=json_decode((string)file_get_contents(__DIR__.'/src/seo-pages.json'),true) ?: [];

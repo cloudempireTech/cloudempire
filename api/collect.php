@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/common.php';
+header('Cache-Control: max-age=0, must-revalidate');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') respond(405, ['error' => 'Method not allowed.']);
 if ((int)($_SERVER['CONTENT_LENGTH'] ?? 0) > 12000) respond(413, ['error' => 'Request is too large.']);

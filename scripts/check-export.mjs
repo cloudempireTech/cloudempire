@@ -15,11 +15,13 @@ for(const path of paths){
   if(!canonical?.endsWith(`/${path}`))fail(`Wrong canonical: ${path}`);
   if(!html.includes('<h1')||!html.includes('name="description"'))fail(`Missing content or description: ${path}`);
   if(!html.includes('id="__next"')||!html.includes('/_next/'))fail(`Not a Next.js export: ${path}`);
-  if((html.match(/googletagmanager\.com\/gtag\/js/g)||[]).length!==1)fail(`Google tag count is wrong: ${path}`);
+  if(html.includes('googletagmanager.com/gtag/js'))fail(`Google Analytics must load after the initial render: ${path}`);
   const schema=JSON.parse(schemaText||'null');
   if(!schema?.['@graph']?.length)fail(`Missing structured data: ${path}`);
   titles.add(title);
 }
 const admin=await readFile(resolve(root,'admin','index.html'),'utf8');
 if(!admin.includes('id="login-form"')||!admin.includes('admin/app.js')||!admin.includes('noindex,nofollow'))fail('Admin export is incomplete');
+const telemetry=await readFile(resolve(import.meta.dirname,'..','src','telemetry.js'),'utf8');
+if(!telemetry.includes('G-93JQKBW9X3')||!telemetry.includes('loadGoogleAnalytics'))fail('Deferred Analytics setup is missing');
 console.log(`${paths.length} unique Next.js public pages plus the admin login export verified.`);

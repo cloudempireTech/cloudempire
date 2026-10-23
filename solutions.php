@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 require __DIR__ . '/api/seo-pages-store.php';
+header('Cache-Control: public, max-age=0, must-revalidate');
 header('Content-Type: text/html; charset=utf-8');
 $db = seo_pages_database();
 $path = trim(parse_url($_SERVER['REQUEST_URI'] ?? '/solutions/', PHP_URL_PATH) ?: '', '/');

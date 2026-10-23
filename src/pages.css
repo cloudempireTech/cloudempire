@@ -42,3 +42,10 @@ html{scroll-padding-top:80px}html.snap-home{scroll-snap-type:y mandatory;scroll-
 .hp-field{position:absolute!important;left:-9999px!important;width:1px!important;height:1px!important;opacity:0!important;pointer-events:none!important}
 .detail-explainer{background:#081121}.detail-explainer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:42px 65px;margin-top:38px}.detail-explainer-grid section{border-top:1px solid #344968;padding-top:24px}.detail-explainer-grid h2{font-size:clamp(27px,3vw,43px);line-height:1.18;letter-spacing:-.04em;margin:0 0 20px}.detail-explainer-grid p,.detail-faq-grid p{color:#aebbd0;font-size:15px;line-height:1.75}.detail-explainer-grid p+p{margin-top:15px}.detail-faq{background:#0b1529}.detail-faq h2{font-size:clamp(36px,5vw,60px);margin:20px 0 35px}.detail-faq-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.detail-faq-grid>div{border:1px solid #304464;border-radius:14px;padding:26px;background:#101d34}.detail-faq-grid h3{font-size:20px;margin:0 0 13px}.detail-faq-grid p{margin:0}
 @media(max-width:760px){.detail-explainer-grid,.detail-faq-grid{grid-template-columns:1fr;gap:22px}.detail-explainer-grid h2{font-size:30px}.detail-faq-grid>div{padding:22px}}
+
+/* Keep the visual progress dots small while giving every scene link a full touch target. */
+.home-progress{gap:0}
+.home-progress a,.home-progress a.active{width:32px;height:32px;display:grid;place-items:center;background:transparent;opacity:1;transform:none;box-shadow:none}
+.home-progress a::after{content:"";width:6px;height:6px;border-radius:50%;background:#7b8caf;transition:transform .25s,background .25s,box-shadow .25s}
+.home-progress a.active::after{background:#9dc1ff;transform:scale(1.4);box-shadow:0 0 12px #4a90ff}
+.home-progress a:focus-visible{outline:2px solid #8db7ff;outline-offset:-2px;border-radius:50%}
