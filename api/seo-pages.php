@@ -61,13 +61,16 @@ try {
         $id = (int)($input['id'] ?? 0);
         $revision = (int)($input['revision'] ?? 0);
         if ($id < 1 || $revision < 1) respond(400, ['error' => 'Invalid page revision.']);
-        $update = $db->prepare("UPDATE ce_seo_pages SET slug=?,status=?,content_json=?,revision=revision+1,updated_at=?,published_at=CASE WHEN ?='published' THEN COALESCE(published_at,?) ELSE NULL END WHERE id=? AND revision=?");
-        $update->execute([$slug, $status, $json, $now, $status, $now, $id, $revision]);
+        // Use a numeric condition: native MySQL parameters and SQL literals can
+        // inherit different collations on shared hosting connections.
+        $update = $db->prepare("UPDATE ce_seo_pages SET slug=?,status=?,content_json=?,revision=revision+1,updated_at=?,published_at=CASE WHEN ? THEN COALESCE(published_at,?) ELSE NULL END WHERE id=? AND revision=?");
+        $update->execute([$slug, $status, $json, $now, $status === 'published' ? 1 : 0, $now, $id, $revision]);
         if ($update->rowCount() !== 1) respond(409, ['error' => 'Page changed elsewhere. Refresh before saving.']);
     }
 } catch (PDOException $error) {
     if ($error->getCode() === '23000') respond(409, ['error' => 'This SEO page slug already exists.']);
-    throw $error;
+    error_log(gmdate('c') . ' method=' . $method . ' id=' . ($id ?? 0) . ' revision=' . ($revision ?? 0) . ' ' . $error->getMessage() . PHP_EOL, 3, private_dir() . '/seo-pages-errors.log');
+    respond(500, ['error' => 'The SEO page could not be saved. Check the private server log.']);
 }
 $select = $db->prepare('SELECT * FROM ce_seo_pages WHERE id=?');
 $select->execute([$id]);
