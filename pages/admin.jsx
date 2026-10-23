@@ -21,6 +21,6 @@ export default function AdminPage({body}){
     <link rel="stylesheet" href={`${base}admin/auth.css?v=3`}/>
     <link rel="stylesheet" href={`${base}admin/dashboard.css?v=1`}/>
     <div dangerouslySetInnerHTML={{__html:body}}/>
-    <script src={`${base}admin/app.js?v=5`} type="module" defer/>
+    <script src={`${base}admin/app.js?v=6`} type="module" defer/>
   </>;
 }

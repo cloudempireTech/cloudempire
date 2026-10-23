@@ -61,6 +61,10 @@ if ($article) {
 }
 $body.='</main>';
 $routeTemplate=preg_match('~^[a-z0-9]+(?:[-/][a-z0-9]+)*$~',$path) ? __DIR__.'/'.$path.'/index.html' : '';
+if ($article && !is_file($routeTemplate)) {
+    require __DIR__.'/dynamic-article.php';
+    exit;
+}
 $template=file_get_contents($routeTemplate && is_file($routeTemplate) ? $routeTemplate : __DIR__.'/index.html');
 if ($template===false) { http_response_code(503); exit('Site template unavailable.'); }
 $html=preg_replace('~<title\b[^>]*>.*?</title>~s','<title>'.e($title).'</title>',$template,1);

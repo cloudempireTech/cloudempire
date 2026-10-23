@@ -8,7 +8,7 @@ export const isPreview = siteBase !== '/';
 export const routePaths = [
   ['about'], ['services'],
   ...services.map(item=>['services',item.slug]),
-  ['work'], ['process'], ['blog'],
+  ['work'], ['process'], ['blog'], ['solutions'],
   ...articles.map(item=>['blog',item.slug]),
   ['contact'],
 ];

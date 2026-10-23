@@ -1,10 +1,11 @@
 const $ = selector => document.querySelector(selector);
-const tabs = ['overview','articles','services','projects','processSteps','messages','analytics','utm','database','users','files'];
-const labels = {overview:'Dashboard',articles:'Blog posts',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',utm:'UTM campaigns',database:'Database & media',users:'Admin users',files:'Site copy'};
+const tabs = ['overview','articles','seoPages','services','projects','processSteps','messages','analytics','utm','database','users','files'];
+const labels = {overview:'Dashboard',articles:'Blog posts',seoPages:'SEO pages',services:'Services',projects:'Portfolio',processSteps:'Process',messages:'Inquiries',analytics:'Analytics',utm:'UTM campaigns',database:'Database & media',users:'Admin users',files:'Site copy'};
 let authenticated = false;
 let isOwner = false;
 let csrf = '';
 let data = null;
+let seoPages = [];
 let contentRevision = 0;
 let currentTab = 'overview';
 let selected = -1;
@@ -14,6 +15,7 @@ const setupUrl = new URL('../../api/setup.php', import.meta.url);
 const mediaUrl = new URL('../../api/media.php', import.meta.url);
 const authUrl = new URL('../../api/auth.php', import.meta.url);
 const contentUrl = new URL('../../api/content.php', import.meta.url);
+const seoPagesUrl = new URL('../../api/seo-pages.php', import.meta.url);
 const usersUrl = new URL('../../api/users.php', import.meta.url);
 const storageUrl = new URL('../../api/storage.php', import.meta.url);
 let inviteToken = location.hash.startsWith('#invite=') ? location.hash.slice(8) : '';
@@ -40,6 +42,11 @@ async function loadContent() {
   contentRevision = file.revision;
   data = file.content;
 }
+async function loadSeoPages() {
+  const response = await api(seoPagesUrl);
+  seoPages = response.pages;
+}
+const currentItems = () => currentTab === 'seoPages' ? seoPages : data[currentTab];
 async function openWorkspace() {
   authenticated=true;
   $('#signin').hidden=true;
@@ -52,6 +59,8 @@ async function openWorkspace() {
     await loadContent();
     switchTab('overview');
   } catch (error) { notice(error.message,true); }
+  try { await loadSeoPages(); renderMetrics(); }
+  catch (error) { notice('SEO pages are unavailable: ' + error.message,true); }
   loadMetrics();
   if(isOwner)loadSetupStatus();
 }
@@ -72,7 +81,7 @@ function switchTab(tab) {
   document.querySelectorAll('.sidebar nav button').forEach(button => button.classList.toggle('active',button.dataset.tab===tab));
   document.querySelectorAll('.panel').forEach(panel => panel.classList.remove('active'));
   $('#page-title').textContent = labels[tab];
-  const panelId = ['articles','services','projects','processSteps'].includes(tab) ? 'editor-panel' : tab;
+  const panelId = ['articles','seoPages','services','projects','processSteps'].includes(tab) ? 'editor-panel' : tab;
   $('#' + panelId).classList.add('active');
   if (panelId === 'editor-panel') renderList();
   if (tab === 'messages' || tab === 'analytics') loadMetrics();
@@ -85,13 +94,13 @@ function renderList() {
   $('#list-title').textContent = labels[currentTab];
   const list = $('#item-list');
   list.replaceChildren();
-  data[currentTab].forEach((item,index) => {
+  currentItems().forEach((item,index) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = selected === index ? 'selected' : '';
     button.textContent = item.title || item.slug || ('Step ' + item.number);
     const small = document.createElement('small');
-    small.textContent = item.category || item.slug || item.description?.slice(0,35) || '';
+    small.textContent = currentTab === 'seoPages' ? `${item.status} · /solutions/${item.slug}/` : item.category || item.slug || item.description?.slice(0,35) || '';
     button.append(small);
     button.addEventListener('click',() => {selected=index;renderList();renderForm();});
     list.append(button);
@@ -104,17 +113,22 @@ function renderList() {
   }
 }
 const fields = {
-  articles:[['slug','URL slug'],['title','Title'],['category','Category'],['description','SEO description','textarea'],['date','Publication date','date'],['readTime','Reading time'],['intro','Introduction','textarea'],['sections','Sections (JSON)','json'],['takeaways','Key takeaways (one per line)','lines'],['relatedService','Related service slug'],['image','Cover image path'],['imageAlt','Cover image alt text'],['upload','Upload cover image','file']],
+  articles:[['slug','URL slug'],['title','Title'],['category','Category'],['description','SEO description','textarea'],['date','Publication date','date'],['readTime','Reading time'],['intro','Introduction','textarea'],['sections','Sections (JSON)','json'],['takeaways','Key takeaways (one per line)','lines'],['relatedService','Related service slug'],['relatedSeoPage','Related SEO page slug'],['image','Cover image path'],['imageAlt','Cover image alt text'],['upload','Upload cover image','file']],
+  seoPages:[['slug','URL slug (/solutions/slug/)'],['title','Page heading'],['seoTitle','Search title'],['description','Search description','textarea'],['eyebrow','Short label'],['intro','Introduction','textarea'],['sections','Sections (JSON)','json'],['faqs','Common questions (JSON)','json'],['relatedService','Related service slug'],['relatedArticle','Related blog slug'],['image','Cover image path'],['imageAlt','Cover image alt text'],['upload','Upload cover image','file'],['status','Visibility','select']],
   services:[['slug','URL slug'],['title','Title'],['category','Category'],['lead','Lead statement'],['description','Description','textarea'],['seoTitle','Search title'],['seoDescription','Search description','textarea'],['deliverables','Deliverables (one per line)','lines'],['outcome','Outcome','textarea'],['sections','Detailed sections (JSON)','json'],['faqs','Common questions (JSON)','json'],['icon','Icon']],
   projects:[['slug','Slug'],['title','Title'],['category','Category'],['location','Location'],['description','Description','textarea'],['theme','Theme']],
   processSteps:[['number','Step number'],['title','Title'],['description','Description','textarea']]
 };
 function renderForm() {
   if (selected < 0) return;
-  const item = data[currentTab][selected];
+  const item = currentItems()[selected];
   $('#content-form').hidden = false;
   $('#form-title').textContent = item.title || 'New item';
-  $('#delete-item').hidden = false;
+  $('#delete-item').hidden = currentTab === 'seoPages';
+  $('#delete-item').textContent = 'Delete';
+  const preview=$('#seo-preview');
+  preview.hidden=currentTab!=='seoPages' || item.status!=='published' || !item.id;
+  if(!preview.hidden)preview.href=`/solutions/${item.slug}/`;
   const container = $('#fields');
   container.replaceChildren();
   for (const [key,label,type] of fields[currentTab]) {
@@ -123,10 +137,13 @@ function renderForm() {
     const caption = document.createElement('label');
     caption.textContent = label;
     caption.htmlFor = 'field-' + key;
-    let control = type === 'textarea' || type === 'json' || type === 'lines' ? document.createElement('textarea') : document.createElement('input');
+    let control = type === 'select' ? document.createElement('select') : type === 'textarea' || type === 'json' || type === 'lines' ? document.createElement('textarea') : document.createElement('input');
     control.id = 'field-' + key;
     control.name = key;
-    if (type === 'file') {
+    if (type === 'select') {
+      for(const value of ['draft','published']){const option=document.createElement('option');option.value=value;option.textContent=value==='draft'?'Draft (not public)':'Published (live and in sitemap)';control.append(option);}
+      control.value=item[key]||'draft';
+    } else if (type === 'file') {
       control.type = 'file';
       control.accept = 'image/png,image/jpeg,image/webp';
     } else {
@@ -146,7 +163,7 @@ function renderForm() {
   }
 }
 function readForm() {
-  const original = data[currentTab][selected];
+  const original = currentItems()[selected];
   const item = {...original};
   for (const [key,,type] of fields[currentTab]) {
     if (type === 'file') continue;
@@ -158,7 +175,8 @@ function readForm() {
   if (!item.title || ('slug' in item && !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(item.slug))) throw new Error('Enter a title and a valid lowercase URL slug.');
   if ('sections' in item && (!Array.isArray(item.sections) || item.sections.some(section => !section.heading || !Array.isArray(section.paragraphs)))) throw new Error('Sections must be a JSON array with heading and paragraphs.');
   if ('faqs' in item && (!Array.isArray(item.faqs) || item.faqs.some(faq => !faq.question || !faq.answer))) throw new Error('Questions must be a JSON array with question and answer.');
-  if ('slug' in item && data[currentTab].some((entry,index) => index !== selected && entry.slug === item.slug)) throw new Error('This URL slug already exists.');
+  if ('slug' in item && currentItems().some((entry,index) => index !== selected && entry.slug === item.slug)) throw new Error('This URL slug already exists.');
+  if (currentTab === 'seoPages' && (!item.seoTitle || !item.description || !item.intro || (item.status === 'published' && !item.sections.length))) throw new Error('Add a search title, description, introduction and useful sections before publishing.');
   return item;
 }
 async function uploadImage(file) {
@@ -175,9 +193,16 @@ async function save(event) {
   button.disabled = true;
   try {
     const item = readForm();
-    if (currentTab === 'articles') {
+    if (currentTab === 'articles' || currentTab === 'seoPages') {
       const file = $('#field-upload').files[0];
       if (file) item.image = await uploadImage(file);
+    }
+    if (currentTab === 'seoPages') {
+      const method=item.id?'PUT':'POST';
+      const response=await api(seoPagesUrl,{method,body:JSON.stringify({id:item.id,revision:item.revision,page:item})});
+      seoPages[selected]=response.page;
+      notice(item.status==='published'?'SEO page published and added to the live sitemap.':'SEO page saved as a draft.');
+      renderList();renderForm();return;
     }
     const updated={...data,[currentTab]:data[currentTab].map((entry,index)=>index===selected?item:entry)};
     const response = await api(contentUrl,{method:'PUT',body:JSON.stringify({content:updated,revision:contentRevision})});
@@ -271,7 +296,7 @@ function renderDashboard(){
     const text=document.createElement('div');const name=document.createElement('strong');name.textContent=item.name||item.email||'Visitor';const detail=document.createElement('small');detail.textContent=(item.service||'General inquiry')+' · '+item.date;text.append(name,detail);row.append(text);recent.append(row);
   }
   const content=$('#overview-content');content.replaceChildren();
-  for(const [value,label] of [[data?.articles?.length||0,'Blog posts'],[data?.services?.length||0,'Services'],[data?.projects?.length||0,'Projects'],[data?.processSteps?.length||0,'Process steps']]){const chip=document.createElement('span');chip.textContent=`${value} ${label}`;content.append(chip);}
+  for(const [value,label] of [[data?.articles?.length||0,'Blog posts'],[seoPages.filter(item=>item.status==='published').length,'Published SEO pages'],[data?.services?.length||0,'Services'],[data?.projects?.length||0,'Projects'],[data?.processSteps?.length||0,'Process steps']]){const chip=document.createElement('span');chip.textContent=`${value} ${label}`;content.append(chip);}
 }
 function renderRanking(selector,rows,emptyText){
   const target=$(selector);target.replaceChildren();
@@ -355,8 +380,8 @@ $('#logout').addEventListener('click',async () => {
   authenticated=false; isOwner=false; csrf=''; data=null; metrics=null; $('#workspace').hidden=true; $('#signin').hidden=false; $('#connection').textContent='Sign in required';
 });
 $('#add-item').addEventListener('click',() => {
-  const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',seoTitle:'',seoDescription:'',deliverables:[],outcome:'',sections:[],faqs:[],icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
-  data[currentTab].push(defaults[currentTab]);selected=data[currentTab].length-1;renderList();renderForm();
+  const defaults={articles:{slug:'new-article',title:'New article',category:'INSIGHTS',description:'',date:new Date().toISOString().slice(0,10),readTime:'5 min read',intro:'',sections:[{heading:'Section heading',paragraphs:['Write the article here.']}],takeaways:[],relatedService:'ai-analytics',relatedSeoPage:''},seoPages:{slug:'new-solution',title:'New solution',seoTitle:'',description:'',eyebrow:'CLOUDEMPIRE SOLUTIONS',intro:'',sections:[{heading:'What you need to know',paragraphs:['Replace this with useful, original information.']}],faqs:[],relatedService:'',relatedArticle:'',image:'',imageAlt:'',status:'draft'},services:{slug:'new-service',title:'New service',category:'SERVICE',lead:'',description:'',seoTitle:'',seoDescription:'',deliverables:[],outcome:'',sections:[],faqs:[],icon:'✦'},projects:{slug:'new-project',title:'New project',category:'PROJECT',location:'',description:'',theme:'campus'},processSteps:{number:String(data.processSteps.length+1).padStart(2,'0'),title:'New step',description:''}};
+  currentItems().push(defaults[currentTab]);selected=currentItems().length-1;renderList();renderForm();
 });
 $('#delete-item').addEventListener('click',async () => {
   if (selected<0 || !confirm('Delete this item from the site?')) return;
