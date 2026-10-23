@@ -1,4 +1,7 @@
 RewriteEngine On
+<IfModule mod_mime.c>
+  AddType image/avif .avif
+</IfModule>
 <IfModule mod_headers.c>
   <IfModule mod_setenvif.c>
     SetEnvIf Request_URI "^/(_next/static/|fonts/|logo-light-(200|400)-v1\.(webp|avif)$)" LONG_LIVED_ASSET=1
