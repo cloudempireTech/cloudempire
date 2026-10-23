@@ -30,7 +30,7 @@ if ($cover) $articleSchema['image'] = $cover;
   <?php if ($cover): ?><meta property="og:image" content="<?=e($cover)?>"><?php endif; ?>
   <meta name="twitter:card" content="<?=$cover ? 'summary_large_image' : 'summary'?>">
   <script type="application/ld+json"><?=json_encode($articleSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE)?></script>
-  <link rel="stylesheet" href="/solutions.css?v=1">
+  <link rel="stylesheet" href="/solutions.css?v=2">
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
