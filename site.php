@@ -103,6 +103,22 @@ if ($article) {
 $schema=['@context'=>'https://schema.org','@graph'=>$graph];
 $schemaJson=json_encode($schema,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_INVALID_UTF8_SUBSTITUTE);
 $html=preg_replace_callback('~<script type="application/ld\+json"[^>]*>.*?</script>~s',static fn()=>'<script type="application/ld+json">'.$schemaJson.'</script>',$html,1);
-$json=json_encode($data,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE);
-$html=str_replace('</head>','<script>window.__CLOUDEMPIRE_CONTENT__='.$json.';</script></head>',$html);
+$clientContent=[];
+if (isset($data['siteCopy']) && is_array($data['siteCopy'])) $clientContent['siteCopy']=$data['siteCopy'];
+if ($path==='blog' || $article) $clientContent['articles']=$data['articles'];
+if ($article || $path==='services' || $service || $path==='contact') $clientContent['services']=$data['services'];
+if ($path==='work') $clientContent['projects']=$data['projects'];
+if ($path==='process' || $service) $clientContent['processSteps']=$data['processSteps'];
+$json=json_encode($clientContent,JSON_UNESCAPED_SLASHES|JSON_HEX_TAG|JSON_HEX_AMP|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_INVALID_UTF8_SUBSTITUTE);
+if ($path==='') {
+    // The homepage is fully prerendered. A small script enhances its controls
+    // without hydrating every scene and SVG on mobile devices.
+    $html=preg_replace_callback('~<script\b[^>]*>.*?</script>~s',static function($match) {
+        return str_contains($match[0],'type="application/ld+json"') ? $match[0] : '';
+    },$html);
+    $contentScript=$clientContent ? '<script>window.__CLOUDEMPIRE_CONTENT__='.$json.';</script>' : '';
+    $html=str_replace('</head>',$contentScript.'<script type="module" src="/site-home.js"></script></head>',$html);
+} else {
+    $html=str_replace('</head>','<script>window.__CLOUDEMPIRE_CONTENT__='.$json.';</script></head>',$html);
+}
 echo $html;

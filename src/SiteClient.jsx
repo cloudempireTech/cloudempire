@@ -10,9 +10,20 @@ const RouteContext = React.createContext([]);
 let articles=seedArticles,processSteps=seedProcessSteps,projects=seedProjects,services=seedServices;
 let siteCopy={heroTitle:'Build what’s',heroAccent:'next.',heroDescription:'AI that thinks ahead. Websites that stand apart. Android and iOS apps that feel effortless. We bring ambitious ideas to life.',finaleTitle:'Everything you need.',finaleAccent:'One team to make it happen.',finaleDescription:'From strategy and design to cloud, Salesforce, security, and long-term support, we’re ready to build what comes next with you.',footerTitle:'Let’s make',footerAccent:'what’s next.',footerDescription:'One conversation can change everything. Tell us what you’re building.'};
 function applyContent(content){
-  if(!content || !['articles','processSteps','projects','services'].every(key=>Array.isArray(content[key])))return;
-  ({articles,processSteps,projects,services}=content);
-  siteCopy={...siteCopy,...content.siteCopy};
+  if(!content || typeof content!=='object')return false;
+  let changed=false;
+  for(const [key,current] of [['articles',articles],['processSteps',processSteps],['projects',projects],['services',services]]){
+    if(!Array.isArray(content[key]) || JSON.stringify(content[key])===JSON.stringify(current))continue;
+    if(key==='articles')articles=content[key];
+    else if(key==='processSteps')processSteps=content[key];
+    else if(key==='projects')projects=content[key];
+    else services=content[key];
+    changed=true;
+  }
+  if(content.siteCopy && typeof content.siteCopy==='object'){
+    for(const [key,value] of Object.entries(content.siteCopy))if(siteCopy[key]!==value){siteCopy={...siteCopy,[key]:value};changed=true;}
+  }
+  return changed;
 }
 
 const focus = [
@@ -152,7 +163,7 @@ function HeroCarousel(){
   },[slide,playing]);
   const current=slides[slide];
   return <>
-    <div ref={anchor} className="container hero-content hero-carousel">
+    <div ref={anchor} className="container hero-content hero-carousel" data-slides={JSON.stringify(slides)}>
       <a className="hero-offer" href={url('services/web-development/')}><span className="hero-offer-spark"><Sparkles size={15}/></span><span className="hero-offer-label">{festiveOffer.label}</span><strong>{festiveOffer.headline}</strong><ArrowUpRight size={16}/></a>
       <div key={slide} className="hero-slide-copy" aria-live="off">
         <div className="eyebrow"><span className="eyebrow-line"/> {current.eyebrow}</div>
@@ -161,7 +172,7 @@ function HeroCarousel(){
       </div>
       <div className="hero-actions"><a className="button button-primary" href={url('contact/')}>Start a project <ArrowUpRight size={18}/></a><a className="text-link" href="#focus-1">Explore our focus <ArrowDown size={17}/></a></div>
     </div>
-    <div className="hero-bottom container"><div className="hero-slide-tabs" role="group" aria-label="Hero messages">{slides.map((item,index)=><button key={item.label} type="button" className={`hero-slide-tab ${index===slide?'is-current':''} ${playing?'is-playing':''}`} aria-pressed={index===slide} onClick={()=>setSlide(index)}><span className="hero-slide-number">0{index+1}</span><span className="hero-slide-name">{item.label}</span><span key={index===slide&&playing?`progress-${slide}`:'idle'} className="hero-slide-track"/></button>)}</div><a href="#focus-1" aria-label="Scroll to explore"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div>
+    <div className="hero-bottom container"><div className="hero-slide-tabs" role="group" aria-label="Hero messages">{slides.map((item,index)=><button key={item.label} type="button" className={`hero-slide-tab ${index===slide?'is-current':''} ${playing?'is-playing':''}`} style={{'--slide-duration':index===0?'6.5s':'4s'}} aria-pressed={index===slide} onClick={()=>setSlide(index)}><span className="hero-slide-number">0{index+1}</span><span className="hero-slide-name">{item.label}</span><span key={index===slide&&playing?`progress-${slide}`:'idle'} className="hero-slide-track"/></button>)}</div><a href="#focus-1" aria-label="Scroll to explore"><span>SCROLL TO EXPLORE</span><ArrowDown size={16}/></a></div>
   </>;
 }
 
@@ -245,7 +256,7 @@ export default function SiteClient({route=[]}){
     import('./telemetry.js');
     const liveRoute=window.location.pathname.slice(siteRoot.length).split('/').filter(Boolean);
     if(liveRoute.join('/')!==route.join('/'))setCurrentRoute(liveRoute);
-    const update=content=>{applyContent(content);setRevision(value=>value+1);};
+    const update=content=>{if(applyContent(content))setRevision(value=>value+1);};
     if(window.__CLOUDEMPIRE_CONTENT__)update(window.__CLOUDEMPIRE_CONTENT__);
     else if(siteRoot==='/' && /(^|\.)cloudempire\.tech$/.test(location.hostname))fetch('/api/site-content.php',{cache:'no-cache'})
       .then(response=>response.ok?response.json():null)
